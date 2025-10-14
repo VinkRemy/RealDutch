@@ -1,11 +1,17 @@
-export default async function handler(req, res) {
-  const { tag } = req.query;
-  const response = await fetch(`https://api.brawlstars.com/v1/clubs/${encodeURIComponent(tag)}/members`, {
-    headers: {
-      Authorization: `Bearer ${process.env.BRAWL_API_KEY}`
-    }
-  });
+import fetch from 'node-fetch';
 
-  const data = await response.json();
-  res.status(response.status).json(data);
+export default async function handler(req, res) {
+    const clubTag = req.query.tag || '2RY829PP0';
+    const url = `https://brawlify.com/stats/club/${clubTag}`;
+
+    try {
+        const response = await fetch(url);
+        const html = await response.text();
+
+        // Stuur de HTML terug naar frontend
+        res.setHeader('Content-Type', 'text/html');
+        res.status(200).send(html);
+    } catch (err) {
+        res.status(500).json({ error: 'Kan clubpagina niet ophalen', details: err.toString() });
+    }
 }
