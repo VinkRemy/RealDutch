@@ -2,7 +2,7 @@ import express from "express";
 import fetch from "node-fetch";
 const app = express();
 
-const API_KEY = process.env.BRAWL_API_KEY; // blijf geheim houden!
+const API_KEY = process.env.BRAWL_API_KEY;
 
 app.get("/api/club/:tag", async (req, res) => {
   const tag = encodeURIComponent(req.params.tag);
