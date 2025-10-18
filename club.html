@@ -1,23 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>RealDutch Minis Club</title>
-</head>
-<body>
-  <h1>RealDutch Minis Clubleden</h1>
-  <ul id="members"></ul>
+<ul id="members">
+  <li>Laden...</li>
+</ul>
 
-  <script>
-    fetch('http://65.21.58.192:8080/api/club?tag=%232RY829PPO')
-      .then(res => res.json())
-      .then(data => {
-        const list = document.getElementById('members');
-        data.items.forEach(member => {
-          const li = document.createElement('li');
-          li.textContent = `${member.name} - main: ${member.name}`; // je kan hier je "mini" info toevoegen
-          list.appendChild(li);
-        });
-      });
-  </script>
-</body>
-</html>
+<script>
+const list = document.getElementById('members');
+list.innerHTML = "<li>Laden...</li>";
+
+// Vervang dit door je HTTPS endpoint als je hebt
+const API_URL = 'https://JOUW_HTTPS_VPS/api/club?tag=%232RY829PPO';
+
+fetch(API_URL)
+  .then(res => res.json())
+  .then(data => {
+    list.innerHTML = ""; // lege de lijst
+    data.items.forEach(member => {
+      const li = document.createElement('li');
+      li.textContent = `${member.name} - main: ${member.name}`; // hier kan je mini info toevoegen
+      list.appendChild(li);
+    });
+  })
+  .catch(err => {
+    list.innerHTML = `<li>Fout bij ophalen: ${err.message}</li>`;
+  });
+</script>
