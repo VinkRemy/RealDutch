@@ -1,70 +1,23 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>RealDutch Minis Club Tool</title>
+  <title>RealDutch Minis Club</title>
 </head>
 <body>
-<h1>RealDutch Minis Clubleden</h1>
-<input type="text" id="clubTag" value="2RY829PP0" placeholder="Clubtag">
-<button onclick="loadClub()">Leden ophalen</button>
+  <h1>RealDutch Minis Clubleden</h1>
+  <ul id="members"></ul>
 
-<pre id="output"></pre>
-<table id="membersTable">
-    <thead>
-        <tr>
-            <th>Naam</th>
-            <th>Trophies</th>
-            <th>Main / Mini</th>
-            <th>Player ID</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
-<script>
-async function loadClub() {
-    const tag = document.getElementById('clubTag').value.trim();
-    const output = document.getElementById('output');
-    output.textContent = 'Laden...';
-
-    try {
-        // fetch via onze proxy op Vercel
-        const res = await fetch(`/api/club?tag=${tag}`);
-        const htmlText = await res.text();
-
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, 'text/html');
-
-        // Brawlify gebruikt rijen met class .row.justify-content-center
-        const rows = doc.querySelectorAll('div.row.justify-content-center');
-        const members = Array.from(rows).map(row => {
-            const name = row.querySelector('.player-name')?.textContent.trim() || '';
-            const trophies = row.querySelector('.player-trophies')?.textContent.trim() || '';
-            return { name, trophies, mainMini: '', playerId: '' };
+  <script>
+    fetch('http://65.21.58.192:8080/api/club?tag=%232RY829PPO')
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('members');
+        data.items.forEach(member => {
+          const li = document.createElement('li');
+          li.textContent = `${member.name} - main: ${member.name}`; // je kan hier je "mini" info toevoegen
+          list.appendChild(li);
         });
-
-        output.textContent = JSON.stringify(members, null, 2);
-
-        // Tabel vullen
-        const tbody = document.querySelector('#membersTable tbody');
-        tbody.innerHTML = '';
-        members.forEach(m => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${m.name}</td>
-                <td>${m.trophies}</td>
-                <td contenteditable="true">${m.mainMini}</td>
-                <td contenteditable="true">${m.playerId}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-    } catch (err) {
-        console.error(err);
-        output.textContent = 'Fout bij ophalen van clubleden';
-    }
-}
-</script>
+      });
+  </script>
 </body>
 </html>
