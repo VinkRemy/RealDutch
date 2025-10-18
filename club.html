@@ -1,25 +1,74 @@
-<ul id="members">
-  <li>Laden...</li>
-</ul>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>RealDutch Minis Club</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    h1 { color: #333; }
+    table { border-collapse: collapse; width: 100%; max-width: 600px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #eee; }
+    input { width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>RealDutch Minis Clubleden</h1>
 
-<script>
-const list = document.getElementById('members');
-list.innerHTML = "<li>Laden...</li>";
+  <table id="club-table">
+    <thead>
+      <tr>
+        <th>Naam</th>
+        <th>Main</th>
+        <th>Mini</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Laden...</td></tr>
+    </tbody>
+  </table>
 
-// Vervang dit door je HTTPS endpoint als je hebt
-const API_URL = 'https://JOUW_HTTPS_VPS/api/club?tag=%232RY829PPO';
+  <script>
+    const API_URL = 'https://badrandoms.com/api/club?tag=%232RY829PPO';
+    const tbody = document.querySelector("#club-table tbody");
 
-fetch(API_URL)
-  .then(res => res.json())
-  .then(data => {
-    list.innerHTML = ""; // lege de lijst
-    data.items.forEach(member => {
-      const li = document.createElement('li');
-      li.textContent = `${member.name} - main: ${member.name}`; // hier kan je mini info toevoegen
-      list.appendChild(li);
-    });
-  })
-  .catch(err => {
-    list.innerHTML = `<li>Fout bij ophalen: ${err.message}</li>`;
-  });
-</script>
+    async function loadMembers() {
+      tbody.innerHTML = "<tr><td colspan='3'>Laden...</td></tr>";
+
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        tbody.innerHTML = ""; // leeg tabel
+
+        data.items.forEach(member => {
+          const tr = document.createElement('tr');
+
+          // Naam en main
+          const tdName = document.createElement('td');
+          tdName.textContent = member.name;
+          const tdMain = document.createElement('td');
+          tdMain.textContent = member.name; // hier kun je main info zetten
+
+          // Mini input
+          const tdMini = document.createElement('td');
+          const input = document.createElement('input');
+          input.type = "text";
+          input.placeholder = "Mini van " + member.name;
+          tdMini.appendChild(input);
+
+          tr.appendChild(tdName);
+          tr.appendChild(tdMain);
+          tr.appendChild(tdMini);
+          tbody.appendChild(tr);
+        });
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="3">Fout bij ophalen: ${err.message}</td></tr>`;
+      }
+    }
+
+    loadMembers();
+  </script>
+</body>
+</html>
