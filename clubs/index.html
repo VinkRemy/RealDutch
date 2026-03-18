@@ -42,7 +42,6 @@
             font-size: 1.2rem;
         }
 
-        /* Clubs Grid */
         .clubs-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -160,7 +159,6 @@
             font-weight: bold;
         }
 
-        /* Sort Controls */
         .sort-controls {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
@@ -205,7 +203,6 @@
             border-color: #FFD700;
         }
 
-        /* Detail Panel */
         .detail-panel {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -400,6 +397,11 @@
             font-weight: bold;
         }
 
+        .ratio-perfect {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
         .loading {
             text-align: center;
             padding: 40px;
@@ -441,14 +443,6 @@
             margin: 20px 0;
             display: none;
         }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .club-name { font-size: 1.5rem; }
-            .detail-title { font-size: 1.8rem; }
-            .members-table { font-size: 0.9rem; }
-            .members-table td { padding: 8px 5px; }
-        }
     </style>
 </head>
 <body>
@@ -458,10 +452,8 @@
             <p class="subtitle">Advanced stats - Prestige, 3v3 wins, Showdown wins & ratio</p>
         </header>
 
-        <!-- Clubs Grid -->
         <div class="clubs-grid" id="clubsGrid"></div>
 
-        <!-- Club Sort Controls -->
         <div class="sort-controls">
             <span class="sort-label">Sorteer clubs op:</span>
             <div class="sort-buttons">
@@ -472,17 +464,14 @@
             </div>
         </div>
 
-        <!-- Loading -->
         <div class="loading" id="loading">
             <div class="loading-spinner"></div>
             <p class="loading-text" id="loadingText">Club gegevens laden...</p>
             <p class="progress-text" id="progressText"></p>
         </div>
 
-        <!-- Error -->
         <div class="error-message" id="error"></div>
 
-        <!-- Detail Panel -->
         <div class="detail-panel" id="detailPanel">
             <div class="detail-header">
                 <h2 class="detail-title" id="detailClubName"></h2>
@@ -544,16 +533,14 @@
 
     <script>
         const API_BASE = 'https://api.realdutch.club';
-        let currentClubTag = null;
         let currentMembers = [];
         let currentSort = {
             field: 'trophies',
             direction: 'desc'
         };
         
-        // Club data uit jouw lijst met alle RD clubs
         const clubs = [
-            { name: 'RealDutch', tag: '28U982', tier: 'S', megaPig: 5, trophies: '95k', description: 'Hoofdclub van de RealDutch familie' },
+            { name: 'RealDutch', tag: '28U982', tier: 'S', megaPig: 5, trophies: '95k', description: 'Hoofdclub' },
             { name: 'RealDutch II', tag: '20QGP08R0', tier: 'A+', megaPig: 5, trophies: '90k', description: 'Tweede club' },
             { name: 'RealDutch Elite', tag: '2GQU92GV8', tier: 'A', megaPig: 5, trophies: '85k', description: 'Elite club' },
             { name: 'RealDutch Force', tag: '2008QRUP0', tier: 'B', megaPig: 5, trophies: '80k', description: 'Force club' },
@@ -566,17 +553,11 @@
             { name: 'RealDutch OG', tag: '2CU9G0Q0V', tier: 'F', megaPig: 0, trophies: 'N/A', description: 'Original gangsters' }
         ];
 
-        // Tier kleuren
         const tierColors = {
-            'S': '#FFD700',
-            'A+': '#C0C0C0',
-            'A': '#C0C0C0',
-            'B': '#CD7F32',
-            'C': '#3498db',
-            'F': '#8B4513'
+            'S': '#FFD700', 'A+': '#C0C0C0', 'A': '#C0C0C0',
+            'B': '#CD7F32', 'C': '#3498db', 'F': '#8B4513'
         };
 
-        // Clubs weergeven
         function displayClubs() {
             const grid = document.getElementById('clubsGrid');
             grid.innerHTML = '';
@@ -586,7 +567,6 @@
                 card.className = 'club-card';
                 card.onclick = () => selectClub(club);
 
-                // Mega Pig icons
                 let pigIcons = '';
                 for (let i = 0; i < 5; i++) {
                     pigIcons += i < club.megaPig ? 
@@ -619,13 +599,10 @@
             });
         }
 
-        // Clubs sorteren
         function sortClubs(criteria) {
-            // Update active button
             document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
-            // Sort clubs
             clubs.sort((a, b) => {
                 if (criteria === 'tier') {
                     const tierOrder = { 'S': 6, 'A+': 5, 'A': 4, 'B': 3, 'C': 2, 'F': 1 };
@@ -644,53 +621,46 @@
             displayClubs();
         }
 
-        // Club selecteren en details laden
         async function selectClub(club) {
-            // Remove selected class from all cards
             document.querySelectorAll('.club-card').forEach(c => c.classList.remove('selected'));
-            
-            // Add selected class to clicked card
             event.currentTarget.classList.add('selected');
 
-            // Show loading
             document.getElementById('loading').style.display = 'block';
             document.getElementById('detailPanel').classList.remove('active');
             document.getElementById('error').style.display = 'none';
             document.getElementById('loadingText').textContent = 'Club gegevens laden...';
             document.getElementById('progressText').textContent = '';
 
-            currentClubTag = club.tag;
-
             try {
-                // Haal LIVE club data op van API
                 const response = await fetch(`${API_BASE}/api/club?tag=${club.tag}`);
                 const clubData = await response.json();
 
-                if (!response.ok) {
-                    throw new Error('Club data niet beschikbaar');
-                }
+                if (!response.ok) throw new Error('Club data niet beschikbaar');
 
                 document.getElementById('loadingText').textContent = 'Speler gegevens ophalen...';
                 
-                // Haal voor elk lid de speler data op voor wins en prestige
                 const membersWithData = [];
                 let loaded = 0;
                 
                 for (const member of clubData.members) {
+                    document.getElementById('progressText').textContent = `${loaded}/${clubData.members.length} spelers geladen...`;
+                    
                     try {
-                        document.getElementById('progressText').textContent = `${loaded}/${clubData.members.length} spelers geladen...`;
+                        // BELANGRIJK: Clean de tag - verwijder alles wat niet alfanumeriek is
+                        const cleanTag = member.tag.replace(/[^a-zA-Z0-9]/g, '');
                         
-                        const playerResponse = await fetch(`${API_BASE}/api/player?tag=${member.tag}`);
+                        console.log(`Ophalen speler: ${member.name} met tag: ${cleanTag}`);
+                        
+                        const playerResponse = await fetch(`${API_BASE}/api/player?tag=${cleanTag}`);
+                        
                         if (playerResponse.ok) {
                             const playerData = await playerResponse.json();
                             
-                            // Bereken showdown wins (solo + duo)
                             const soloWins = playerData.soloVictories || 0;
                             const duoWins = playerData.duoVictories || 0;
                             const showdownWins = soloWins + duoWins;
                             const teamWins = playerData['3vs3Victories'] || 0;
                             
-                            // Bereken ratio (3v3 wins / showdown wins)
                             let ratio = '0';
                             if (showdownWins === 0 && teamWins > 0) {
                                 ratio = '∞';
@@ -707,7 +677,10 @@
                                     ratio: ratio
                                 }
                             });
+                            
+                            console.log(`✅ ${member.name}: Prestige=${playerData.totalPrestigeLevel}, 3v3=${teamWins}`);
                         } else {
+                            console.log(`❌ Geen data voor ${member.name} (status ${playerResponse.status})`);
                             membersWithData.push({
                                 ...member,
                                 playerData: {
@@ -719,7 +692,7 @@
                             });
                         }
                     } catch (e) {
-                        console.error('Error fetching player data:', e);
+                        console.error(`Fout bij ${member.name}:`, e);
                         membersWithData.push({
                             ...member,
                             playerData: {
@@ -735,12 +708,10 @@
 
                 currentMembers = membersWithData;
 
-                // Toon ALLE club data
                 document.getElementById('detailClubName').textContent = clubData.name;
                 document.getElementById('detailClubTag').textContent = `#${clubData.tag}`;
                 document.getElementById('detailClubType').textContent = clubData.type || 'onbekend';
                 
-                // Stats
                 const totalTrophies = clubData.trophies || 0;
                 const memberCount = clubData.members?.length || 0;
                 const requiredTrophies = clubData.requiredTrophies || 0;
@@ -752,10 +723,7 @@
                 document.getElementById('detailAverage').textContent = avgTrophies.toLocaleString();
                 document.getElementById('memberCountDisplay').textContent = `${memberCount} leden`;
 
-                // Toon leden met stats
                 displayMembers(currentMembers);
-
-                // Toon detail panel
                 document.getElementById('detailPanel').classList.add('active');
                 document.getElementById('loading').style.display = 'none';
 
@@ -767,7 +735,6 @@
             }
         }
 
-        // Leden weergeven met stats
         function displayMembers(members) {
             const membersList = document.getElementById('membersList');
             membersList.innerHTML = '';
@@ -777,7 +744,6 @@
                 return;
             }
 
-            // Sorteer leden
             const sortedMembers = sortMembersArray(members, currentSort.field, currentSort.direction);
 
             sortedMembers.forEach(member => {
@@ -806,10 +772,9 @@
                     ratio: '0'
                 };
 
-                // Bepaal ratio class
                 let ratioClass = 'ratio-neutral';
                 if (playerData.ratio === '∞') {
-                    ratioClass = 'ratio-good';
+                    ratioClass = 'ratio-perfect';
                 } else if (playerData.ratio !== '0') {
                     const ratioNum = parseFloat(playerData.ratio);
                     if (ratioNum >= 2) ratioClass = 'ratio-good';
@@ -831,7 +796,6 @@
             });
         }
 
-        // Sorteer leden
         function sortMembersArray(members, field, direction) {
             return [...members].sort((a, b) => {
                 let aVal, bVal;
@@ -879,13 +843,10 @@
             });
         }
 
-        // Leden sorteren (vanuit UI)
         function sortMembers(field) {
-            // Update active button
             document.querySelectorAll('.member-sort-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
-            // Toggle direction if same field
             if (currentSort.field === field) {
                 currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
             } else {
@@ -902,7 +863,6 @@
             return div.innerHTML;
         }
 
-        // Initialize
         displayClubs();
     </script>
 </body>
