@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RealDutch Clubs - Complete Stats</title>
+    <title>RealDutch Clubs - Advanced Stats</title>
     <style>
         * {
             margin: 0;
@@ -160,6 +160,55 @@
             font-weight: bold;
         }
 
+        /* Sort Controls */
+        .sort-controls {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .sort-label {
+            color: #8892b0;
+            font-weight: 600;
+        }
+
+        .sort-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .sort-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .sort-btn:hover {
+            background: rgba(255,215,0,0.2);
+            border-color: #FFD700;
+        }
+
+        .sort-btn.active {
+            background: #FFD700;
+            color: #0B1026;
+            border-color: #FFD700;
+        }
+
+        .sort-direction {
+            margin-left: 5px;
+        }
+
         /* Detail Panel */
         .detail-panel {
             background: rgba(255, 255, 255, 0.05);
@@ -251,6 +300,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .members-header h3 {
@@ -265,6 +316,32 @@
             color: #FFD700;
         }
 
+        .member-sort-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .member-sort-btn {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .member-sort-btn:hover {
+            background: rgba(255,215,0,0.2);
+        }
+
+        .member-sort-btn.active {
+            background: #FFD700;
+            color: #0B1026;
+        }
+
         .members-table {
             width: 100%;
             border-collapse: collapse;
@@ -276,6 +353,12 @@
             color: #8892b0;
             font-weight: 600;
             border-bottom: 1px solid rgba(255,215,0,0.2);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .members-table th:hover {
+            color: #FFD700;
         }
 
         .members-table td {
@@ -295,6 +378,31 @@
         .role-vicePresident { background: #f39c12; color: white; }
         .role-senior { background: #9b59b6; color: white; }
         .role-member { background: #3498db; color: white; }
+
+        .prestige-badge {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            display: inline-block;
+        }
+
+        .ratio-good {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .ratio-bad {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .ratio-neutral {
+            color: #f39c12;
+            font-weight: bold;
+        }
 
         .loading {
             text-align: center;
@@ -333,6 +441,7 @@
             .club-name { font-size: 1.5rem; }
             .detail-title { font-size: 1.8rem; }
             .members-table { font-size: 0.9rem; }
+            .members-table td { padding: 8px 5px; }
         }
     </style>
 </head>
@@ -340,11 +449,22 @@
     <div class="container">
         <header>
             <h1>🏆 RealDutch Familie</h1>
-            <p class="subtitle">Alle Brawl Stars clubs met live stats</p>
+            <p class="subtitle">Advanced stats - Prestige, 3v3 wins, Showdown wins & ratio</p>
         </header>
 
         <!-- Clubs Grid -->
         <div class="clubs-grid" id="clubsGrid"></div>
+
+        <!-- Club Sort Controls -->
+        <div class="sort-controls">
+            <span class="sort-label">Sorteer clubs op:</span>
+            <div class="sort-buttons">
+                <button class="sort-btn" onclick="sortClubs('tier')">Tier</button>
+                <button class="sort-btn" onclick="sortClubs('name')">Naam</button>
+                <button class="sort-btn" onclick="sortClubs('trophies')">Trophies</button>
+                <button class="sort-btn" onclick="sortClubs('megaPig')">Mega Pig</button>
+            </div>
+        </div>
 
         <!-- Loading -->
         <div class="loading" id="loading">
@@ -386,16 +506,25 @@
 
             <div class="members-section">
                 <div class="members-header">
-                    <h3>👥 Leden</h3>
+                    <h3>👥 Leden stats</h3>
                     <span class="member-count" id="memberCountDisplay"></span>
+                    <div class="member-sort-controls" id="memberSortControls">
+                        <button class="member-sort-btn active" onclick="sortMembers('trophies')">🏆 Trophies</button>
+                        <button class="member-sort-btn" onclick="sortMembers('prestige')">⭐ Prestige</button>
+                        <button class="member-sort-btn" onclick="sortMembers('ratio')">📊 Ratio (3v3/SD)</button>
+                        <button class="member-sort-btn" onclick="sortMembers('name')">🔤 Naam</button>
+                    </div>
                 </div>
                 <table class="members-table">
                     <thead>
                         <tr>
-                            <th>Naam</th>
-                            <th>Rol</th>
-                            <th>Trophies</th>
-                            <th>Icon</th>
+                            <th onclick="sortMembers('name')">Naam</th>
+                            <th onclick="sortMembers('role')">Rol</th>
+                            <th onclick="sortMembers('trophies')">🏆 Trophies</th>
+                            <th onclick="sortMembers('prestige')">⭐ Prestige</th>
+                            <th onclick="sortMembers('3vs3')">3v3 Wins</th>
+                            <th onclick="sortMembers('sd')">Showdown Wins</th>
+                            <th onclick="sortMembers('ratio')">📊 Ratio (3v3/SD)</th>
                         </tr>
                     </thead>
                     <tbody id="membersList"></tbody>
@@ -406,6 +535,12 @@
 
     <script>
         const API_BASE = 'https://api.realdutch.club';
+        let currentClubTag = null;
+        let currentMembers = [];
+        let currentSort = {
+            field: 'trophies',
+            direction: 'desc'
+        };
         
         // Club data uit jouw lijst met alle RD clubs
         const clubs = [
@@ -475,6 +610,31 @@
             });
         }
 
+        // Clubs sorteren
+        function sortClubs(criteria) {
+            // Update active button
+            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Sort clubs
+            clubs.sort((a, b) => {
+                if (criteria === 'tier') {
+                    const tierOrder = { 'S': 6, 'A+': 5, 'A': 4, 'B': 3, 'C': 2, 'F': 1 };
+                    return tierOrder[b.tier] - tierOrder[a.tier];
+                } else if (criteria === 'name') {
+                    return a.name.localeCompare(b.name);
+                } else if (criteria === 'trophies') {
+                    if (a.trophies === 'N/A') return 1;
+                    if (b.trophies === 'N/A') return -1;
+                    return parseInt(b.trophies) - parseInt(a.trophies);
+                } else if (criteria === 'megaPig') {
+                    return b.megaPig - a.megaPig;
+                }
+            });
+
+            displayClubs();
+        }
+
         // Club selecteren en details laden
         async function selectClub(club) {
             // Remove selected class from all cards
@@ -488,24 +648,71 @@
             document.getElementById('detailPanel').classList.remove('active');
             document.getElementById('error').style.display = 'none';
 
+            currentClubTag = club.tag;
+
             try {
                 // Haal LIVE club data op van API
                 const response = await fetch(`${API_BASE}/api/club?tag=${club.tag}`);
-                const data = await response.json();
+                const clubData = await response.json();
 
                 if (!response.ok) {
                     throw new Error('Club data niet beschikbaar');
                 }
 
+                // Haal voor elk lid de speler data op voor wins en prestige
+                const memberPromises = clubData.members.map(async (member) => {
+                    try {
+                        const playerResponse = await fetch(`${API_BASE}/api/player?tag=${member.tag}`);
+                        if (playerResponse.ok) {
+                            const playerData = await playerResponse.json();
+                            
+                            // Bereken ratio (3v3 wins / showdown wins)
+                            const soloWins = playerData.soloVictories || 0;
+                            const duoWins = playerData.duoVictories || 0;
+                            const showdownWins = soloWins + duoWins;
+                            const teamWins = playerData['3vs3Victories'] || 0;
+                            const ratio = showdownWins > 0 ? (teamWins / showdownWins).toFixed(2) : teamWins > 0 ? '∞' : '0';
+                            
+                            return {
+                                ...member,
+                                playerData: {
+                                    totalPrestige: playerData.totalPrestigeLevel || 0,
+                                    soloWins: soloWins,
+                                    duoWins: duoWins,
+                                    teamWins: teamWins,
+                                    showdownWins: showdownWins,
+                                    ratio: ratio
+                                }
+                            };
+                        }
+                    } catch (e) {
+                        console.error('Error fetching player data:', e);
+                    }
+                    return {
+                        ...member,
+                        playerData: {
+                            totalPrestige: 0,
+                            soloWins: 0,
+                            duoWins: 0,
+                            teamWins: 0,
+                            showdownWins: 0,
+                            ratio: '0'
+                        }
+                    };
+                });
+
+                const membersWithData = await Promise.all(memberPromises);
+                currentMembers = membersWithData;
+
                 // Toon ALLE club data
-                document.getElementById('detailClubName').textContent = data.name;
-                document.getElementById('detailClubTag').textContent = `#${data.tag}`;
-                document.getElementById('detailClubType').textContent = data.type || 'onbekend';
+                document.getElementById('detailClubName').textContent = clubData.name;
+                document.getElementById('detailClubTag').textContent = `#${clubData.tag}`;
+                document.getElementById('detailClubType').textContent = clubData.type || 'onbekend';
                 
                 // Stats
-                const totalTrophies = data.trophies || 0;
-                const memberCount = data.members?.length || 0;
-                const requiredTrophies = data.requiredTrophies || 0;
+                const totalTrophies = clubData.trophies || 0;
+                const memberCount = clubData.members?.length || 0;
+                const requiredTrophies = clubData.requiredTrophies || 0;
                 const avgTrophies = memberCount > 0 ? Math.round(totalTrophies / memberCount) : 0;
                 
                 document.getElementById('detailTrophies').textContent = totalTrophies.toLocaleString();
@@ -514,50 +721,8 @@
                 document.getElementById('detailAverage').textContent = avgTrophies.toLocaleString();
                 document.getElementById('memberCountDisplay').textContent = `${memberCount} leden`;
 
-                // Toon leden
-                const membersList = document.getElementById('membersList');
-                membersList.innerHTML = '';
-
-                if (data.members && data.members.length > 0) {
-                    // Sorteer op trophies (hoogste eerst)
-                    const sortedMembers = data.members.sort((a, b) => b.trophies - a.trophies);
-
-                    sortedMembers.forEach(member => {
-                        const row = document.createElement('tr');
-
-                        let roleClass = 'role-member';
-                        let roleText = member.role || 'member';
-                        
-                        if (roleText === 'president') {
-                            roleClass = 'role-president';
-                            roleText = 'President';
-                        } else if (roleText === 'vicePresident') {
-                            roleClass = 'role-vicePresident';
-                            roleText = 'Vice President';
-                        } else if (roleText === 'senior') {
-                            roleClass = 'role-senior';
-                            roleText = 'Senior';
-                        } else {
-                            roleText = 'Member';
-                        }
-
-                        // Naamkleur toepassen als die er is
-                        const nameColor = member.nameColor ? member.nameColor.replace('0x', '#') : 'white';
-
-                        row.innerHTML = `
-                            <td style="color: ${nameColor}; font-weight: ${member.role === 'president' ? 'bold' : 'normal'}">
-                                ${escapeHtml(member.name)}
-                            </td>
-                            <td><span class="role-badge ${roleClass}">${roleText}</span></td>
-                            <td>${member.trophies?.toLocaleString() || '0'}</td>
-                            <td>${member.icon?.id || '👤'}</td>
-                        `;
-
-                        membersList.appendChild(row);
-                    });
-                } else {
-                    membersList.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">Geen leden gevonden</td></tr>';
-                }
+                // Toon leden met stats
+                displayMembers(currentMembers);
 
                 // Toon detail panel
                 document.getElementById('detailPanel').classList.add('active');
@@ -569,6 +734,133 @@
                 document.getElementById('error').textContent = 'Kon club gegevens niet laden. Probeer het later opnieuw.';
                 console.error('Error:', error);
             }
+        }
+
+        // Leden weergeven met stats
+        function displayMembers(members) {
+            const membersList = document.getElementById('membersList');
+            membersList.innerHTML = '';
+
+            if (members.length === 0) {
+                membersList.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">Geen leden gevonden</td></tr>';
+                return;
+            }
+
+            // Sorteer leden
+            const sortedMembers = sortMembersArray(members, currentSort.field, currentSort.direction);
+
+            sortedMembers.forEach(member => {
+                const row = document.createElement('tr');
+
+                let roleClass = 'role-member';
+                let roleText = member.role || 'member';
+                
+                if (roleText === 'president') {
+                    roleClass = 'role-president';
+                    roleText = 'President';
+                } else if (roleText === 'vicePresident') {
+                    roleClass = 'role-vicePresident';
+                    roleText = 'Vice President';
+                } else if (roleText === 'senior') {
+                    roleClass = 'role-senior';
+                    roleText = 'Senior';
+                } else {
+                    roleText = 'Member';
+                }
+
+                const playerData = member.playerData || {
+                    totalPrestige: 0,
+                    teamWins: 0,
+                    showdownWins: 0,
+                    ratio: '0'
+                };
+
+                // Bepaal ratio class
+                let ratioClass = 'ratio-neutral';
+                if (playerData.ratio !== '∞' && playerData.ratio !== '0') {
+                    const ratioNum = parseFloat(playerData.ratio);
+                    if (ratioNum >= 2) ratioClass = 'ratio-good';
+                    else if (ratioNum >= 1) ratioClass = 'ratio-neutral';
+                    else ratioClass = 'ratio-bad';
+                }
+
+                row.innerHTML = `
+                    <td>${escapeHtml(member.name)}</td>
+                    <td><span class="role-badge ${roleClass}">${roleText}</span></td>
+                    <td>${member.trophies?.toLocaleString() || '0'}</td>
+                    <td><span class="prestige-badge">${playerData.totalPrestige}</span></td>
+                    <td>${playerData.teamWins?.toLocaleString() || '0'}</td>
+                    <td>${playerData.showdownWins?.toLocaleString() || '0'}</td>
+                    <td class="${ratioClass}">${playerData.ratio}</td>
+                `;
+
+                membersList.appendChild(row);
+            });
+        }
+
+        // Sorteer leden
+        function sortMembersArray(members, field, direction) {
+            return [...members].sort((a, b) => {
+                let aVal, bVal;
+
+                if (field === 'trophies') {
+                    aVal = a.trophies || 0;
+                    bVal = b.trophies || 0;
+                } else if (field === 'prestige') {
+                    aVal = a.playerData?.totalPrestige || 0;
+                    bVal = b.playerData?.totalPrestige || 0;
+                } else if (field === 'ratio') {
+                    const aRatio = a.playerData?.ratio || '0';
+                    const bRatio = b.playerData?.ratio || '0';
+                    
+                    if (aRatio === '∞') aVal = 999999;
+                    else if (aRatio === '0') aVal = 0;
+                    else aVal = parseFloat(aRatio);
+                    
+                    if (bRatio === '∞') bVal = 999999;
+                    else if (bRatio === '0') bVal = 0;
+                    else bVal = parseFloat(bRatio);
+                } else if (field === 'name') {
+                    aVal = a.name || '';
+                    bVal = b.name || '';
+                    return direction === 'asc' 
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
+                } else if (field === 'role') {
+                    const roleOrder = { 'president': 4, 'vicePresident': 3, 'senior': 2, 'member': 1 };
+                    aVal = roleOrder[a.role] || 0;
+                    bVal = roleOrder[b.role] || 0;
+                } else if (field === '3vs3') {
+                    aVal = a.playerData?.teamWins || 0;
+                    bVal = b.playerData?.teamWins || 0;
+                } else if (field === 'sd') {
+                    aVal = a.playerData?.showdownWins || 0;
+                    bVal = b.playerData?.showdownWins || 0;
+                }
+
+                if (direction === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+        }
+
+        // Leden sorteren (vanuit UI)
+        function sortMembers(field) {
+            // Update active button
+            document.querySelectorAll('.member-sort-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Toggle direction if same field
+            if (currentSort.field === field) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.field = field;
+                currentSort.direction = 'desc';
+            }
+
+            displayMembers(currentMembers);
         }
 
         function escapeHtml(text) {
