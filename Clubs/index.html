@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RealDutch Clubs - Brawl Stars Familie</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0B1026, #1A1F3D);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        .subtitle {
+            color: #8892b0;
+            font-size: 1.2rem;
+        }
+
+        .clubs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .club-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .club-card:hover {
+            transform: translateY(-5px);
+            border-color: #FFD700;
+            box-shadow: 0 10px 30px rgba(255,215,0,0.2);
+        }
+
+        .club-card.selected {
+            border: 2px solid #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .club-tier {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .club-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .club-tag {
+            color: #FFD700;
+            font-family: monospace;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255,215,0,0.1);
+            border-radius: 20px;
+        }
+
+        .club-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #8892b0;
+        }
+
+        .mega-pig {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 1.2rem;
+        }
+
+        .pig-filled {
+            color: #FF69B4;
+        }
+
+        .pig-empty {
+            color: #4a4a6a;
+        }
+
+        /* Detail Panel */
+        .detail-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .detail-panel.active {
+            display: block;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .detail-title {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .detail-tag {
+            font-family: monospace;
+            font-size: 1.3rem;
+            color: #8892b0;
+        }
+
+        .detail-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .detail-stat-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+
+        .detail-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 5px;
+        }
+
+        .detail-stat-label {
+            color: #8892b0;
+        }
+
+        .members-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .members-section h3 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .members-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .members-table th {
+            text-align: left;
+            padding: 15px;
+            color: #8892b0;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+        }
+
+        .members-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .role-president { background: #e74c3c; color: white; }
+        .role-vicePresident { background: #f39c12; color: white; }
+        .role-senior { background: #9b59b6; color: white; }
+        .role-member { background: #3498db; color: white; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255,215,0,0.1);
+            border-top: 4px solid #FFD700;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .club-name { font-size: 1.3rem; }
+            .detail-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 RealDutch Familie</h1>
+            <p class="subtitle">Alle Brawl Stars clubs van de RealDutch familie</p>
+        </header>
+
+        <!-- Clubs Grid -->
+        <div class="clubs-grid" id="clubsGrid"></div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Club gegevens laden...</p>
+        </div>
+
+        <!-- Error -->
+        <div class="error-message" id="error" style="display: none;"></div>
+
+        <!-- Detail Panel -->
+        <div class="detail-panel" id="detailPanel">
+            <div class="detail-header">
+                <h2 class="detail-title" id="detailClubName"></h2>
+                <span class="detail-tag" id="detailClubTag"></span>
+            </div>
+
+            <div class="detail-stats-grid">
+                <div class="detail-stat-box">
+                    <div class="detail-stat-value" id="detailTrophies">-</div>
+                    <div class="detail-stat-label">Totaal Trophies</div>
+                </div>
+                <div class="detail-stat-box">
+                    <div class="detail-stat-value" id="detailMembers">-</div>
+                    <div class="detail-stat-label">Leden</div>
+                </div>
+                <div class="detail-stat-box">
+                    <div class="detail-stat-value" id="detailRequired">-</div>
+                    <div class="detail-stat-label">Vereiste Trophies</div>
+                </div>
+                <div class="detail-stat-box">
+                    <div class="detail-stat-value" id="detailAverage">-</div>
+                    <div class="detail-stat-label">Gem. Trophies</div>
+                </div>
+            </div>
+
+            <div class="members-section">
+                <h3>👥 Leden</h3>
+                <table class="members-table">
+                    <thead>
+                        <tr>
+                            <th>Naam</th>
+                            <th>Rol</th>
+                            <th>Trophies</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersList"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.realdutch.club';
+        
+        // Club data uit je lijst
+        const clubs = [
+            { name: 'RealDutch', tag: '28U982', trophies: '95k', tier: 'S', megaPig: 5, description: 'Hoofdclub' },
+            { name: 'RealDutch II', tag: '20QGP08R0', trophies: '90k', tier: 'A+', megaPig: 5, description: 'Tweede club' },
+            { name: 'RealDutch Elite', tag: '2GQU92GV8', trophies: '85k', tier: 'A', megaPig: 5, description: 'Elite club' },
+            { name: 'RealDutch Force', tag: '2008QRUP0', trophies: '80k', tier: 'B', megaPig: 5, description: 'Force club' },
+            { name: 'RealDutch Glory', tag: '2GU8VJVYU', trophies: '87k', tier: 'B', megaPig: 5, description: 'Glory club' },
+            { name: 'RealDutch Stars', tag: '2PGG8GJRC', trophies: '75k', tier: 'B', megaPig: 5, description: 'Stars club' },
+            { name: 'RealDutch Light', tag: '2GV0UGG8Y', trophies: '55k', tier: 'C', megaPig: 5, description: 'Light club' },
+            { name: 'RealDutch Nova', tag: '2GV0UGG8Y', trophies: '25k', tier: 'C', megaPig: 0, description: 'Nova club' },
+            { name: 'RealDutch Minis', tag: '2RY829PPO', trophies: 'N/A', tier: 'C', megaPig: 0, description: 'Mini accounts' },
+            { name: 'RealDutch Mini2', tag: '2RY829PPO', trophies: 'N/A', tier: 'C', megaPig: 0, description: 'Mini accounts 2' },
+            { name: 'RealDutch OG', tag: '2CU9G0Q0V', trophies: 'N/A', tier: 'F', megaPig: 0, description: 'Original gangsters' }
+        ];
+
+        // Toon alle clubs
+        function displayClubs() {
+            const grid = document.getElementById('clubsGrid');
+            grid.innerHTML = '';
+
+            clubs.forEach(club => {
+                const card = document.createElement('div');
+                card.className = 'club-card';
+                card.onclick = () => selectClub(club);
+
+                // Bepaal tier kleur
+                let tierColor = '#8892b0';
+                if (club.tier === 'S') tierColor = '#FFD700';
+                else if (club.tier === 'A' || club.tier === 'A+') tierColor = '#C0C0C0';
+                else if (club.tier === 'B') tierColor = '#CD7F32';
+                else if (club.tier === 'F') tierColor = '#8B4513';
+
+                // Mega Pig icons
+                let pigIcons = '';
+                for (let i = 0; i < 5; i++) {
+                    pigIcons += i < club.megaPig ? '🐷' : '⬛';
+                }
+
+                card.innerHTML = `
+                    <div class="club-tier" style="color: ${tierColor};">${club.tier}</div>
+                    <div class="club-name">${club.name}</div>
+                    <div class="club-tag">#${club.tag}</div>
+                    <div class="club-stats">
+                        <div class="stat">
+                            <div class="stat-value">${club.trophies}</div>
+                            <div class="stat-label">Trophies</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">${club.megaPig}/5</div>
+                            <div class="stat-label">Mega Pig</div>
+                        </div>
+                    </div>
+                    <div class="mega-pig">
+                        ${pigIcons}
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Selecteer een club en laad details
+        async function selectClub(club) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.club-card').forEach(c => c.classList.remove('selected'));
+            
+            // Add selected class to clicked card
+            event.currentTarget.classList.add('selected');
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('detailPanel').classList.remove('active');
+            document.getElementById('error').style.display = 'none';
+
+            try {
+                // Haal echte club data op van API
+                const response = await fetch(`${API_BASE}/api/club?tag=${club.tag}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Club data niet beschikbaar');
+                }
+
+                // Update detail panel met echte data
+                document.getElementById('detailClubName').textContent = data.club.name;
+                document.getElementById('detailClubTag').textContent = `#${data.club.tag}`;
+                document.getElementById('detailTrophies').textContent = data.club.trophies.toLocaleString();
+                document.getElementById('detailMembers').textContent = data.club.membersCount;
+                document.getElementById('detailRequired').textContent = data.club.requiredTrophies.toLocaleString();
+
+                // Bereken gemiddelde
+                const avg = Math.round(data.club.trophies / data.club.membersCount);
+                document.getElementById('detailAverage').textContent = avg.toLocaleString();
+
+                // Toon leden
+                const membersList = document.getElementById('membersList');
+                membersList.innerHTML = '';
+
+                // Sorteer leden op trophies
+                const sortedMembers = data.members.sort((a, b) => b.trophies - a.trophies);
+
+                sortedMembers.forEach(member => {
+                    const row = document.createElement('tr');
+
+                    let roleClass = 'role-member';
+                    let roleText = member.role;
+                    
+                    if (member.role === 'president') {
+                        roleClass = 'role-president';
+                        roleText = 'President';
+                    } else if (member.role === 'vicePresident') {
+                        roleClass = 'role-vicePresident';
+                        roleText = 'Vice President';
+                    } else if (member.role === 'senior') {
+                        roleClass = 'role-senior';
+                        roleText = 'Senior';
+                    } else {
+                        roleText = 'Member';
+                    }
+
+                    row.innerHTML = `
+                        <td>${escapeHtml(member.name)}</td>
+                        <td><span class="role-badge ${roleClass}">${roleText}</span></td>
+                        <td>${member.trophies.toLocaleString()}</td>
+                    `;
+
+                    membersList.appendChild(row);
+                });
+
+                // Toon detail panel
+                document.getElementById('detailPanel').classList.add('active');
+                document.getElementById('loading').style.display = 'none';
+
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Kon club gegevens niet laden. Probeer het later opnieuw.';
+                console.error('Error:', error);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize
+        displayClubs();
+    </script>
+</body>
+</html>
