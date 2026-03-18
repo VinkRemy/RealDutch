@@ -205,10 +205,6 @@
             border-color: #FFD700;
         }
 
-        .sort-direction {
-            margin-left: 5px;
-        }
-
         /* Detail Panel */
         .detail-panel {
             background: rgba(255, 255, 255, 0.05);
@@ -420,6 +416,16 @@
             margin: 0 auto 20px;
         }
 
+        .loading-text {
+            color: #8892b0;
+        }
+
+        .progress-text {
+            color: #FFD700;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -469,7 +475,8 @@
         <!-- Loading -->
         <div class="loading" id="loading">
             <div class="loading-spinner"></div>
-            <p>Club gegevens laden...</p>
+            <p class="loading-text" id="loadingText">Club gegevens laden...</p>
+            <p class="progress-text" id="progressText"></p>
         </div>
 
         <!-- Error -->
@@ -513,6 +520,8 @@
                         <button class="member-sort-btn" onclick="sortMembers('prestige')">⭐ Prestige</button>
                         <button class="member-sort-btn" onclick="sortMembers('ratio')">📊 Ratio (3v3/SD)</button>
                         <button class="member-sort-btn" onclick="sortMembers('name')">🔤 Naam</button>
+                        <button class="member-sort-btn" onclick="sortMembers('3vs3')">3v3 Wins</button>
+                        <button class="member-sort-btn" onclick="sortMembers('sd')">SD Wins</button>
                     </div>
                 </div>
                 <table class="members-table">
@@ -647,6 +656,8 @@
             document.getElementById('loading').style.display = 'block';
             document.getElementById('detailPanel').classList.remove('active');
             document.getElementById('error').style.display = 'none';
+            document.getElementById('loadingText').textContent = 'Club gegevens laden...';
+            document.getElementById('progressText').textContent = '';
 
             currentClubTag = club.tag;
 
@@ -659,49 +670,69 @@
                     throw new Error('Club data niet beschikbaar');
                 }
 
+                document.getElementById('loadingText').textContent = 'Speler gegevens ophalen...';
+                
                 // Haal voor elk lid de speler data op voor wins en prestige
-                const memberPromises = clubData.members.map(async (member) => {
+                const membersWithData = [];
+                let loaded = 0;
+                
+                for (const member of clubData.members) {
                     try {
+                        document.getElementById('progressText').textContent = `${loaded}/${clubData.members.length} spelers geladen...`;
+                        
                         const playerResponse = await fetch(`${API_BASE}/api/player?tag=${member.tag}`);
                         if (playerResponse.ok) {
                             const playerData = await playerResponse.json();
                             
-                            // Bereken ratio (3v3 wins / showdown wins)
+                            // Bereken showdown wins (solo + duo)
                             const soloWins = playerData.soloVictories || 0;
                             const duoWins = playerData.duoVictories || 0;
                             const showdownWins = soloWins + duoWins;
                             const teamWins = playerData['3vs3Victories'] || 0;
-                            const ratio = showdownWins > 0 ? (teamWins / showdownWins).toFixed(2) : teamWins > 0 ? '∞' : '0';
                             
-                            return {
+                            // Bereken ratio (3v3 wins / showdown wins)
+                            let ratio = '0';
+                            if (showdownWins === 0 && teamWins > 0) {
+                                ratio = '∞';
+                            } else if (showdownWins > 0) {
+                                ratio = (teamWins / showdownWins).toFixed(2);
+                            }
+                            
+                            membersWithData.push({
                                 ...member,
                                 playerData: {
                                     totalPrestige: playerData.totalPrestigeLevel || 0,
-                                    soloWins: soloWins,
-                                    duoWins: duoWins,
                                     teamWins: teamWins,
                                     showdownWins: showdownWins,
                                     ratio: ratio
                                 }
-                            };
+                            });
+                        } else {
+                            membersWithData.push({
+                                ...member,
+                                playerData: {
+                                    totalPrestige: 0,
+                                    teamWins: 0,
+                                    showdownWins: 0,
+                                    ratio: '0'
+                                }
+                            });
                         }
                     } catch (e) {
                         console.error('Error fetching player data:', e);
+                        membersWithData.push({
+                            ...member,
+                            playerData: {
+                                totalPrestige: 0,
+                                teamWins: 0,
+                                showdownWins: 0,
+                                ratio: '0'
+                            }
+                        });
                     }
-                    return {
-                        ...member,
-                        playerData: {
-                            totalPrestige: 0,
-                            soloWins: 0,
-                            duoWins: 0,
-                            teamWins: 0,
-                            showdownWins: 0,
-                            ratio: '0'
-                        }
-                    };
-                });
+                    loaded++;
+                }
 
-                const membersWithData = await Promise.all(memberPromises);
                 currentMembers = membersWithData;
 
                 // Toon ALLE club data
@@ -777,7 +808,9 @@
 
                 // Bepaal ratio class
                 let ratioClass = 'ratio-neutral';
-                if (playerData.ratio !== '∞' && playerData.ratio !== '0') {
+                if (playerData.ratio === '∞') {
+                    ratioClass = 'ratio-good';
+                } else if (playerData.ratio !== '0') {
                     const ratioNum = parseFloat(playerData.ratio);
                     if (ratioNum >= 2) ratioClass = 'ratio-good';
                     else if (ratioNum >= 1) ratioClass = 'ratio-neutral';
