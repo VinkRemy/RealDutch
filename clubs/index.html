@@ -148,11 +148,11 @@
     </div>
     
     <div class="note">
-        ⚡ Data laatst geüpdatet via server. Voor Discord status aanpassen: <a href="https://github.com/JOUW-GITHUB/realdutch-clubs" style="color:#ffd966;">bewerk data/clubs-data.json</a>
+        📊 Data live van RealDutch server | Laatste update: <span id="updateTime"></span>
     </div>
     
     <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
-        <div id="lastUpdated" class="last-updated" style="margin-bottom: 0;"></div>
+        <button class="refresh-btn" onclick="loadData()">🔄 Refresh</button>
     </div>
     
     <div class="club-selector">
@@ -193,14 +193,14 @@
                     <tr><th>Name</th><th>Role</th><th>🏆 Trophies</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th>
                 </thead>
                 <tbody id="membersList"></tbody>
-            </table>
+             </table>
         </div>
     </div>
 </div>
 
 <script>
-    // GEBRUIK LOKAAL JSON BESTAND
-    const DATA_URL = 'data/clubs-data.json';
+    // JSON bestand van je server
+    const DATA_URL = 'http://217.154.80.74/clubs/data/clubs-data.json';
     let clubsData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
@@ -208,12 +208,14 @@
     async function loadData() {
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('detailPanel').classList.add('hidden');
+        document.getElementById('error').classList.add('hidden');
         
         try {
             const response = await fetch(DATA_URL);
-            if (!response.ok) throw new Error('Failed to load data file');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             clubsData = await response.json();
             
+            document.getElementById('updateTime').textContent = new Date(clubsData.lastUpdated).toLocaleString();
             document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date(clubsData.lastUpdated).toLocaleString()}`;
             
             const dropdown = document.getElementById('clubDropdown');
@@ -229,7 +231,7 @@
         } catch (err) {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('error').classList.remove('hidden');
-            document.getElementById('error').innerHTML = '❌ Error loading data. Make sure data/clubs-data.json exists.';
+            document.getElementById('error').innerHTML = `❌ Error loading data: ${err.message}<br><br>Make sure the server is running: ${DATA_URL}`;
         }
     }
     
@@ -289,7 +291,7 @@
                 <td>${m.showdownWins.toLocaleString()}</td>
                 <td class="${ratioClass}">${m.ratio}</td>
                 <td class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Not in Discord'}</td>
-             </tr>`;
+            </tr>`;
         }).join('');
         
         document.querySelectorAll('.sort-btn').forEach(btn => {
@@ -326,6 +328,7 @@
         btn.addEventListener('click', () => sortMembers(btn.dataset.sort));
     });
     
+    // Load on page load
     loadData();
 </script>
 </body>
