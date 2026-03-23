@@ -333,21 +333,6 @@
     const STATS_URL = 'https://json.realdutch.club/clubs-data.json';
     const SECRET_TOKEN = 'realdutch-secret-2024';
     
-    // Club beheercodes - pas hier aan voor elke club!
-    const CLUB_CODES = {
-        '28U982': 'realdutch',      // RealDutch
-        '20QGP08R0': 'code2',        // RealDutch II
-        '2GQU92GV8': 'code3',        // RealDutch Elite
-        '2008QRUP0': 'code4',        // RealDutch Force
-        '2GU8VJVYU': 'code5',        // RealDutch Glory
-        '2PGG8GJRC': 'code6',        // RealDutch Stars
-        '2GV0UGG8Y': 'code7',        // RealDutch Light
-        '8089CJV2Q': 'code8',        // RealDutch Nova
-        '2RY829PPO': 'code9',        // RealDutch Minis
-        'GYLRV9Q9': 'code10',        // RealDutch Mini2
-        '2CU9G0Q0V': 'code11'        // RealDutch OG
-    };
-    
     let statsData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
@@ -355,27 +340,41 @@
     let currentClubTag = null;
     
     // Autorisatie check per club
-    function checkAuth() {
-        const code = document.getElementById('authCode').value;
-        const requiredCode = CLUB_CODES[currentClubTag];
+    async function checkAuth() {
+    const password = document.getElementById('authCode').value;
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/auth-club`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                clubTag: currentClubTag,
+                password: password,
+                secretToken: SECRET_TOKEN
+            })
+        });
+        const result = await response.json();
         
-        if (requiredCode && code === requiredCode) {
+        if (result.success) {
             isAuthorized = true;
             document.getElementById('authPanel').style.display = 'none';
             document.getElementById('editHint').classList.remove('hidden');
-            // Update header met Discord en Kicklist kolommen
             updateTableHeader(true);
             if (currentClub) {
                 displayMembers();
             }
         } else {
-            document.getElementById('authError').textContent = '❌ Onjuiste code voor deze club!';
+            document.getElementById('authError').textContent = '❌ Onjuist wachtwoord!';
             document.getElementById('authError').classList.remove('hidden');
             setTimeout(() => {
                 document.getElementById('authError').classList.add('hidden');
             }, 2000);
         }
+    } catch (err) {
+        document.getElementById('authError').textContent = '❌ Fout bij authenticatie';
+        document.getElementById('authError').classList.remove('hidden');
     }
+}
     
     // Update tabel header (toon/verberg Discord/Kicklist kolommen)
     function updateTableHeader(showEditColumns) {
