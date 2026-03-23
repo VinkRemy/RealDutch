@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RealDutch • Club Stats</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -112,11 +112,11 @@
             font-size: 0.7rem;
             display: inline-block;
         }
-        .discord-cell {
+        .discord-cell, .kicklist-cell {
             cursor: pointer;
             transition: 0.2s;
         }
-        .discord-cell:hover {
+        .discord-cell:hover, .kicklist-cell:hover {
             opacity: 0.7;
             transform: scale(1.02);
         }
@@ -136,7 +136,23 @@
             display: inline-block;
             font-weight: bold;
         }
-        .discord-edit {
+        .kicklist-yes { 
+            background: #f39c12; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+            font-weight: bold;
+        }
+        .kicklist-no { 
+            background: #2c3e50; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+            font-weight: bold;
+        }
+        .discord-edit, .kicklist-edit {
             background: #ffd966;
             color: #5a2412;
             padding: 2px 8px;
@@ -204,39 +220,6 @@
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             th, td { font-size: 0.65rem; padding: 6px 4px; }
         }
-        /* Al je bestaande CSS blijft */
-        .kicklist-cell {
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .kicklist-cell:hover {
-            opacity: 0.7;
-            transform: scale(1.02);
-        }
-        .kicklist-yes { 
-            background: #f39c12; 
-            color: #fff; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            display: inline-block;
-            font-weight: bold;
-        }
-        .kicklist-no { 
-            background: #2c3e50; 
-            color: #fff; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            display: inline-block;
-            font-weight: bold;
-        }
-        .kicklist-edit {
-            background: #ffd966;
-            color: #5a2412;
-            padding: 2px 8px;
-            border-radius: 16px;
-            font-size: 0.6rem;
-            margin-left: 8px;
-        }
     </style>
 </head>
 <body>
@@ -247,13 +230,13 @@
     </div>
     
     <div class="note">
-    📊 Data live van RealDutch server | Laatste update: <span id="updateTime"></span> | Klik op Discord of Kicklist om aan te passen
-</div>
+        📊 Ledenlijst is live | Prestige/wins update elke 15 min | Klik op Discord/Kicklist om aan te passen
+    </div>
     
     <div id="lastUpdated" class="last-updated"></div>
     
     <div style="display: flex; justify-content: flex-end; margin-bottom: 16px; gap: 10px;">
-        <button class="refresh-btn" onclick="loadData()">🔄 Refresh</button>
+        <button class="refresh-btn" onclick="loadData()">🔄 Refresh Stats</button>
         <button class="save-btn" onclick="updateStats()">📡 Update Prestige/Wins</button>
     </div>
     
@@ -267,7 +250,36 @@
     <div id="error" class="error hidden"></div>
     
     <div id="detailPanel" class="detail-panel hidden">
-        <!-- je bestaande detail panel -->
+        <div class="detail-header">
+            <div class="detail-club-name" id="clubName">-</div>
+            <span class="detail-tag" id="clubTag"></span>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="totalTrophies">0</div><div class="stat-label">Total Trophies</div></div>
+            <div class="stat-card"><div class="stat-value" id="requiredTrophies">0</div><div class="stat-label">Required</div></div>
+            <div class="stat-card"><div class="stat-value" id="memberCount">0</div><div class="stat-label">Members</div></div>
+            <div class="stat-card"><div class="stat-value" id="avgTrophies">0</div><div class="stat-label">Avg Trophies</div></div>
+        </div>
+        
+        <div class="members-header">
+            <h3>👥 Member Stats <span style="font-size:0.7rem;">(click Discord/Kicklist to edit)</span></h3>
+            <span id="memberCountDisplay" class="member-count"></span>
+            <div class="sort-buttons">
+                <button class="sort-btn" data-sort="trophies">🏆 Trophies</button>
+                <button class="sort-btn" data-sort="prestige">⭐ Prestige</button>
+                <button class="sort-btn" data-sort="ratio">📊 Ratio</button>
+                <button class="sort-btn" data-sort="name">Name</button>
+            </div>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="membersTable">
+                <thead>
+                    <tr><th>Name</th><th>Role</th><th>🏆 Trophies</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th><th>⚠️ Kicklijst</th>
+                </thead>
+                <tbody id="membersList"></tbody>
+             
+        </div>
     </div>
 </div>
 
@@ -276,53 +288,57 @@
     const STATS_URL = 'https://json.realdutch.club/clubs-data.json';
     const SECRET_TOKEN = 'realdutch-secret-2024';
     
-    let clubsData = null;      // stats data (prestige, wins, discord, kicklist)
+    let statsData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
     
-    // Live club data ophalen (ledenlijst)
+    // Live club data ophalen
     async function fetchLiveClub(tag) {
         const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     }
     
-    // Stats ophalen (prestige, wins, discord, kicklist)
+    // Stats ophalen
     async function fetchStats() {
         const response = await fetch(STATS_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     }
     
-    // Combine live club data met stats
+    // Load dropdown en stats
     async function loadData() {
         document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
         
         try {
-            // Haal stats op
-            const stats = await fetchStats();
-            clubsData = stats;
+            statsData = await fetchStats();
+            document.getElementById('lastUpdated').innerHTML = `📅 Stats last updated: ${new Date(statsData.lastUpdated).toLocaleString()}`;
             
-            document.getElementById('updateTime').textContent = new Date(stats.lastUpdated).toLocaleString();
-            document.getElementById('lastUpdated').innerHTML = `📅 Stats last updated: ${new Date(stats.lastUpdated).toLocaleString()}`;
-            
-            // Maak dropdown
             const dropdown = document.getElementById('clubDropdown');
+            const currentValue = dropdown.value;
             dropdown.innerHTML = '<option value="">-- Select a club --</option>';
-            stats.clubs.forEach(club => {
+            statsData.clubs.forEach(club => {
                 const option = document.createElement('option');
                 option.value = club.tag;
                 option.textContent = `${club.name}`;
                 dropdown.appendChild(option);
             });
             
+            if (currentValue && statsData.clubs.find(c => c.tag === currentValue)) {
+                dropdown.value = currentValue;
+                selectClub(currentValue);
+            }
+            
             document.getElementById('loading').classList.add('hidden');
         } catch (err) {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('error').classList.remove('hidden');
-            document.getElementById('error').innerHTML = `❌ Error: ${err.message}`;
+            document.getElementById('error').innerHTML = `❌ Error loading stats: ${err.message}`;
         }
     }
     
-    // Update alleen prestige/wins stats (niet de ledenlijst)
+    // Update stats
     async function updateStats() {
         if (!confirm('Update prestige/wins stats? (takes 2-3 min)')) return;
         document.getElementById('loading').classList.remove('hidden');
@@ -336,25 +352,24 @@
                     selectClub(currentClub.tag);
                 }
                 alert('✅ Stats updated!');
+            } else {
+                throw new Error('Update failed');
             }
         } catch (err) {
-            alert('❌ Update failed');
+            alert('❌ Update failed: ' + err.message);
         }
         document.getElementById('loading').classList.add('hidden');
     }
     
-    // Selecteer club - haalt LIVE ledenlijst op
+    // Selecteer club - combineert live leden met stats
     async function selectClub(tag) {
         document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
         
         try {
-            // Haal live club data op (snelle API)
             const liveClub = await fetchLiveClub(tag);
+            const statsClub = statsData?.clubs?.find(c => c.tag === tag);
             
-            // Zoek stats voor deze club
-            const statsClub = clubsData?.clubs?.find(c => c.tag === tag);
-            
-            // Combineer: ledenlijst van live, stats van JSON
             const members = liveClub.members.map(member => {
                 const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
                 return {
@@ -380,7 +395,6 @@
                 members: members
             };
             
-            // Update UI
             document.getElementById('clubName').textContent = currentClub.name;
             document.getElementById('clubTag').textContent = `#${currentClub.tag}`;
             document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString();
@@ -396,29 +410,206 @@
             
         } catch (err) {
             console.error(err);
-            alert('Error loading club');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = `❌ Error loading club: ${err.message}`;
         }
         
         document.getElementById('loading').classList.add('hidden');
     }
     
-    function displayMembers() {
-        // je bestaande displayMembers functie
-    }
-    
-    // Discord en Kicklist update functies blijven hetzelfde
+    // Update Discord status
     async function updateDiscordStatus(tag, inDiscord, discordName) {
-        // ... bestaande code
+        try {
+            const response = await fetch(`${API_BASE}/api/update-json-discord`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tag: tag,
+                    inDiscord: inDiscord,
+                    discordName: discordName || null,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                await loadData();
+                if (currentClub) {
+                    selectClub(currentClub.tag);
+                }
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
     }
     
+    // Update Kicklist status
     async function updateKicklistStatus(tag, onKickList) {
-        // ... bestaande code
+        try {
+            const response = await fetch(`${API_BASE}/api/update-kicklist`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tag: tag,
+                    onKickList: onKickList,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                await loadData();
+                if (currentClub) {
+                    selectClub(currentClub.tag);
+                }
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
     }
     
-    // Event listeners
+    // Modals
+    function openDiscordModal(member) {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
+                <p style="color:#ffdeae;">Current: ${member.inDiscord ? '✅ In Discord' : '❌ Not in Discord'}</p>
+                <label style="color:#ffdeae; display:block; text-align:left;">Discord username:</label>
+                <input type="text" id="discordNameInput" placeholder="username" value="${member.discordName || ''}">
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button onclick="setDiscordStatus(true)" style="background:#2e7d32; color:white;">✅ In Discord</button>
+                    <button onclick="setDiscordStatus(false)" style="background:#c62828; color:white;">❌ Not in Discord</button>
+                </div>
+                <button onclick="closeModal()" style="margin-top:15px; background:#ffd966;">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        window.closeModal = () => modal.remove();
+        window.setDiscordStatus = async (status) => {
+            const discordName = document.getElementById('discordNameInput').value;
+            await updateDiscordStatus(member.tag, status, discordName);
+            modal.remove();
+        };
+    }
+    
+    function openKicklistModal(member) {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
+                <p style="color:#ffdeae;">Current: ${member.onKickList ? '⚠️ On kicklist' : '✅ Safe'}</p>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button onclick="setKicklistStatus(true)" style="background:#f39c12; color:white;">⚠️ Add to kicklist</button>
+                    <button onclick="setKicklistStatus(false)" style="background:#2c3e50; color:white;">✅ Remove from kicklist</button>
+                </div>
+                <button onclick="closeModal()" style="margin-top:15px; background:#ffd966;">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        window.closeModal = () => modal.remove();
+        window.setKicklistStatus = async (status) => {
+            await updateKicklistStatus(member.tag, status);
+            modal.remove();
+        };
+    }
+    
+    function displayMembers() {
+        if (!currentClub) return;
+        
+        const sorted = [...currentClub.members].sort((a, b) => {
+            let aVal, bVal;
+            if (currentSort.field === 'trophies') { aVal = a.trophies; bVal = b.trophies; }
+            else if (currentSort.field === 'prestige') { aVal = a.prestige; bVal = b.prestige; }
+            else if (currentSort.field === 'ratio') { 
+                aVal = a.ratio === '∞' ? 999999 : parseFloat(a.ratio) || 0;
+                bVal = b.ratio === '∞' ? 999999 : parseFloat(b.ratio) || 0;
+            }
+            else { aVal = a.name; bVal = b.name; }
+            
+            if (currentSort.field === 'name') {
+                return currentSort.dir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            }
+            return currentSort.dir === 'asc' ? aVal - bVal : bVal - aVal;
+        });
+        
+        const tbody = document.getElementById('membersList');
+        tbody.innerHTML = sorted.map(m => {
+            const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
+            const roleClass = `role-${m.role}`;
+            
+            let ratioClass = 'ratio-neutral';
+            if (m.ratio === '∞') ratioClass = 'ratio-perfect';
+            else { let r = parseFloat(m.ratio); if (r >= 2) ratioClass = 'ratio-good'; else if (r < 1 && r > 0) ratioClass = 'ratio-bad'; }
+            
+            return `
+            <tr>
+                <td>${escapeHtml(m.name)}</td>
+                <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                <td>${m.trophies.toLocaleString()}</td>
+                <td><span class="prestige-badge">${m.prestige}</span></td>
+                <td>${m.teamWins.toLocaleString()}</td>
+                <td>${m.showdownWins.toLocaleString()}</td>
+                <td class="${ratioClass}">${m.ratio}</td>
+                <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                    <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
+                        ${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Not in Discord'}
+                        <span class="discord-edit">✎</span>
+                    </span>
+                </td>
+                <td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                    <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
+                        ${m.onKickList ? '⚠️ On kicklist' : '✅ Safe'}
+                        <span class="kicklist-edit">✎</span>
+                    </span>
+                </td>
+             </tr>`;
+        }).join('');
+        
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.sort === currentSort.field) btn.classList.add('active');
+        });
+    }
+    
+    function sortMembers(field) {
+        if (currentSort.field === field) {
+            currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.field = field;
+            currentSort.dir = 'desc';
+        }
+        displayMembers();
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
     document.getElementById('clubDropdown').addEventListener('change', (e) => {
         if (e.target.value) selectClub(e.target.value);
     });
+    
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+        btn.addEventListener('click', () => sortMembers(btn.dataset.sort));
+    });
+    
+    window.openDiscordModal = openDiscordModal;
+    window.openKicklistModal = openKicklistModal;
     
     loadData();
 </script>
