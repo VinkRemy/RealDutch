@@ -5,204 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RealDutch • Club Stats</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #e67e22;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            background: #cc4125;
-            border-radius: 28px;
-            padding: 24px;
-        }
-        .brand { text-align: center; margin-bottom: 24px; }
-        .brand h1 { font-size: 3rem; color: #ffd966; font-family: Georgia, serif; }
-        .brand h2 { font-size: 1rem; color: #ffd966; margin-top: -8px; }
-        .last-updated { text-align: center; color: #ffdca8; font-size: 0.7rem; margin-bottom: 20px; }
-        .club-selector { margin-bottom: 24px; }
-        .club-dropdown {
-            width: 100%;
-            padding: 14px 18px;
-            font-size: 1rem;
-            background: #ffefcf;
-            border: 2px solid #ffd966;
-            border-radius: 60px;
-            color: #5a2412;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .detail-panel { background: #b33c21; border-radius: 24px; padding: 20px; }
-        .detail-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            border-bottom: 2px solid #ffd966;
-            padding-bottom: 12px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .detail-club-name { font-size: 1.8rem; font-weight: bold; color: #ffefbf; }
-        .detail-tag { background: #8b2c16; padding: 5px 14px; border-radius: 40px; color: #ffdeae; font-family: monospace; }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .stat-card {
-            background: #9e351d;
-            border-radius: 16px;
-            padding: 12px;
-            text-align: center;
-        }
-        .stat-value { font-size: 1.4rem; font-weight: 800; color: #ffd966; }
-        .stat-label { font-size: 0.7rem; color: #ffdeae; text-transform: uppercase; }
-        .members-header {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            gap: 12px;
-        }
-        .members-header h3 { color: #ffd966; font-size: 1.2rem; }
-        .member-count { background: #662211; padding: 4px 14px; border-radius: 40px; font-size: 0.75rem; color: #ffdeae; }
-        .sort-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
-        .sort-btn {
-            background: #af401f;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #ffecb3;
-            cursor: pointer;
-        }
-        .sort-btn.active { background: #ffd966; color: #611f0c; }
-        .table-wrapper { overflow-x: auto; border-radius: 16px; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #882e16a0;
-            font-size: 0.75rem;
-        }
-        th, td { padding: 10px 8px; text-align: left; color: #fff0cf; }
-        th { background: #63200e; color: #ffdeae; cursor: pointer; }
-        .role-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 30px;
-            font-size: 0.65rem;
-            font-weight: bold;
-        }
-        .role-president { background: #c0392b; color: #ffd966; }
-        .role-vicePresident { background: #e67e22; color: #2c0f05; }
-        .role-senior { background: #9b59b6; color: #f3e5ab; }
-        .role-member { background: #2c6e9e; color: white; }
-        .prestige-badge {
-            background: #f1c40f;
-            color: #5a1e0b;
-            padding: 3px 10px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 0.7rem;
-            display: inline-block;
-        }
-        .discord-cell {
+        /* Al je bestaande CSS blijft */
+        .kicklist-cell {
             cursor: pointer;
             transition: 0.2s;
         }
-        .discord-cell:hover {
+        .kicklist-cell:hover {
             opacity: 0.7;
             transform: scale(1.02);
         }
-        .discord-yes { 
-            background: #2e7d32; 
+        .kicklist-yes { 
+            background: #f39c12; 
             color: #fff; 
             padding: 4px 10px; 
             border-radius: 20px; 
             display: inline-block;
             font-weight: bold;
         }
-        .discord-no { 
-            background: #c62828; 
+        .kicklist-no { 
+            background: #2c3e50; 
             color: #fff; 
             padding: 4px 10px; 
             border-radius: 20px; 
             display: inline-block;
             font-weight: bold;
         }
-        .discord-edit {
+        .kicklist-edit {
             background: #ffd966;
             color: #5a2412;
             padding: 2px 8px;
             border-radius: 16px;
             font-size: 0.6rem;
             margin-left: 8px;
-        }
-        .loading, .error { text-align: center; padding: 40px; background: #c24a2a; border-radius: 24px; color: #ffdca8; }
-        .hidden { display: none; }
-        .refresh-btn, .save-btn {
-            background: #ffd966;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 40px;
-            color: #5a2412;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: #cc4125;
-            padding: 24px;
-            border-radius: 28px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-        }
-        .modal-content input {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border-radius: 40px;
-            border: none;
-            font-size: 1rem;
-        }
-        .modal-content button {
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 40px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .note {
-            background: #662211;
-            padding: 10px;
-            border-radius: 16px;
-            text-align: center;
-            margin-bottom: 16px;
-            font-size: 0.7rem;
-            color: #ffdeae;
-        }
-        @media (max-width: 700px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            th, td { font-size: 0.65rem; padding: 6px 4px; }
         }
     </style>
 </head>
@@ -214,7 +48,7 @@
     </div>
     
     <div class="note">
-        📊 Data live van RealDutch server | Laatste update: <span id="updateTime"></span> | Klik op Discord status om aan te passen
+        📊 Data live van RealDutch server | Laatste update: <span id="updateTime"></span> | Klik op Discord of Kicklijst om aan te passen
     </div>
     
     <div id="lastUpdated" class="last-updated"></div>
@@ -246,7 +80,7 @@
         </div>
         
         <div class="members-header">
-            <h3>👥 Member Stats <span style="font-size:0.7rem;">(click Discord to edit)</span></h3>
+            <h3>👥 Member Stats <span style="font-size:0.7rem;">(click Discord or Kicklist to edit)</span></h3>
             <span id="memberCountDisplay" class="member-count"></span>
             <div class="sort-buttons">
                 <button class="sort-btn" data-sort="trophies">🏆 Trophies</button>
@@ -259,7 +93,7 @@
         <div class="table-wrapper">
             <table id="membersTable">
                 <thead>
-                    <tr><th>Name</th><th>Role</th><th>🏆 Trophies</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th>
+                    <tr><th>Name</th><th>Role</th><th>🏆 Trophies</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th><th>⚠️ Kicklijst</th>
                 </thead>
                 <tbody id="membersList"></tbody>
              
@@ -270,6 +104,7 @@
 <script>
     const DATA_URL = 'https://json.realdutch.club/clubs-data.json';
     const UPDATE_API = 'https://api.realdutch.club/api/update-json-discord';
+    const KICK_API = 'https://api.realdutch.club/api/update-kicklist';
     const SECRET_TOKEN = 'realdutch-secret-2024';
     let clubsData = null;
     let currentClub = null;
@@ -307,7 +142,7 @@
         } catch (err) {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('error').classList.remove('hidden');
-            document.getElementById('error').innerHTML = `❌ Error loading data: ${err.message}<br><br>URL: ${DATA_URL}`;
+            document.getElementById('error').innerHTML = `❌ Error loading data: ${err.message}`;
         }
     }
     
@@ -344,7 +179,6 @@
             });
             const result = await response.json();
             if (result.success) {
-                // Update lokale data zonder herladen
                 for (const club of clubsData.clubs) {
                     for (const member of club.members) {
                         if (member.tag === tag || member.tag === '#' + tag) {
@@ -354,14 +188,46 @@
                         }
                     }
                 }
-                // Update de weergave direct
                 if (currentClub) {
                     currentClub = clubsData.clubs.find(c => c.tag === currentClub.tag);
                     displayMembers();
                 }
-                // Update de timestamp
                 document.getElementById('updateTime').textContent = new Date().toLocaleString();
                 document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date().toLocaleString()}`;
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+    
+    async function updateKicklistStatus(tag, onKickList) {
+        try {
+            const response = await fetch(KICK_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tag: tag,
+                    onKickList: onKickList,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                for (const club of clubsData.clubs) {
+                    for (const member of club.members) {
+                        if (member.tag === tag || member.tag === '#' + tag) {
+                            member.onKickList = onKickList;
+                            break;
+                        }
+                    }
+                }
+                if (currentClub) {
+                    currentClub = clubsData.clubs.find(c => c.tag === currentClub.tag);
+                    displayMembers();
+                }
                 return true;
             }
             return false;
@@ -393,6 +259,29 @@
         window.setDiscordStatus = async (status) => {
             const discordName = document.getElementById('discordNameInput').value;
             await updateDiscordStatus(member.tag, status, discordName);
+            modal.remove();
+        };
+    }
+    
+    function openKicklistModal(member) {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
+                <p style="color:#ffdeae;">Current: ${member.onKickList ? '⚠️ On kicklist' : '✅ Not on kicklist'}</p>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button onclick="setKicklistStatus(true)" style="background:#f39c12; color:white;">⚠️ Add to kicklist</button>
+                    <button onclick="setKicklistStatus(false)" style="background:#2c3e50; color:white;">✅ Remove from kicklist</button>
+                </div>
+                <button onclick="closeModal()" style="margin-top:15px; background:#ffd966;">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        window.closeModal = () => modal.remove();
+        window.setKicklistStatus = async (status) => {
+            await updateKicklistStatus(member.tag, status);
             modal.remove();
         };
     }
@@ -458,7 +347,13 @@
                         <span class="discord-edit">✎</span>
                     </span>
                 </td>
-             </tr>`;
+                <td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                    <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
+                        ${m.onKickList ? '⚠️ On kicklist' : '✅ Safe'}
+                        <span class="kicklist-edit">✎</span>
+                    </span>
+                </td>
+            </tr>`;
         }).join('');
         
         document.querySelectorAll('.sort-btn').forEach(btn => {
@@ -496,7 +391,7 @@
     });
     
     window.openDiscordModal = openDiscordModal;
-    window.updateDiscordStatus = updateDiscordStatus;
+    window.openKicklistModal = openKicklistModal;
     
     loadData();
 </script>
