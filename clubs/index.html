@@ -245,6 +245,11 @@
             margin-top: 10px;
             font-size: 0.8rem;
         }
+        .auth-success {
+            color: #b9f6ca;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
         @media (max-width: 700px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             th, td { font-size: 0.65rem; padding: 6px 4px; }
@@ -264,12 +269,13 @@
     
     <div id="lastUpdated" class="last-updated"></div>
     
-    <!-- Autorisatie panel -->
+    <!-- Autorisatie panel - per club -->
     <div id="authPanel" class="auth-panel">
-        <p style="color:#ffdeae; margin-bottom:10px;">🔒 Voer beheercode in om Discord/Kicklist te bewerken:</p>
+        <p style="color:#ffdeae; margin-bottom:10px;">🔒 Voer beheercode in voor <strong id="clubNameForAuth">deze club</strong> om Discord/Kicklist te bewerken:</p>
         <input type="password" id="authCode" placeholder="Beheercode">
         <button onclick="checkAuth()">Toegang</button>
         <div id="authError" class="auth-error hidden"></div>
+        <div id="authSuccess" class="auth-success hidden"></div>
     </div>
     
     <div style="display: flex; justify-content: flex-end; margin-bottom: 16px; gap: 10px;">
@@ -311,10 +317,10 @@
         
         <div class="table-wrapper">
             <table id="membersTable">
-                <thead>
-                    <tr><th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
-                    <th id="discordHeader" class="hidden">Discord</th>
-                    <th id="kicklistHeader" class="hidden">⚠️ Kicklijst</th>
+                <thead id="tableHeader">
+                    <tr id="headerRow">
+                        <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
+                    </tr>
                 </thead>
                 <tbody id="membersList"></tbody>
              
@@ -326,31 +332,93 @@
     const API_BASE = 'https://api.realdutch.club';
     const STATS_URL = 'https://json.realdutch.club/clubs-data.json';
     const SECRET_TOKEN = 'realdutch-secret-2024';
-    const ADMIN_CODE = 'realdutch2024'; // Beheercode - wijzig naar wat jij wilt!
+    
+    // Club beheercodes - pas hier aan voor elke club!
+    const CLUB_CODES = {
+        '28U982': 'realdutch',      // RealDutch
+        '20QGP08R0': 'code2',        // RealDutch II
+        '2GQU92GV8': 'code3',        // RealDutch Elite
+        '2008QRUP0': 'code4',        // RealDutch Force
+        '2GU8VJVYU': 'code5',        // RealDutch Glory
+        '2PGG8GJRC': 'code6',        // RealDutch Stars
+        '2GV0UGG8Y': 'code7',        // RealDutch Light
+        '8089CJV2Q': 'code8',        // RealDutch Nova
+        '2RY829PPO': 'code9',        // RealDutch Minis
+        'GYLRV9Q9': 'code10',        // RealDutch Mini2
+        '2CU9G0Q0V': 'code11'        // RealDutch OG
+    };
     
     let statsData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
     let isAuthorized = false;
+    let currentClubTag = null;
     
-    // Autorisatie check
+    // Autorisatie check per club
     function checkAuth() {
         const code = document.getElementById('authCode').value;
-        if (code === ADMIN_CODE) {
+        const requiredCode = CLUB_CODES[currentClubTag];
+        
+        if (requiredCode && code === requiredCode) {
             isAuthorized = true;
             document.getElementById('authPanel').style.display = 'none';
             document.getElementById('editHint').classList.remove('hidden');
-            document.getElementById('discordHeader').classList.remove('hidden');
-            document.getElementById('kicklistHeader').classList.remove('hidden');
+            // Update header met Discord en Kicklist kolommen
+            updateTableHeader(true);
             if (currentClub) {
                 displayMembers();
             }
         } else {
-            document.getElementById('authError').textContent = '❌ Onjuiste code!';
+            document.getElementById('authError').textContent = '❌ Onjuiste code voor deze club!';
             document.getElementById('authError').classList.remove('hidden');
             setTimeout(() => {
                 document.getElementById('authError').classList.add('hidden');
             }, 2000);
+        }
+    }
+    
+    // Update tabel header (toon/verberg Discord/Kicklist kolommen)
+    function updateTableHeader(showEditColumns) {
+        const headerRow = document.getElementById('headerRow');
+        if (!headerRow) return;
+        
+        // Basis headers die altijd getoond worden
+        const baseHeaders = ['Naam', 'Rol', '🏆 Trofeeën', '⭐ Prestige', '3v3 Wins', 'SD Wins', 'Ratio'];
+        
+        if (showEditColumns) {
+            headerRow.innerHTML = `
+                <th>Naam</th>
+                <th>Rol</th>
+                <th>🏆 Trofeeën</th>
+                <th>⭐ Prestige</th>
+                <th>3v3 Wins</th>
+                <th>SD Wins</th>
+                <th>Ratio</th>
+                <th>Discord</th>
+                <th>⚠️ Kicklijst</th>
+            `;
+        } else {
+            headerRow.innerHTML = `
+                <th>Naam</th>
+                <th>Rol</th>
+                <th>🏆 Trofeeën</th>
+                <th>⭐ Prestige</th>
+                <th>3v3 Wins</th>
+                <th>SD Wins</th>
+                <th>Ratio</th>
+            `;
+        }
+    }
+    
+    // Reset autorisatie bij clubwissel
+    function resetAuth() {
+        isAuthorized = false;
+        document.getElementById('authPanel').style.display = 'block';
+        document.getElementById('editHint').classList.add('hidden');
+        document.getElementById('authCode').value = '';
+        updateTableHeader(false);
+        if (currentClub) {
+            displayMembers();
         }
     }
     
@@ -425,6 +493,15 @@
     
     // Selecteer club - combineert live leden met stats
     async function selectClub(tag) {
+        currentClubTag = tag;
+        resetAuth();
+        
+        // Update auth panel met clubnaam
+        const club = statsData?.clubs?.find(c => c.tag === tag);
+        if (club) {
+            document.getElementById('clubNameForAuth').textContent = club.name;
+        }
+        
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('error').classList.add('hidden');
         
@@ -609,49 +686,62 @@
         });
         
         const tbody = document.getElementById('membersList');
-        tbody.innerHTML = sorted.map(m => {
-            const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
-            const roleClass = `role-${m.role}`;
-            
-            let ratioClass = 'ratio-neutral';
-            if (m.ratio === '∞') ratioClass = 'ratio-perfect';
-            else { let r = parseFloat(m.ratio); if (r >= 2) ratioClass = 'ratio-good'; else if (r < 1 && r > 0) ratioClass = 'ratio-bad'; }
-            
-            const discordCell = isAuthorized ? 
-                `<td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
-                    <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
-                        ${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Niet in Discord'}
-                        <span class="discord-edit">✎</span>
-                    </span>
-                 </td>` :
-                `<td><span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
-                    ${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Niet in Discord'}
-                </span></td>`;
-            
-            const kicklistCell = isAuthorized ? 
-                `<td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
-                    <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
-                        ${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}
-                        <span class="kicklist-edit">✎</span>
-                    </span>
-                 </td>` :
-                `<td><span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
-                    ${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}
-                </span></td>`;
-            
-            return `
-            <tr>
-                <td>${escapeHtml(m.name)}</td>
-                <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
-                <td>${m.trophies.toLocaleString()}</td>
-                <td><span class="prestige-badge">${m.prestige}</span></td>
-                <td>${m.teamWins.toLocaleString()}</td>
-                <td>${m.showdownWins.toLocaleString()}</td>
-                <td class="${ratioClass}">${m.ratio}</td>
-                ${discordCell}
-                ${kicklistCell}
-             </td>`;
-        }).join('');
+        
+        if (isAuthorized) {
+            // Met edit kolommen
+            tbody.innerHTML = sorted.map(m => {
+                const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
+                const roleClass = `role-${m.role}`;
+                
+                let ratioClass = 'ratio-neutral';
+                if (m.ratio === '∞') ratioClass = 'ratio-perfect';
+                else { let r = parseFloat(m.ratio); if (r >= 2) ratioClass = 'ratio-good'; else if (r < 1 && r > 0) ratioClass = 'ratio-bad'; }
+                
+                return `
+                <tr>
+                    <td>${escapeHtml(m.name)}</td>
+                    <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                    <td>${m.trophies.toLocaleString()}</td>
+                    <td><span class="prestige-badge">${m.prestige}</span></td>
+                    <td>${m.teamWins.toLocaleString()}</td>
+                    <td>${m.showdownWins.toLocaleString()}</td>
+                    <td class="${ratioClass}">${m.ratio}</td>
+                    <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                        <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
+                            ${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Niet in Discord'}
+                            <span class="discord-edit">✎</span>
+                        </span>
+                    </td>
+                    <td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                        <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
+                            ${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}
+                            <span class="kicklist-edit">✎</span>
+                        </span>
+                    </td>
+                </tr>`;
+            }).join('');
+        } else {
+            // Zonder edit kolommen
+            tbody.innerHTML = sorted.map(m => {
+                const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
+                const roleClass = `role-${m.role}`;
+                
+                let ratioClass = 'ratio-neutral';
+                if (m.ratio === '∞') ratioClass = 'ratio-perfect';
+                else { let r = parseFloat(m.ratio); if (r >= 2) ratioClass = 'ratio-good'; else if (r < 1 && r > 0) ratioClass = 'ratio-bad'; }
+                
+                return `
+                <tr>
+                    <td>${escapeHtml(m.name)}</td>
+                    <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                    <td>${m.trophies.toLocaleString()}</td>
+                    <td><span class="prestige-badge">${m.prestige}</span></td>
+                    <td>${m.teamWins.toLocaleString()}</td>
+                    <td>${m.showdownWins.toLocaleString()}</td>
+                    <td class="${ratioClass}">${m.ratio}</td>
+                </tr>`;
+            }).join('');
+        }
         
         document.querySelectorAll('.sort-btn').forEach(btn => {
             btn.classList.remove('active');
