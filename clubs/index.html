@@ -112,11 +112,41 @@
             font-size: 0.7rem;
             display: inline-block;
         }
-        .discord-yes { color: #b9f6ca; font-weight: bold; }
-        .discord-no { color: #ffab91; }
+        .discord-cell {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .discord-cell:hover {
+            opacity: 0.7;
+            transform: scale(1.02);
+        }
+        .discord-yes { 
+            background: #2e7d32; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+            font-weight: bold;
+        }
+        .discord-no { 
+            background: #c62828; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+            font-weight: bold;
+        }
+        .discord-edit {
+            background: #ffd966;
+            color: #5a2412;
+            padding: 2px 8px;
+            border-radius: 16px;
+            font-size: 0.6rem;
+            margin-left: 8px;
+        }
         .loading, .error { text-align: center; padding: 40px; background: #c24a2a; border-radius: 24px; color: #ffdca8; }
         .hidden { display: none; }
-        .refresh-btn {
+        .refresh-btn, .save-btn {
             background: #ffd966;
             border: none;
             padding: 8px 16px;
@@ -125,9 +155,41 @@
             font-weight: bold;
             cursor: pointer;
         }
-        @media (max-width: 700px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            th, td { font-size: 0.65rem; padding: 6px 4px; }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #cc4125;
+            padding: 24px;
+            border-radius: 28px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 40px;
+            border: none;
+            font-size: 1rem;
+        }
+        .modal-content button {
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
         }
         .note {
             background: #662211;
@@ -137,6 +199,10 @@
             margin-bottom: 16px;
             font-size: 0.7rem;
             color: #ffdeae;
+        }
+        @media (max-width: 700px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            th, td { font-size: 0.65rem; padding: 6px 4px; }
         }
     </style>
 </head>
@@ -148,11 +214,14 @@
     </div>
     
     <div class="note">
-        📊 Data live van RealDutch server | Laatste update: <span id="updateTime"></span>
+        📊 Data live van RealDutch server | Laatste update: <span id="updateTime"></span> | Klik op Discord status om aan te passen
     </div>
     
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+    <div id="lastUpdated" class="last-updated"></div>
+    
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px; gap: 10px;">
         <button class="refresh-btn" onclick="loadData()">🔄 Refresh</button>
+        <button class="save-btn" onclick="triggerUpdate()">📡 Update Data</button>
     </div>
     
     <div class="club-selector">
@@ -177,7 +246,7 @@
         </div>
         
         <div class="members-header">
-            <h3>👥 Member Stats</h3>
+            <h3>👥 Member Stats <span style="font-size:0.7rem;">(click Discord to edit)</span></h3>
             <span id="memberCountDisplay" class="member-count"></span>
             <div class="sort-buttons">
                 <button class="sort-btn" data-sort="trophies">🏆 Trophies</button>
@@ -193,14 +262,15 @@
                     <tr><th>Name</th><th>Role</th><th>🏆 Trophies</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th>
                 </thead>
                 <tbody id="membersList"></tbody>
-             </table>
+             
         </div>
     </div>
 </div>
 
 <script>
-    // JSON bestand van je server
-    const DATA_URL = 'http://217.154.80.74/clubs/data/clubs-data.json';
+    const DATA_URL = 'https://json.realdutch.club/clubs-data.json';
+    const UPDATE_API = 'https://api.realdutch.club/api/update-json-discord';
+    const SECRET_TOKEN = 'realdutch-secret-2024';
     let clubsData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
@@ -219,6 +289,7 @@
             document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date(clubsData.lastUpdated).toLocaleString()}`;
             
             const dropdown = document.getElementById('clubDropdown');
+            const selectedTag = dropdown.value;
             dropdown.innerHTML = '<option value="">-- Select a club --</option>';
             clubsData.clubs.forEach(club => {
                 const option = document.createElement('option');
@@ -227,12 +298,103 @@
                 dropdown.appendChild(option);
             });
             
+            if (selectedTag && clubsData.clubs.find(c => c.tag === selectedTag)) {
+                dropdown.value = selectedTag;
+                selectClub(selectedTag);
+            }
+            
             document.getElementById('loading').classList.add('hidden');
         } catch (err) {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('error').classList.remove('hidden');
-            document.getElementById('error').innerHTML = `❌ Error loading data: ${err.message}<br><br>Make sure the server is running: ${DATA_URL}`;
+            document.getElementById('error').innerHTML = `❌ Error loading data: ${err.message}<br><br>URL: ${DATA_URL}`;
         }
+    }
+    
+    async function triggerUpdate() {
+        if (!confirm('This will fetch fresh data from Brawl Stars API (takes 2-3 min). Continue?')) return;
+        document.getElementById('loading').classList.remove('hidden');
+        
+        try {
+            const response = await fetch(`https://api.realdutch.club/api/update-clubs?token=${SECRET_TOKEN}`);
+            const result = await response.json();
+            if (result.success) {
+                await loadData();
+                alert('✅ Update completed!');
+            } else {
+                throw new Error('Update failed');
+            }
+        } catch (err) {
+            alert('❌ Update failed. Check server.');
+        }
+        document.getElementById('loading').classList.add('hidden');
+    }
+    
+    async function updateDiscordStatus(tag, inDiscord, discordName) {
+        try {
+            const response = await fetch(UPDATE_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tag: tag,
+                    inDiscord: inDiscord,
+                    discordName: discordName || null,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                // Update lokale data zonder herladen
+                for (const club of clubsData.clubs) {
+                    for (const member of club.members) {
+                        if (member.tag === tag || member.tag === '#' + tag) {
+                            member.inDiscord = inDiscord;
+                            member.discordName = discordName || null;
+                            break;
+                        }
+                    }
+                }
+                // Update de weergave direct
+                if (currentClub) {
+                    currentClub = clubsData.clubs.find(c => c.tag === currentClub.tag);
+                    displayMembers();
+                }
+                // Update de timestamp
+                document.getElementById('updateTime').textContent = new Date().toLocaleString();
+                document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date().toLocaleString()}`;
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+    
+    function openDiscordModal(member) {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
+                <p style="color:#ffdeae;">Current: ${member.inDiscord ? '✅ In Discord' : '❌ Not in Discord'}</p>
+                <label style="color:#ffdeae; display:block; text-align:left;">Discord username:</label>
+                <input type="text" id="discordNameInput" placeholder="e.g., username" value="${member.discordName || ''}">
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button onclick="setDiscordStatus(true)" style="background:#2e7d32; color:white;">✅ In Discord</button>
+                    <button onclick="setDiscordStatus(false)" style="background:#c62828; color:white;">❌ Not in Discord</button>
+                </div>
+                <button onclick="closeModal()" style="margin-top:15px; background:#ffd966;">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        window.closeModal = () => modal.remove();
+        window.setDiscordStatus = async (status) => {
+            const discordName = document.getElementById('discordNameInput').value;
+            await updateDiscordStatus(member.tag, status, discordName);
+            modal.remove();
+        };
     }
     
     function selectClub(tag) {
@@ -290,8 +452,13 @@
                 <td>${m.teamWins.toLocaleString()}</td>
                 <td>${m.showdownWins.toLocaleString()}</td>
                 <td class="${ratioClass}">${m.ratio}</td>
-                <td class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Not in Discord'}</td>
-            </tr>`;
+                <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                    <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
+                        ${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Not in Discord'}
+                        <span class="discord-edit">✎</span>
+                    </span>
+                </td>
+             </tr>`;
         }).join('');
         
         document.querySelectorAll('.sort-btn').forEach(btn => {
@@ -328,7 +495,9 @@
         btn.addEventListener('click', () => sortMembers(btn.dataset.sort));
     });
     
-    // Load on page load
+    window.openDiscordModal = openDiscordModal;
+    window.updateDiscordStatus = updateDiscordStatus;
+    
     loadData();
 </script>
 </body>
