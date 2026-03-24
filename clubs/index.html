@@ -45,7 +45,30 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .detail-club-name { font-size: 1.8rem; font-weight: bold; color: #ffefbf; }
+        .detail-club-name { 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            color: #ffefbf;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .admin-toggle-btn {
+            background: #ffd966;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #5a2412;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .admin-toggle-btn:hover { background: #ffedb5; transform: scale(0.98); }
         .detail-tag { background: #8b2c16; padding: 5px 14px; border-radius: 40px; color: #ffdeae; font-family: monospace; }
         .stats-grid {
             display: grid;
@@ -216,43 +239,36 @@
             font-size: 0.7rem;
             color: #ffdeae;
         }
-        .auth-panel {
+        /* Collapsible admin panel */
+        .admin-collapse-panel {
             background: #9e351d;
             border-radius: 20px;
-            padding: 20px;
-            text-align: center;
             margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.25s ease;
         }
-        .auth-panel input {
-            padding: 10px 15px;
-            border-radius: 40px;
-            border: none;
-            font-size: 1rem;
-            width: 200px;
-            margin-right: 10px;
+        .admin-collapse-inner {
+            padding: 20px;
+            border-top: 1px solid #ffd966;
         }
-        .auth-panel button {
-            background: #ffd966;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            color: #5a2412;
-            font-weight: bold;
-            cursor: pointer;
+        .admin-status-badge {
+            font-size: 0.7rem;
+            background: #662211;
+            padding: 4px 12px;
+            border-radius: 60px;
+            color: #ffdeae;
         }
-        .auth-error {
-            color: #ffab91;
-            margin-top: 10px;
-            font-size: 0.8rem;
-        }
-        .auth-success {
-            color: #b9f6ca;
-            margin-top: 10px;
-            font-size: 0.8rem;
+        .auth-success-badge {
+            background: #2e7d32;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 60px;
+            font-size: 0.7rem;
         }
         @media (max-width: 700px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             th, td { font-size: 0.65rem; padding: 6px 4px; }
+            .detail-club-name { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -269,20 +285,6 @@
     
     <div id="lastUpdated" class="last-updated"></div>
     
-    <!-- Autorisatie panel - per club -->
-    <div id="authPanel" class="auth-panel">
-        <p style="color:#ffdeae; margin-bottom:10px;">🔒 Voer beheercode in voor <strong id="clubNameForAuth">deze club</strong> om Discord/Kicklist te bewerken:</p>
-        <input type="password" id="authCode" placeholder="Beheercode">
-        <button onclick="checkAuth()">Toegang</button>
-        <div id="authError" class="auth-error hidden"></div>
-        <div id="authSuccess" class="auth-success hidden"></div>
-    </div>
-    
-    <div style="display: none; justify-content: flex-end; margin-bottom: 16px; gap: 10px;">
-        <button class="refresh-btn" onclick="loadData()">🔄 Refresh Stats</button>
-        <button class="save-btn" onclick="updateStats()">📡 Update Prestige/Wins</button>
-    </div>
-    
     <div class="club-selector">
         <select id="clubDropdown" class="club-dropdown">
             <option value="">-- Selecteer een club --</option>
@@ -294,9 +296,34 @@
     
     <div id="detailPanel" class="detail-panel hidden">
         <div class="detail-header">
-            <div class="detail-club-name" id="clubName">-</div>
+            <div class="detail-club-name">
+                <span id="clubName">-</span>
+                <button id="adminToggleBtn" class="admin-toggle-btn">🔧 Beheer</button>
+                <span id="adminSessionStatus" class="admin-status-badge hidden">⛔ Niet geautoriseerd</span>
+            </div>
             <span class="detail-tag" id="clubTag"></span>
         </div>
+        
+        <!-- Inklapbaar beheerderspaneel -->
+        <div id="adminCollapsePanel" class="admin-collapse-panel hidden">
+            <div class="admin-collapse-inner">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <strong style="color:#ffd966;">🔐 Beheer toegang</strong>
+                    <div id="authInlineStatus" style="font-size:0.75rem;"></div>
+                </div>
+                <div id="authFormArea">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="password" id="authCodeInput" placeholder="Beheercode voor deze club" style="flex:2; min-width:160px; padding:10px 16px; border-radius:60px; border:none;">
+                        <button id="submitAuthBtn" style="background:#ffd966; border:none; padding:10px 20px; border-radius:60px; font-weight:bold; cursor:pointer;">✅ Toegang verlenen</button>
+                    </div>
+                    <div id="authMessage" class="hidden" style="margin-top:12px; font-size:0.75rem;"></div>
+                </div>
+                <div id="authorizedHintArea" class="hidden" style="margin-top: 16px; background:#662211; padding:8px 12px; border-radius: 40px; text-align:center;">
+                    ✨ Beheermodus actief — klik op Discord / Kicklijst om direct te bewerken
+                </div>
+            </div>
+        </div>
+        
         <div class="stats-grid">
             <div class="stat-card"><div class="stat-value" id="totalTrophies">0</div><div class="stat-label">Total Trophies</div></div>
             <div class="stat-card"><div class="stat-value" id="requiredTrophies">0</div><div class="stat-label">Required</div></div>
@@ -305,7 +332,7 @@
         </div>
         
         <div class="members-header">
-            <h3>👥 Leden Statistieken <span id="editHint" class="hidden" style="font-size:0.7rem;">(klik op Discord/Kicklist om te bewerken)</span></h3>
+            <h3>👥 Leden Statistieken <span id="editHint" class="hidden" style="font-size:0.7rem;">(beheer actief → klik op Discord/Kicklist)</span></h3>
             <span id="memberCountDisplay" class="member-count"></span>
             <div class="sort-buttons">
                 <button class="sort-btn" data-sort="trophies">🏆 Trofeeën</button>
@@ -323,7 +350,7 @@
                     </tr>
                 </thead>
                 <tbody id="membersList"></tbody>
-             
+            </table>
         </div>
     </div>
 </div>
@@ -336,54 +363,66 @@
     let statsData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
-    let isAuthorized = false;
+    let isAuthorized = false;          // autorisatie voor huidige club
     let currentClubTag = null;
+    let authorizedClubTag = null;       // onthoudt voor welke club de sessie actief is
     
-    // Autorisatie check per club
-    async function checkAuth() {
-    const password = document.getElementById('authCode').value;
+    // DOM elementen
+    const adminToggleBtn = document.getElementById('adminToggleBtn');
+    const adminCollapsePanel = document.getElementById('adminCollapsePanel');
+    const adminSessionStatus = document.getElementById('adminSessionStatus');
+    const authFormArea = document.getElementById('authFormArea');
+    const authorizedHintArea = document.getElementById('authorizedHintArea');
+    const authMessageDiv = document.getElementById('authMessage');
+    const editHintSpan = document.getElementById('editHint');
+    const authCodeInput = document.getElementById('authCodeInput');
+    const submitAuthBtn = document.getElementById('submitAuthBtn');
     
-    try {
-        const response = await fetch(`${API_BASE}/api/auth-club`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                clubTag: currentClubTag,
-                password: password,
-                secretToken: SECRET_TOKEN
-            })
-        });
-        const result = await response.json();
-        
-        if (result.success) {
-            isAuthorized = true;
-            document.getElementById('authPanel').style.display = 'none';
-            document.getElementById('editHint').classList.remove('hidden');
-            updateTableHeader(true);
-            if (currentClub) {
-                displayMembers();
-            }
-        } else {
-            document.getElementById('authError').textContent = '❌ Onjuist wachtwoord!';
-            document.getElementById('authError').classList.remove('hidden');
-            setTimeout(() => {
-                document.getElementById('authError').classList.add('hidden');
-            }, 2000);
-        }
-    } catch (err) {
-        document.getElementById('authError').textContent = '❌ Fout bij authenticatie';
-        document.getElementById('authError').classList.remove('hidden');
+    // --- Helper: reset sessie bij clubwissel (maar bewaar geen auth)
+    function resetAuthForNewClub() {
+        isAuthorized = false;
+        authorizedClubTag = null;
+        updateAuthUI();
+        // Collapse paneel sluiten maar knop blijft zichtbaar
+        adminCollapsePanel.classList.add('hidden');
+        adminSessionStatus.classList.remove('hidden');
+        adminSessionStatus.innerHTML = '🔒 Beheer gesloten';
+        adminSessionStatus.style.background = '#662211';
+        editHintSpan.classList.add('hidden');
+        updateTableHeader(false);
+        if (currentClub) displayMembers();
     }
-}
     
-    // Update tabel header (toon/verberg Discord/Kicklist kolommen)
+    // Update UI op basis van autorisatiestatus
+    function updateAuthUI() {
+        if (isAuthorized && authorizedClubTag === currentClubTag) {
+            // geautoriseerd
+            adminSessionStatus.innerHTML = '✅ Beheer actief';
+            adminSessionStatus.style.background = '#2e7d32';
+            adminSessionStatus.classList.remove('hidden');
+            authorizedHintArea.classList.remove('hidden');
+            editHintSpan.classList.remove('hidden');
+            authFormArea.classList.add('hidden');
+            if (authMessageDiv) authMessageDiv.classList.add('hidden');
+            updateTableHeader(true);
+        } else {
+            adminSessionStatus.innerHTML = '🔒 Niet geautoriseerd';
+            adminSessionStatus.style.background = '#662211';
+            adminSessionStatus.classList.remove('hidden');
+            authorizedHintArea.classList.add('hidden');
+            editHintSpan.classList.add('hidden');
+            authFormArea.classList.remove('hidden');
+            updateTableHeader(false);
+            if (authMessageDiv) authMessageDiv.classList.add('hidden');
+        }
+        // Als tabel geladen is, refresh
+        if (currentClub) displayMembers();
+    }
+    
+    // Kolom headers tonen/verbergen obv auth
     function updateTableHeader(showEditColumns) {
         const headerRow = document.getElementById('headerRow');
         if (!headerRow) return;
-        
-        // Basis headers die altijd getoond worden
-        const baseHeaders = ['Naam', 'Rol', '🏆 Trofeeën', '⭐ Prestige', '3v3 Wins', 'SD Wins', 'Ratio'];
-        
         if (showEditColumns) {
             headerRow.innerHTML = `
                 <th>Naam</th>
@@ -409,41 +448,82 @@
         }
     }
     
-    // Reset autorisatie bij clubwissel
-    function resetAuth() {
-        isAuthorized = false;
-        document.getElementById('authPanel').style.display = 'block';
-        document.getElementById('editHint').classList.add('hidden');
-        document.getElementById('authCode').value = '';
-        updateTableHeader(false);
-        if (currentClub) {
-            displayMembers();
+    // Authenticatie check (sessie blijft behouden per club tot wissel)
+    async function performAuth() {
+        const password = authCodeInput.value.trim();
+        if (!password) {
+            showAuthMessage('❌ Voer een beheercode in', 'error');
+            return;
+        }
+        if (!currentClubTag) {
+            showAuthMessage('❌ Selecteer eerst een club', 'error');
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE}/api/auth-club`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    clubTag: currentClubTag,
+                    password: password,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                isAuthorized = true;
+                authorizedClubTag = currentClubTag;
+                updateAuthUI();
+                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklist aanpassen.', 'success');
+                authCodeInput.value = '';
+                // na 2 sec melding verbergen
+                setTimeout(() => {
+                    if (authMessageDiv) authMessageDiv.classList.add('hidden');
+                }, 2000);
+                // refresh de huidige leden weergave met edit knoppen
+                if (currentClub) displayMembers();
+            } else {
+                showAuthMessage('❌ Onjuiste beheercode voor deze club', 'error');
+                isAuthorized = false;
+                authorizedClubTag = null;
+                updateAuthUI();
+            }
+        } catch (err) {
+            showAuthMessage('❌ Fout bij authenticatie: ' + err.message, 'error');
+            isAuthorized = false;
+            updateAuthUI();
         }
     }
     
-    // Live club data ophalen
+    function showAuthMessage(msg, type) {
+        if (!authMessageDiv) return;
+        authMessageDiv.textContent = msg;
+        authMessageDiv.style.color = type === 'error' ? '#ffab91' : '#b9f6ca';
+        authMessageDiv.classList.remove('hidden');
+        setTimeout(() => {
+            if (authMessageDiv) authMessageDiv.classList.add('hidden');
+        }, 2500);
+    }
+    
+    // --- API calls
     async function fetchLiveClub(tag) {
         const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     }
     
-    // Stats ophalen
     async function fetchStats() {
         const response = await fetch(STATS_URL);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     }
     
-    // Load dropdown en stats
     async function loadData() {
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('error').classList.add('hidden');
-        
         try {
             statsData = await fetchStats();
             document.getElementById('lastUpdated').innerHTML = `📅 Laatste update: ${new Date(statsData.lastUpdated).toLocaleString()}`;
-            
             const dropdown = document.getElementById('clubDropdown');
             const currentValue = dropdown.value;
             dropdown.innerHTML = '<option value="">-- Selecteer een club --</option>';
@@ -453,12 +533,10 @@
                 option.textContent = `${club.name}`;
                 dropdown.appendChild(option);
             });
-            
             if (currentValue && statsData.clubs.find(c => c.tag === currentValue)) {
                 dropdown.value = currentValue;
                 selectClub(currentValue);
             }
-            
             document.getElementById('loading').classList.add('hidden');
         } catch (err) {
             document.getElementById('loading').classList.add('hidden');
@@ -467,11 +545,9 @@
         }
     }
     
-    // Update stats
     async function updateStats() {
         if (!confirm('Prestige/wins worden geüpdatet (duurt 2-3 min). Doorgaan?')) return;
         document.getElementById('loading').classList.remove('hidden');
-        
         try {
             const response = await fetch(`${API_BASE}/api/update-clubs?token=${SECRET_TOKEN}`);
             const result = await response.json();
@@ -490,24 +566,25 @@
         document.getElementById('loading').classList.add('hidden');
     }
     
-    // Selecteer club - combineert live leden met stats
     async function selectClub(tag) {
         currentClubTag = tag;
-        resetAuth();
-        
-        // Update auth panel met clubnaam
-        const club = statsData?.clubs?.find(c => c.tag === tag);
-        if (club) {
-            document.getElementById('clubNameForAuth').textContent = club.name;
+        // Bij clubwissel: autorisatie vervalt tenzij sessie voor exact dezelfde club al actief was
+        if (authorizedClubTag !== tag) {
+            isAuthorized = false;
+            authorizedClubTag = null;
+        } else {
+            // behoud bestaande auth
+            isAuthorized = true;
         }
+        updateAuthUI();
+        // Collapse standaard dichtzetten bij nieuwe club
+        adminCollapsePanel.classList.add('hidden');
         
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('error').classList.add('hidden');
-        
         try {
             const liveClub = await fetchLiveClub(tag);
             const statsClub = statsData?.clubs?.find(c => c.tag === tag);
-            
             const members = liveClub.members.map(member => {
                 const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
                 return {
@@ -524,7 +601,6 @@
                     onKickList: statsMember?.onKickList || false
                 };
             });
-            
             currentClub = {
                 name: liveClub.name,
                 tag: liveClub.tag,
@@ -532,33 +608,27 @@
                 requiredTrophies: liveClub.requiredTrophies || 0,
                 members: members
             };
-            
             document.getElementById('clubName').textContent = currentClub.name;
-            // Fix dubbele # - tag komt al met # uit de API
             document.getElementById('clubTag').textContent = currentClub.tag.startsWith('#') ? currentClub.tag : `#${currentClub.tag}`;
             document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString();
             document.getElementById('requiredTrophies').textContent = currentClub.requiredTrophies.toLocaleString();
             document.getElementById('memberCount').textContent = currentClub.members.length;
             document.getElementById('memberCountDisplay').textContent = `${currentClub.members.length} leden`;
-            
             const avg = Math.round(currentClub.totalTrophies / currentClub.members.length);
             document.getElementById('avgTrophies').textContent = avg.toLocaleString();
-            
             displayMembers();
             document.getElementById('detailPanel').classList.remove('hidden');
-            
         } catch (err) {
             console.error(err);
             document.getElementById('error').classList.remove('hidden');
             document.getElementById('error').innerHTML = `❌ Fout bij laden club: ${err.message}`;
         }
-        
         document.getElementById('loading').classList.add('hidden');
     }
     
-    // Update Discord status
+    // Updates zonder autorisatie reset (sessie blijft)
     async function updateDiscordStatus(tag, inDiscord, discordName) {
-        if (!isAuthorized) return false;
+        if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
         try {
             const response = await fetch(`${API_BASE}/api/update-json-discord`, {
                 method: 'POST',
@@ -572,10 +642,8 @@
             });
             const result = await response.json();
             if (result.success) {
-                await loadData();
-                if (currentClub) {
-                    selectClub(currentClub.tag);
-                }
+                await loadData();          // herlaad stats
+                if (currentClub) await selectClub(currentClub.tag);  // refresh behoudt autorisatie
                 return true;
             }
             return false;
@@ -585,9 +653,8 @@
         }
     }
     
-    // Update Kicklist status
     async function updateKicklistStatus(tag, onKickList) {
-        if (!isAuthorized) return false;
+        if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
         try {
             const response = await fetch(`${API_BASE}/api/update-kicklist`, {
                 method: 'POST',
@@ -601,9 +668,7 @@
             const result = await response.json();
             if (result.success) {
                 await loadData();
-                if (currentClub) {
-                    selectClub(currentClub.tag);
-                }
+                if (currentClub) await selectClub(currentClub.tag);
                 return true;
             }
             return false;
@@ -624,21 +689,27 @@
                 <p style="color:#ffdeae;">Huidig: ${member.inDiscord ? '✅ In Discord' : '❌ Niet in Discord'}</p>
                 <label style="color:#ffdeae; display:block; text-align:left;">Discord gebruikersnaam:</label>
                 <input type="text" id="discordNameInput" placeholder="gebruikersnaam" value="${member.discordName || ''}">
-                <div style="display:flex; gap:10px; justify-content:center;">
-                    <button onclick="setDiscordStatus(true)" style="background:#2e7d32; color:white;">✅ In Discord</button>
-                    <button onclick="setDiscordStatus(false)" style="background:#c62828; color:white;">❌ Niet in Discord</button>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
+                    <button id="discordYesBtn" style="background:#2e7d32; color:white;">✅ In Discord</button>
+                    <button id="discordNoBtn" style="background:#c62828; color:white;">❌ Niet in Discord</button>
                 </div>
-                <button onclick="closeModal()" style="margin-top:15px; background:#ffd966;">Annuleren</button>
+                <button id="closeModalBtn" style="margin-top:15px; background:#ffd966;">Annuleren</button>
             </div>
         `;
         document.body.appendChild(modal);
+        const discordNameInput = modal.querySelector('#discordNameInput');
+        const yesBtn = modal.querySelector('#discordYesBtn');
+        const noBtn = modal.querySelector('#discordNoBtn');
+        const closeBtn = modal.querySelector('#closeModalBtn');
         
-        window.closeModal = () => modal.remove();
-        window.setDiscordStatus = async (status) => {
-            const discordName = document.getElementById('discordNameInput').value;
+        const apply = async (status) => {
+            const discordName = discordNameInput.value;
             await updateDiscordStatus(member.tag, status, discordName);
             modal.remove();
         };
+        yesBtn.onclick = () => apply(true);
+        noBtn.onclick = () => apply(false);
+        closeBtn.onclick = () => modal.remove();
     }
     
     function openKicklistModal(member) {
@@ -649,25 +720,28 @@
             <div class="modal-content">
                 <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
                 <p style="color:#ffdeae;">Huidig: ${member.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}</p>
-                <div style="display:flex; gap:10px; justify-content:center;">
-                    <button onclick="setKicklistStatus(true)" style="background:#f39c12; color:white;">⚠️ Toevoegen aan kicklijst</button>
-                    <button onclick="setKicklistStatus(false)" style="background:#2c3e50; color:white;">✅ Verwijderen van kicklijst</button>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+                    <button id="kickYesBtn" style="background:#f39c12; color:white;">⚠️ Toevoegen aan kicklijst</button>
+                    <button id="kickNoBtn" style="background:#2c3e50; color:white;">✅ Verwijderen</button>
                 </div>
-                <button onclick="closeModal()" style="margin-top:15px; background:#ffd966;">Annuleren</button>
+                <button id="closeKickModal" style="margin-top:15px; background:#ffd966;">Annuleren</button>
             </div>
         `;
         document.body.appendChild(modal);
-        
-        window.closeModal = () => modal.remove();
-        window.setKicklistStatus = async (status) => {
+        const yesBtn = modal.querySelector('#kickYesBtn');
+        const noBtn = modal.querySelector('#kickNoBtn');
+        const closeBtn = modal.querySelector('#closeKickModal');
+        const apply = async (status) => {
             await updateKicklistStatus(member.tag, status);
             modal.remove();
         };
+        yesBtn.onclick = () => apply(true);
+        noBtn.onclick = () => apply(false);
+        closeBtn.onclick = () => modal.remove();
     }
     
     function displayMembers() {
         if (!currentClub) return;
-        
         const sorted = [...currentClub.members].sort((a, b) => {
             let aVal, bVal;
             if (currentSort.field === 'trophies') { aVal = a.trophies; bVal = b.trophies; }
@@ -677,25 +751,17 @@
                 bVal = b.ratio === '∞' ? 999999 : parseFloat(b.ratio) || 0;
             }
             else { aVal = a.name; bVal = b.name; }
-            
             if (currentSort.field === 'name') {
                 return currentSort.dir === 'asc' ? aVal.localeCompare(bVal, 'nl') : bVal.localeCompare(aVal, 'nl');
             }
             return currentSort.dir === 'asc' ? aVal - bVal : bVal - aVal;
         });
-        
         const tbody = document.getElementById('membersList');
+        const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
         
-        if (isAuthorized) {
-            // Met edit kolommen
+        if (isAuthorized && authorizedClubTag === currentClubTag) {
             tbody.innerHTML = sorted.map(m => {
-                const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
                 const roleClass = `role-${m.role}`;
-                
-                let ratioClass = 'ratio-neutral';
-                if (m.ratio === '∞') ratioClass = 'ratio-perfect';
-                else { let r = parseFloat(m.ratio); if (r >= 2) ratioClass = 'ratio-good'; else if (r < 1 && r > 0) ratioClass = 'ratio-bad'; }
-                
                 return `
                 <tr>
                     <td>${escapeHtml(m.name)}</td>
@@ -704,7 +770,7 @@
                     <td><span class="prestige-badge">${m.prestige}</span></td>
                     <td>${m.teamWins.toLocaleString()}</td>
                     <td>${m.showdownWins.toLocaleString()}</td>
-                    <td class="${ratioClass}">${m.ratio}</td>
+                    <td>${m.ratio}</td>
                     <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
                         <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
                             ${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Niet in Discord'}
@@ -720,15 +786,8 @@
                 </tr>`;
             }).join('');
         } else {
-            // Zonder edit kolommen
             tbody.innerHTML = sorted.map(m => {
-                const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
                 const roleClass = `role-${m.role}`;
-                
-                let ratioClass = 'ratio-neutral';
-                if (m.ratio === '∞') ratioClass = 'ratio-perfect';
-                else { let r = parseFloat(m.ratio); if (r >= 2) ratioClass = 'ratio-good'; else if (r < 1 && r > 0) ratioClass = 'ratio-bad'; }
-                
                 return `
                 <tr>
                     <td>${escapeHtml(m.name)}</td>
@@ -737,11 +796,10 @@
                     <td><span class="prestige-badge">${m.prestige}</span></td>
                     <td>${m.teamWins.toLocaleString()}</td>
                     <td>${m.showdownWins.toLocaleString()}</td>
-                    <td class="${ratioClass}">${m.ratio}</td>
+                    <td>${m.ratio}</td>
                 </tr>`;
             }).join('');
         }
-        
         document.querySelectorAll('.sort-btn').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.sort === currentSort.field) btn.classList.add('active');
@@ -768,17 +826,25 @@
         });
     }
     
+    // Event listeners
     document.getElementById('clubDropdown').addEventListener('change', (e) => {
         if (e.target.value) selectClub(e.target.value);
     });
-    
     document.querySelectorAll('.sort-btn').forEach(btn => {
         btn.addEventListener('click', () => sortMembers(btn.dataset.sort));
     });
+    adminToggleBtn.addEventListener('click', () => {
+        if (adminCollapsePanel.classList.contains('hidden')) {
+            adminCollapsePanel.classList.remove('hidden');
+        } else {
+            adminCollapsePanel.classList.add('hidden');
+        }
+    });
+    submitAuthBtn.addEventListener('click', performAuth);
     
+    // Expose globals voor modals
     window.openDiscordModal = openDiscordModal;
     window.openKicklistModal = openKicklistModal;
-    window.checkAuth = checkAuth;
     window.updateStats = updateStats;
     window.loadData = loadData;
     
