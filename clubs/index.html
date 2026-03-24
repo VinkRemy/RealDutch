@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RealDutch • Club Statistieken</title>
     <style>
-        /* Alle bestaande CSS blijft hetzelfde */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #e67e22;
@@ -204,21 +203,11 @@
             background: #cc4125;
             padding: 24px;
             border-radius: 28px;
-            max-width: 500px;
+            max-width: 800px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
             text-align: left;
-        }
-        .modal-content pre {
-            background: #2c0f05;
-            padding: 12px;
-            border-radius: 16px;
-            overflow-x: auto;
-            font-size: 0.7rem;
-            color: #ffdeae;
-            white-space: pre-wrap;
-            word-wrap: break-word;
         }
         .modal-content input {
             width: 100%;
@@ -310,7 +299,7 @@
     </div>
     
     <div class="note">
-        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | Beheerders kunnen maandrapport downloaden
+        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | Beheerders kunnen snapshots downloaden en vergelijken
     </div>
     
     <div id="lastUpdated" class="last-updated"></div>
@@ -338,7 +327,10 @@
             <div class="admin-collapse-inner">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
                     <strong style="color:#ffd966;">🔐 Beheer toegang</strong>
-                    <button id="downloadReportBtn" class="download-report-btn hidden">📥 Download Maandrapport</button>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button>
+                        <button id="compareGitHubBtn" class="download-report-btn" style="background:#ff9800;">📊 Vergelijk met GitHub</button>
+                    </div>
                 </div>
                 <div id="authFormArea">
                     <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
@@ -376,10 +368,10 @@
                 <thead id="tableHeader">
                     <tr id="headerRow">
                         <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
-                    </tr>
+                     </tr>
                 </thead>
                 <tbody id="membersList"></tbody>
-            </table>
+             </table>
         </div>
     </div>
 </div>
@@ -405,7 +397,8 @@
     const authCodeInput = document.getElementById('authCodeInput');
     const submitAuthBtn = document.getElementById('submitAuthBtn');
     const authMessageContainer = document.getElementById('authMessageContainer');
-    const downloadReportBtn = document.getElementById('downloadReportBtn');
+    const downloadSnapshotBtn = document.getElementById('downloadSnapshotBtn');
+    const compareGitHubBtn = document.getElementById('compareGitHubBtn');
     
     function showToast(message, isError = false) {
         const toast = document.createElement('div');
@@ -430,7 +423,8 @@
             adminSessionStatus.classList.remove('hidden');
             authorizedHintArea.classList.remove('hidden');
             editHintSpan.classList.remove('hidden');
-            downloadReportBtn.classList.remove('hidden');
+            downloadSnapshotBtn.classList.remove('hidden');
+            compareGitHubBtn.classList.remove('hidden');
             updateTableHeader(true);
         } else {
             adminSessionStatus.innerHTML = '🔒 Niet geautoriseerd';
@@ -438,7 +432,8 @@
             adminSessionStatus.classList.remove('hidden');
             authorizedHintArea.classList.add('hidden');
             editHintSpan.classList.add('hidden');
-            downloadReportBtn.classList.add('hidden');
+            downloadSnapshotBtn.classList.add('hidden');
+            compareGitHubBtn.classList.add('hidden');
             updateTableHeader(false);
         }
         if (currentClub) displayMembers();
@@ -449,25 +444,11 @@
         if (!headerRow) return;
         if (showEditColumns) {
             headerRow.innerHTML = `
-                <th>Naam</th>
-                <th>Rol</th>
-                <th>🏆 Trofeeën</th>
-                <th>⭐ Prestige</th>
-                <th>3v3 Wins</th>
-                <th>SD Wins</th>
-                <th>Ratio</th>
-                <th>Discord</th>
-                <th>⚠️ Kicklijst</th>
+                <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th><th>⚠️ Kicklijst</th>
             `;
         } else {
             headerRow.innerHTML = `
-                <th>Naam</th>
-                <th>Rol</th>
-                <th>🏆 Trofeeën</th>
-                <th>⭐ Prestige</th>
-                <th>3v3 Wins</th>
-                <th>SD Wins</th>
-                <th>Ratio</th>
+                <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
             `;
         }
     }
@@ -501,7 +482,7 @@
                 isAuthorized = true;
                 authorizedClubTag = currentClubTag;
                 updateAuthUI();
-                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklijst aanpassen en rapport downloaden.', false);
+                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklijst aanpassen en rapporten downloaden.', false);
                 authCodeInput.value = '';
                 if (currentClub) displayMembers();
             } else {
@@ -517,185 +498,33 @@
         }
     }
     
-    async function generateMonthlyReport() {
-    if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) return;
-    
-    const now = new Date();
-    let historicalData = null;
-    let usedDate = null;
-    
-    showToast('📥 Maandrapport wordt gegenereerd...', false);
-    
-    // Probeer de afgelopen 12 maanden (van huidige maand terug)
-    for (let i = 0; i <= 12; i++) {
-        const checkDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const dateStr = checkDate.toISOString().split('T')[0];
-        const githubUrl = `${GITHUB_RAW_BASE}${dateStr}.json`;
-        
-        try {
-            const response = await fetch(githubUrl);
-            if (response.ok) {
-                historicalData = await response.json();
-                usedDate = checkDate;
-                break;
-            }
-        } catch (err) {
-            // Doorgaan naar volgende maand
+    // Download huidige snapshot
+    function downloadCurrentSnapshot() {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
+            showToast('❌ Geen toegang', true);
+            return;
         }
-    }
-    
-    if (!historicalData) {
-        const modal = document.createElement('div');
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <h3 style="color:#ffd966;">⚠️ Geen historische data</h3>
-                <p style="color:#ffdeae;">Er is geen snapshot gevonden van de afgelopen 12 maanden.</p>
-                <p style="color:#ffdeae;">Download eerst een JSON bestand en upload naar GitHub.</p>
-                <button id="closeModalBtn" style="margin-top:15px; background:#ffd966; padding:8px 20px;">Sluiten</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        modal.querySelector('#closeModalBtn').onclick = () => modal.remove();
-        return;
-    }
-    
-    // Maak huidige snapshot
-    const currentSnapshot = {
-        date: new Date().toISOString(),
-        club: {
-            name: currentClub.name,
-            tag: currentClub.tag,
-            totalTrophies: currentClub.totalTrophies
-        },
-        members: currentClub.members.map((m, index) => ({
-            rank: index + 1,
-            name: m.name,
-            tag: m.tag,
-            trophies: m.trophies,
-            prestige: m.prestige,
-            role: m.role,
-            inDiscord: m.inDiscord,
-            onKickList: m.onKickList
-        }))
-    };
-    
-    // Maak rapport met vergelijking
-    const report = {
-        generatedAt: new Date().toISOString(),
-        club: currentClub.name,
-        comparisonDate: usedDate.toISOString(),
-        comparisonDateFormatted: usedDate.toLocaleDateString('nl-NL'),
-        members: currentSnapshot.members.map(current => {
-            const historical = historicalData.members?.find(h => h.tag === current.tag);
-            return {
-                name: current.name,
-                tag: current.tag,
-                role: current.role,
-                currentRank: current.rank,
-                currentTrophies: current.trophies,
-                currentPrestige: current.prestige,
-                historicalTrophies: historical?.trophies || null,
-                historicalPrestige: historical?.prestige || null,
-                historicalRank: historical?.rank || null,
-                trophyChange: historical ? current.trophies - historical.trophies : null,
-                prestigeChange: historical ? current.prestige - historical.prestige : null,
-                rankChange: historical ? historical.rank - current.rank : null, // positieve waarde = gestegen
-                inDiscord: current.inDiscord,
-                onKickList: current.onKickList
-            };
-        })
-    };
-    
-    // Sorteer op trofeeën verandering (meeste stijging eerst)
-    report.members.sort((a, b) => (b.trophyChange || 0) - (a.trophyChange || 0));
-    
-    // Toon rapport in modal
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    
-    let reportHtml = `
-        <div class="modal-content" style="max-width: 700px;">
-            <h3 style="color:#ffd966;">📊 Maandrapport - ${currentClub.name}</h3>
-            <p style="color:#ffdeae; margin-bottom: 5px;">Vergelijking met: <strong>${usedDate.toLocaleDateString('nl-NL')}</strong></p>
-            <p style="color:#ffdeae; margin-bottom: 15px; font-size:0.7rem;">(meest recente beschikbare snapshot)</p>
-            
-            <div style="background:#2c0f05; border-radius: 16px; padding: 12px; margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                    <div><strong style="color:#ffd966;">📈 Top stijgers:</strong></div>
-                    <div><strong style="color:#ffd966;">📉 Top dalers:</strong></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
-                    <div style="flex:1;">
-                        ${report.members.filter(m => (m.trophyChange || 0) > 0).slice(0, 5).map(m => 
-                            `<div style="color:#b9f6ca;">+${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`
-                        ).join('') || '<span style="color:#ffdeae;">-</span>'}
-                    </div>
-                    <div style="flex:1;">
-                        ${report.members.filter(m => (m.trophyChange || 0) < 0).slice(0, 5).map(m => 
-                            `<div style="color:#ffab91;">${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`
-                        ).join('') || '<span style="color:#ffdeae;">-</span>'}
-                    </div>
-                </div>
-            </div>
-            
-            <div style="overflow-x: auto;">
-                <table style="width:100%; font-size:0.7rem;">
-                    <thead>
-                        <tr style="background:#63200e;">
-                            <th>#</th><th>Naam</th><th>🏆 Nu</th><th>🏆 Toen</th><th>📈 Δ</th><th>⭐ Nu</th><th>⭐ Toen</th><th>⭐ Δ</th><th>📊 Pos Δ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    `;
-    
-    report.members.forEach(m => {
-        const trophyDiff = m.trophyChange !== null ? (m.trophyChange > 0 ? `+${m.trophyChange}` : m.trophyChange) : '?';
-        const prestigeDiff = m.prestigeChange !== null ? (m.prestigeChange > 0 ? `+${m.prestigeChange}` : m.prestigeChange) : '?';
-        const rankDiff = m.rankChange !== null ? (m.rankChange > 0 ? `↑${m.rankChange}` : (m.rankChange < 0 ? `↓${-m.rankChange}` : '=')) : '?';
-        const trophyColor = m.trophyChange > 0 ? '#b9f6ca' : (m.trophyChange < 0 ? '#ffab91' : '#ffd966');
-        const prestigeColor = m.prestigeChange > 0 ? '#b9f6ca' : (m.prestigeChange < 0 ? '#ffab91' : '#ffd966');
-        const rankColor = m.rankChange > 0 ? '#b9f6ca' : (m.rankChange < 0 ? '#ffab91' : '#ffd966');
         
-        reportHtml += `
-            <tr style="border-bottom:1px solid #e67e2240;">
-                <td>${m.currentRank}</td>
-                <td>${escapeHtml(m.name)}</td>
-                <td>${m.currentTrophies.toLocaleString()}</td>
-                <td>${m.historicalTrophies?.toLocaleString() || '?'}</td>
-                <td style="color:${trophyColor}; font-weight:bold;">${trophyDiff}</td>
-                <td>${m.currentPrestige}</td>
-                <td>${m.historicalPrestige || '?'}</td>
-                <td style="color:${prestigeColor}; font-weight:bold;">${prestigeDiff}</td>
-                <td style="color:${rankColor}; font-weight:bold;">${rankDiff}</td>
-            </tr>
-        `;
-    });
-    
-    reportHtml += `
-                    </tbody>
-                </table>
-            </div>
-            
-            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button id="downloadJsonBtn" style="background:#4caf50; color:white;">💾 Download JSON (huidige)</button>
-                <button id="closeReportBtn" style="background:#ffd966;">Sluiten</button>
-            </div>
-            <p style="font-size:0.6rem; color:#ffdeae; margin-top: 12px; text-align:center;">
-                💡 Upload de JSON naar GitHub voor toekomstige vergelijkingen:<br>
-                <code style="background:#2c0f05; padding:2px 6px; border-radius:8px;">https://github.com/jouwusername/realdutch-stats/tree/main/snapshots/</code>
-            </p>
-        </div>
-    `;
-    
-    modal.innerHTML = reportHtml;
-    document.body.appendChild(modal);
-    
-    const downloadBtn = modal.querySelector('#downloadJsonBtn');
-    const closeBtn = modal.querySelector('#closeReportBtn');
-    
-    downloadBtn.onclick = () => {
-        const dataStr = JSON.stringify(currentSnapshot, null, 2);
+        const snapshot = {
+            date: new Date().toISOString(),
+            club: {
+                name: currentClub.name,
+                tag: currentClub.tag,
+                totalTrophies: currentClub.totalTrophies
+            },
+            members: currentClub.members.map((m, index) => ({
+                rank: index + 1,
+                name: m.name,
+                tag: m.tag,
+                trophies: m.trophies,
+                prestige: m.prestige,
+                role: m.role,
+                inDiscord: m.inDiscord,
+                onKickList: m.onKickList
+            }))
+        };
+        
+        const dataStr = JSON.stringify(snapshot, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -705,11 +534,181 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+        
         showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
-    };
+    }
     
-    closeBtn.onclick = () => modal.remove();
-}
+    // Vergelijk met GitHub snapshot
+    async function compareWithGitHub() {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
+            showToast('❌ Geen toegang', true);
+            return;
+        }
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:#ffd966;">📊 Vergelijk met eerdere snapshot</h3>
+                <p style="color:#ffdeae; margin-bottom: 15px;">Voer de datum van de snapshot in (YYYY-MM-DD):</p>
+                <input type="date" id="snapshotDate" style="width:100%; padding:12px; border-radius:40px; border:none; margin-bottom:15px;">
+                <p style="color:#ffdeae; font-size:0.7rem; margin-bottom:15px;">Bestand moet heten: <code>Clubnaam_YYYY-MM-DD.json</code></p>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button id="compareBtn" style="background:#4caf50; color:white;">🔍 Vergelijk</button>
+                    <button id="cancelBtn" style="background:#ffd966;">Annuleren</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        const compareBtn = modal.querySelector('#compareBtn');
+        const cancelBtn = modal.querySelector('#cancelBtn');
+        const dateInput = modal.querySelector('#snapshotDate');
+        
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+        
+        compareBtn.onclick = async () => {
+            const selectedDate = dateInput.value;
+            if (!selectedDate) {
+                showToast('❌ Kies een datum', true);
+                return;
+            }
+            modal.remove();
+            
+            const filename = `${currentClub.name.replace(/ /g, '_')}_${selectedDate}.json`;
+            const githubUrl = `${GITHUB_RAW_BASE}${filename}`;
+            
+            showToast('📥 Snapshot wordt opgehaald...', false);
+            
+            try {
+                const response = await fetch(githubUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const historicalData = await response.json();
+                generateComparisonReport(historicalData, selectedDate);
+            } catch (err) {
+                showToast(`❌ Geen snapshot gevonden voor ${selectedDate}`, true);
+            }
+        };
+        
+        cancelBtn.onclick = () => modal.remove();
+    }
+    
+    function generateComparisonReport(historicalData, comparisonDate) {
+        const currentMembers = currentClub.members;
+        
+        const report = currentMembers.map(current => {
+            const historical = historicalData.members?.find(h => h.tag === current.tag);
+            return {
+                name: current.name,
+                tag: current.tag,
+                role: current.role,
+                currentRank: currentClub.members.findIndex(m => m.tag === current.tag) + 1,
+                currentTrophies: current.trophies,
+                currentPrestige: current.prestige,
+                historicalTrophies: historical?.trophies || null,
+                historicalPrestige: historical?.prestige || null,
+                historicalRank: historical?.rank || null,
+                trophyChange: historical ? current.trophies - historical.trophies : null,
+                prestigeChange: historical ? current.prestige - historical.prestige : null,
+                rankChange: historical ? historical.rank - (currentClub.members.findIndex(m => m.tag === current.tag) + 1) : null,
+                isNew: !historical,
+                left: historical && !currentClub.members.find(m => m.tag === historical.tag)
+            };
+        });
+        
+        report.sort((a, b) => (b.trophyChange || 0) - (a.trophyChange || 0));
+        
+        const formattedDate = new Date(comparisonDate).toLocaleDateString('nl-NL');
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        
+        let reportHtml = `
+            <div class="modal-content" style="max-width: 800px;">
+                <h3 style="color:#ffd966;">📊 Progressie rapport - ${currentClub.name}</h3>
+                <p style="color:#ffdeae; margin-bottom: 15px;">Vergelijking met: <strong>${formattedDate}</strong></p>
+                
+                <div style="background:#2c0f05; border-radius: 16px; padding: 12px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                        <div><strong style="color:#ffd966;">📈 Top stijgers (trofeeën):</strong></div>
+                        <div><strong style="color:#ffd966;">📉 Top dalers (trofeeën):</strong></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+                        <div style="flex:1;">
+                            ${report.filter(m => (m.trophyChange || 0) > 0).slice(0, 5).map(m => 
+                                `<div style="color:#b9f6ca;">+${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`
+                            ).join('') || '<span style="color:#ffdeae;">-</span>'}
+                        </div>
+                        <div style="flex:1;">
+                            ${report.filter(m => (m.trophyChange || 0) < 0).slice(0, 5).map(m => 
+                                `<div style="color:#ffab91;">${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`
+                            ).join('') || '<span style="color:#ffdeae;">-</span>'}
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto; max-height: 400px;">
+                    <table style="width:100%; font-size:0.7rem;">
+                        <thead>
+                            <tr style="background:#63200e; position: sticky; top: 0;">
+                                <th>#</th><th>Naam</th><th>🏆 Nu</th><th>🏆 Toen</th><th>📈 Δ</th><th>⭐ Nu</th><th>⭐ Toen</th><th>⭐ Δ</th><th>📊 Pos Δ</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        `;
+        
+        report.forEach(m => {
+            const trophyDiff = m.trophyChange !== null ? (m.trophyChange > 0 ? `+${m.trophyChange}` : m.trophyChange) : '?';
+            const prestigeDiff = m.prestigeChange !== null ? (m.prestigeChange > 0 ? `+${m.prestigeChange}` : m.prestigeChange) : '?';
+            const rankDiff = m.rankChange !== null ? (m.rankChange > 0 ? `↑${m.rankChange}` : (m.rankChange < 0 ? `↓${-m.rankChange}` : '=')) : '?';
+            const trophyColor = m.trophyChange > 0 ? '#b9f6ca' : (m.trophyChange < 0 ? '#ffab91' : '#ffd966');
+            const prestigeColor = m.prestigeChange > 0 ? '#b9f6ca' : (m.prestigeChange < 0 ? '#ffab91' : '#ffd966');
+            const rankColor = m.rankChange > 0 ? '#b9f6ca' : (m.rankChange < 0 ? '#ffab91' : '#ffd966');
+            
+            let status = '';
+            let statusColor = '#ffdeae';
+            if (m.isNew) {
+                status = '🆕 Nieuw';
+                statusColor = '#4caf50';
+            } else if (m.left) {
+                status = '❌ Weg';
+                statusColor = '#c62828';
+            }
+            
+            reportHtml += `
+                <tr style="border-bottom:1px solid #e67e2240;">
+                    <td>${m.currentRank}</td>
+                    <td>${escapeHtml(m.name)}</td>
+                    <td>${m.currentTrophies.toLocaleString()}</td>
+                    <td>${m.historicalTrophies?.toLocaleString() || '?'}</td>
+                    <td style="color:${trophyColor}; font-weight:bold;">${trophyDiff}</td>
+                    <td>${m.currentPrestige}</td>
+                    <td>${m.historicalPrestige || '?'}</td>
+                    <td style="color:${prestigeColor}; font-weight:bold;">${prestigeDiff}</td>
+                    <td style="color:${rankColor}; font-weight:bold;">${rankDiff}</td>
+                    <td style="color:${statusColor};">${status}</td>
+                </tr>
+            `;
+        });
+        
+        reportHtml += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                    <button id="closeReportBtn" style="background:#ffd966;">Sluiten</button>
+                </div>
+            </div>
+        `;
+        
+        modal.innerHTML = reportHtml;
+        document.body.appendChild(modal);
+        modal.querySelector('#closeReportBtn').onclick = () => modal.remove();
+    }
     
     async function fetchLiveClub(tag) {
         const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
@@ -1077,7 +1076,8 @@
         adminCollapsePanel.classList.toggle('hidden');
     });
     submitAuthBtn.addEventListener('click', performAuth);
-    downloadReportBtn.addEventListener('click', generateMonthlyReport);
+    downloadSnapshotBtn.addEventListener('click', downloadCurrentSnapshot);
+    compareGitHubBtn.addEventListener('click', compareWithGitHub);
     
     window.openDiscordModal = openDiscordModal;
     window.openKicklistModal = openKicklistModal;
