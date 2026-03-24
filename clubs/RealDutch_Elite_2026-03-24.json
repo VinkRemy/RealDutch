@@ -1,0 +1,290 @@
+{
+  "date": "2026-03-24T13:44:22.272Z",
+  "club": {
+    "name": "RealDutch Elite",
+    "tag": "#2GQU92GV8",
+    "totalTrophies": 2699924
+  },
+  "members": [
+    {
+      "rank": 1,
+      "name": "Joas 1323",
+      "tag": "#G802Q0QG",
+      "trophies": 113576,
+      "prestige": 103,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": true
+    },
+    {
+      "rank": 2,
+      "name": "MoonWolf🖤🤍",
+      "tag": "#82JUCQPVJ",
+      "trophies": 111580,
+      "prestige": 103,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": true
+    },
+    {
+      "rank": 3,
+      "name": "SP|Densel🐦‍🔥",
+      "tag": "#220JC0LGV",
+      "trophies": 107209,
+      "prestige": 100,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": true
+    },
+    {
+      "rank": 4,
+      "name": "nathan678",
+      "tag": "#22U8RVQRP",
+      "trophies": 107072,
+      "prestige": 101,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 5,
+      "name": "RD | tobibla11",
+      "tag": "#922VP082C",
+      "trophies": 106000,
+      "prestige": 100,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 6,
+      "name": "SP|Niels🐦‍🔥",
+      "tag": "#2VV0UY8QL",
+      "trophies": 105453,
+      "prestige": 99,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 7,
+      "name": "dirk",
+      "tag": "#2P0VQ009U",
+      "trophies": 104285,
+      "prestige": 100,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": true
+    },
+    {
+      "rank": 8,
+      "name": "Blutbad",
+      "tag": "#V0U2Y8PLV",
+      "trophies": 102371,
+      "prestige": 100,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 9,
+      "name": "Rogierklier",
+      "tag": "#VJQG0UPQ",
+      "trophies": 102156,
+      "prestige": 101,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 10,
+      "name": "kurrysaus",
+      "tag": "#2LR2V8P0",
+      "trophies": 101649,
+      "prestige": 96,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 11,
+      "name": "reinpoko boy",
+      "tag": "#9Q9GUU0QP",
+      "trophies": 101585,
+      "prestige": 99,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 12,
+      "name": "꧁ℐᶦℓℓ𝕖𝓼༒ᏦᎥᏁᏳ꧂",
+      "tag": "#880L8Q9LC",
+      "trophies": 101094,
+      "prestige": 97,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 13,
+      "name": "Omar112",
+      "tag": "#20CLYVU8V",
+      "trophies": 100896,
+      "prestige": 98,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 14,
+      "name": "龍 | 𝚋𝚓𝚘𝚛𝚗⚡",
+      "tag": "#PG28VV22L",
+      "trophies": 98705,
+      "prestige": 85,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 15,
+      "name": "𝓂𝒾𝓀𝒶🦋",
+      "tag": "#PL9LPR90P",
+      "trophies": 98146,
+      "prestige": 78,
+      "role": "vicePresident",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 16,
+      "name": "RD|𝕄𝕚𝕔𝕙𝕒☃️",
+      "tag": "#2RULC28L9",
+      "trophies": 97293,
+      "prestige": 75,
+      "role": "vicePresident",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 17,
+      "name": "andos",
+      "tag": "#92LCPQ2V",
+      "trophies": 97200,
+      "prestige": 93,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 18,
+      "name": "ⁱᵃᵐ|𝐌𝗼ⲡěყ𒆜",
+      "tag": "#PVYJ9YCL2",
+      "trophies": 96874,
+      "prestige": 84,
+      "role": "member",
+      "inDiscord": true,
+      "onKickList": false
+    },
+    {
+      "rank": 19,
+      "name": "DHC|jappie",
+      "tag": "#UL00GCJ",
+      "trophies": 96867,
+      "prestige": 94,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 20,
+      "name": "JonasW",
+      "tag": "#82RLJLVC",
+      "trophies": 96603,
+      "prestige": 66,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 21,
+      "name": "RD | Julian",
+      "tag": "#2UC2G98PL",
+      "trophies": 95720,
+      "prestige": 64,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 22,
+      "name": "RD|Johannes",
+      "tag": "#Y9L8YRJ",
+      "trophies": 95502,
+      "prestige": 93,
+      "role": "vicePresident",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 23,
+      "name": "hasty",
+      "tag": "#82QQQC929",
+      "trophies": 95161,
+      "prestige": 63,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 24,
+      "name": "Amber🐝",
+      "tag": "#Y2UPVJ000",
+      "trophies": 90206,
+      "prestige": 83,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 25,
+      "name": "RD<Nathan🥰",
+      "tag": "#909LJ29Q0",
+      "trophies": 90113,
+      "prestige": 82,
+      "role": "member",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 26,
+      "name": "RStrijder",
+      "tag": "#L2P2LQRJ",
+      "trophies": 88016,
+      "prestige": 80,
+      "role": "president",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 27,
+      "name": "Mexx ✵",
+      "tag": "#2RR8PLQJRV",
+      "trophies": 56841,
+      "prestige": 30,
+      "role": "senior",
+      "inDiscord": false,
+      "onKickList": false
+    },
+    {
+      "rank": 28,
+      "name": "RD|Thomas 2",
+      "tag": "#PUGUUL89",
+      "trophies": 41751,
+      "prestige": 3,
+      "role": "vicePresident",
+      "inDiscord": false,
+      "onKickList": false
+    }
+  ]
+}
