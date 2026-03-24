@@ -1,1 +1,1089 @@
-{}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RealDutch • Club Statistieken</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #e67e22;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #cc4125;
+            border-radius: 28px;
+            padding: 24px;
+        }
+        .brand { text-align: center; margin-bottom: 24px; }
+        .brand h1 { font-size: 3rem; color: #ffd966; font-family: Georgia, serif; }
+        .brand h2 { font-size: 1rem; color: #ffd966; margin-top: -8px; }
+        .last-updated { text-align: center; color: #ffdca8; font-size: 0.7rem; margin-bottom: 20px; }
+        .club-selector { margin-bottom: 24px; }
+        .club-dropdown {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1rem;
+            background: #ffefcf;
+            border: 2px solid #ffd966;
+            border-radius: 60px;
+            color: #5a2412;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .detail-panel { background: #b33c21; border-radius: 24px; padding: 20px; }
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid #ffd966;
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .detail-club-name { 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            color: #ffefbf;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .admin-toggle-btn, .download-report-btn {
+            background: #ffd966;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #5a2412;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .download-report-btn { background: #4caf50; color: white; }
+        .download-report-btn:hover { background: #45a049; }
+        .admin-toggle-btn:hover { background: #ffedb5; transform: scale(0.98); }
+        .detail-tag { background: #8b2c16; padding: 5px 14px; border-radius: 40px; color: #ffdeae; font-family: monospace; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #9e351d;
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.4rem; font-weight: 800; color: #ffd966; }
+        .stat-label { font-size: 0.7rem; color: #ffdeae; text-transform: uppercase; }
+        .members-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 12px;
+        }
+        .members-header h3 { color: #ffd966; font-size: 1.2rem; }
+        .member-count { background: #662211; padding: 4px 14px; border-radius: 40px; font-size: 0.75rem; color: #ffdeae; }
+        .sort-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+        .sort-btn {
+            background: #af401f;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #ffecb3;
+            cursor: pointer;
+        }
+        .sort-btn.active { background: #ffd966; color: #611f0c; }
+        .table-wrapper { overflow-x: auto; border-radius: 16px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #882e16a0;
+            font-size: 0.75rem;
+        }
+        th, td { padding: 10px 8px; text-align: left; color: #fff0cf; }
+        th { background: #63200e; color: #ffdeae; cursor: pointer; }
+        .role-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: bold;
+        }
+        .role-president { background: #c0392b; color: #ffd966; }
+        .role-vicePresident { background: #e67e22; color: #2c0f05; }
+        .role-senior { background: #9b59b6; color: #f3e5ab; }
+        .role-member { background: #2c6e9e; color: white; }
+        .prestige-badge {
+            background: #f1c40f;
+            color: #5a1e0b;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+        .discord-cell, .kicklist-cell {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .discord-cell:hover, .kicklist-cell:hover {
+            opacity: 0.7;
+            transform: scale(1.02);
+        }
+        .discord-yes { 
+            background: #2e7d32; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+            font-weight: bold;
+        }
+        .discord-no { 
+            background: #c62828; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+            font-weight: bold;
+        }
+        .kicklist-yes { 
+            background: #f39c12; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+            font-weight: bold;
+        }
+        .kicklist-no { 
+            background: #2c3e50; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+            font-weight: bold;
+        }
+        .discord-edit, .kicklist-edit {
+            background: #ffd966;
+            color: #5a2412;
+            padding: 2px 8px;
+            border-radius: 16px;
+            font-size: 0.6rem;
+            margin-left: 8px;
+        }
+        .loading, .error { text-align: center; padding: 40px; background: #c24a2a; border-radius: 24px; color: #ffdca8; }
+        .hidden { display: none; }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #cc4125;
+            padding: 24px;
+            border-radius: 28px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: left;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 40px;
+            border: none;
+            font-size: 1rem;
+        }
+        .modal-content button {
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .note {
+            background: #662211;
+            padding: 10px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 0.7rem;
+            color: #ffdeae;
+        }
+        .admin-collapse-panel {
+            background: #9e351d;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+        }
+        .admin-collapse-inner {
+            padding: 20px;
+            border-top: 1px solid #ffd966;
+        }
+        .admin-status-badge {
+            font-size: 0.7rem;
+            background: #662211;
+            padding: 4px 12px;
+            border-radius: 60px;
+            color: #ffdeae;
+        }
+        .auth-message-error {
+            background: #c62828;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+        }
+        .auth-message-success {
+            background: #2e7d32;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+        }
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2e7d32;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @media (max-width: 700px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            th, td { font-size: 0.65rem; padding: 6px 4px; }
+            .detail-club-name { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="brand">
+        <h1>RealDutch</h1>
+        <h2>Brawl Stars • Club Statistieken</h2>
+    </div>
+    
+    <div class="note">
+        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | Beheerders kunnen snapshots downloaden en vergelijken
+    </div>
+    
+    <div id="lastUpdated" class="last-updated"></div>
+    
+    <div class="club-selector">
+        <select id="clubDropdown" class="club-dropdown">
+            <option value="">-- Selecteer een club --</option>
+        </select>
+    </div>
+    
+    <div id="loading" class="loading hidden">⏳ Laden...</div>
+    <div id="error" class="error hidden"></div>
+    
+    <div id="detailPanel" class="detail-panel hidden">
+        <div class="detail-header">
+            <div class="detail-club-name">
+                <span id="clubName">-</span>
+                <button id="adminToggleBtn" class="admin-toggle-btn">🔧 Beheer</button>
+                <span id="adminSessionStatus" class="admin-status-badge hidden">⛔ Niet geautoriseerd</span>
+            </div>
+            <span class="detail-tag" id="clubTag"></span>
+        </div>
+        
+        <div id="adminCollapsePanel" class="admin-collapse-panel hidden">
+            <div class="admin-collapse-inner">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <strong style="color:#ffd966;">🔐 Beheer toegang</strong>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button>
+                        <button id="compareGitHubBtn" class="download-report-btn" style="background:#ff9800;">📊 Vergelijk met GitHub</button>
+                    </div>
+                </div>
+                <div id="authFormArea">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="password" id="authCodeInput" placeholder="Beheercode voor deze club" style="flex:2; min-width:160px; padding:10px 16px; border-radius:60px; border:none;">
+                        <button id="submitAuthBtn" style="background:#ffd966; border:none; padding:10px 20px; border-radius:60px; font-weight:bold; cursor:pointer;">✅ Toegang verlenen</button>
+                    </div>
+                    <div id="authMessageContainer" style="margin-top:12px;"></div>
+                </div>
+                <div id="authorizedHintArea" class="hidden" style="margin-top: 16px; background:#2e7d32; padding:8px 12px; border-radius: 40px; text-align:center; color:white;">
+                    ✨ Beheermodus actief — klik op Discord / Kicklijst om direct te bewerken
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="totalTrophies">0</div><div class="stat-label">Total Trophies</div></div>
+            <div class="stat-card"><div class="stat-value" id="requiredTrophies">0</div><div class="stat-label">Required</div></div>
+            <div class="stat-card"><div class="stat-value" id="memberCount">0</div><div class="stat-label">Members</div></div>
+            <div class="stat-card"><div class="stat-value" id="avgTrophies">0</div><div class="stat-label">Avg Trophies</div></div>
+        </div>
+        
+        <div class="members-header">
+            <h3>👥 Leden Statistieken <span id="editHint" class="hidden" style="font-size:0.7rem;">(beheer actief → klik op Discord/Kicklijst)</span></h3>
+            <span id="memberCountDisplay" class="member-count"></span>
+            <div class="sort-buttons">
+                <button class="sort-btn" data-sort="trophies">🏆 Trofeeën</button>
+                <button class="sort-btn" data-sort="prestige">⭐ Prestige</button>
+                <button class="sort-btn" data-sort="ratio">📊 Ratio</button>
+                <button class="sort-btn" data-sort="name">Naam</button>
+            </div>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="membersTable">
+                <thead id="tableHeader">
+                    <tr id="headerRow">
+                        <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
+                     </tr>
+                </thead>
+                <tbody id="membersList"></tbody>
+             </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = 'https://api.realdutch.club';
+    const STATS_URL = 'https://json.realdutch.club/clubs-data.json';
+    const SECRET_TOKEN = 'realdutch-secret-2024';
+    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/VinkRemy/RealDutch/refs/heads/main/clubs/';
+    
+    let statsData = null;
+    let currentClub = null;
+    let currentSort = { field: 'trophies', dir: 'desc' };
+    let isAuthorized = false;
+    let currentClubTag = null;
+    let authorizedClubTag = null;
+    
+    const adminToggleBtn = document.getElementById('adminToggleBtn');
+    const adminCollapsePanel = document.getElementById('adminCollapsePanel');
+    const adminSessionStatus = document.getElementById('adminSessionStatus');
+    const authorizedHintArea = document.getElementById('authorizedHintArea');
+    const editHintSpan = document.getElementById('editHint');
+    const authCodeInput = document.getElementById('authCodeInput');
+    const submitAuthBtn = document.getElementById('submitAuthBtn');
+    const authMessageContainer = document.getElementById('authMessageContainer');
+    const downloadSnapshotBtn = document.getElementById('downloadSnapshotBtn');
+    const compareGitHubBtn = document.getElementById('compareGitHubBtn');
+    
+    function showToast(message, isError = false) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.style.background = isError ? '#c62828' : '#2e7d32';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    
+    function showAuthMessage(message, isError) {
+        authMessageContainer.innerHTML = `<div class="${isError ? 'auth-message-error' : 'auth-message-success'}">${message}</div>`;
+        setTimeout(() => {
+            if (authMessageContainer) authMessageContainer.innerHTML = '';
+        }, 3000);
+    }
+    
+    function updateAuthUI() {
+        if (isAuthorized && authorizedClubTag === currentClubTag) {
+            adminSessionStatus.innerHTML = '✅ Beheer actief';
+            adminSessionStatus.style.background = '#2e7d32';
+            adminSessionStatus.classList.remove('hidden');
+            authorizedHintArea.classList.remove('hidden');
+            editHintSpan.classList.remove('hidden');
+            downloadSnapshotBtn.classList.remove('hidden');
+            compareGitHubBtn.classList.remove('hidden');
+            updateTableHeader(true);
+        } else {
+            adminSessionStatus.innerHTML = '🔒 Niet geautoriseerd';
+            adminSessionStatus.style.background = '#662211';
+            adminSessionStatus.classList.remove('hidden');
+            authorizedHintArea.classList.add('hidden');
+            editHintSpan.classList.add('hidden');
+            downloadSnapshotBtn.classList.add('hidden');
+            compareGitHubBtn.classList.add('hidden');
+            updateTableHeader(false);
+        }
+        if (currentClub) displayMembers();
+    }
+    
+    function updateTableHeader(showEditColumns) {
+        const headerRow = document.getElementById('headerRow');
+        if (!headerRow) return;
+        if (showEditColumns) {
+            headerRow.innerHTML = `
+                <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th><th>⚠️ Kicklijst</th>
+            `;
+        } else {
+            headerRow.innerHTML = `
+                <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
+            `;
+        }
+    }
+    
+    async function performAuth() {
+        const password = authCodeInput.value.trim();
+        if (!password) {
+            showAuthMessage('❌ Voer een beheercode in', true);
+            return;
+        }
+        if (!currentClubTag) {
+            showAuthMessage('❌ Selecteer eerst een club', true);
+            return;
+        }
+        
+        showAuthMessage('🔍 Controleren...', false);
+        
+        try {
+            const response = await fetch(`${API_BASE}/api/auth-club`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    clubTag: currentClubTag,
+                    password: password,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            
+            if (result.success) {
+                isAuthorized = true;
+                authorizedClubTag = currentClubTag;
+                updateAuthUI();
+                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklijst aanpassen en rapporten downloaden.', false);
+                authCodeInput.value = '';
+                if (currentClub) displayMembers();
+            } else {
+                showAuthMessage('❌ Onjuiste beheercode voor deze club', true);
+                isAuthorized = false;
+                authorizedClubTag = null;
+                updateAuthUI();
+            }
+        } catch (err) {
+            showAuthMessage('❌ Fout bij authenticatie: ' + err.message, true);
+            isAuthorized = false;
+            updateAuthUI();
+        }
+    }
+    
+    // Download huidige snapshot
+    function downloadCurrentSnapshot() {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
+            showToast('❌ Geen toegang', true);
+            return;
+        }
+        
+        const snapshot = {
+            date: new Date().toISOString(),
+            club: {
+                name: currentClub.name,
+                tag: currentClub.tag,
+                totalTrophies: currentClub.totalTrophies
+            },
+            members: currentClub.members.map((m, index) => ({
+                rank: index + 1,
+                name: m.name,
+                tag: m.tag,
+                trophies: m.trophies,
+                prestige: m.prestige,
+                role: m.role,
+                inDiscord: m.inDiscord,
+                onKickList: m.onKickList
+            }))
+        };
+        
+        const dataStr = JSON.stringify(snapshot, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${currentClub.name.replace(/ /g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
+    }
+    
+    // Vergelijk met GitHub snapshot
+    async function compareWithGitHub() {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
+            showToast('❌ Geen toegang', true);
+            return;
+        }
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:#ffd966;">📊 Vergelijk met eerdere snapshot</h3>
+                <p style="color:#ffdeae; margin-bottom: 15px;">Voer de datum van de snapshot in (YYYY-MM-DD):</p>
+                <input type="date" id="snapshotDate" style="width:100%; padding:12px; border-radius:40px; border:none; margin-bottom:15px;">
+                <p style="color:#ffdeae; font-size:0.7rem; margin-bottom:15px;">Bestand moet heten: <code>Clubnaam_YYYY-MM-DD.json</code></p>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button id="compareBtn" style="background:#4caf50; color:white;">🔍 Vergelijk</button>
+                    <button id="cancelBtn" style="background:#ffd966;">Annuleren</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        const compareBtn = modal.querySelector('#compareBtn');
+        const cancelBtn = modal.querySelector('#cancelBtn');
+        const dateInput = modal.querySelector('#snapshotDate');
+        
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+        
+        compareBtn.onclick = async () => {
+            const selectedDate = dateInput.value;
+            if (!selectedDate) {
+                showToast('❌ Kies een datum', true);
+                return;
+            }
+            modal.remove();
+            
+            const filename = `${currentClub.name.replace(/ /g, '_')}_${selectedDate}.json`;
+            const githubUrl = `${GITHUB_RAW_BASE}${filename}`;
+            
+            showToast('📥 Snapshot wordt opgehaald...', false);
+            
+            try {
+                const response = await fetch(githubUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const historicalData = await response.json();
+                generateComparisonReport(historicalData, selectedDate);
+            } catch (err) {
+                showToast(`❌ Geen snapshot gevonden voor ${selectedDate}`, true);
+            }
+        };
+        
+        cancelBtn.onclick = () => modal.remove();
+    }
+    
+    function generateComparisonReport(historicalData, comparisonDate) {
+        const currentMembers = currentClub.members;
+        
+        const report = currentMembers.map(current => {
+            const historical = historicalData.members?.find(h => h.tag === current.tag);
+            return {
+                name: current.name,
+                tag: current.tag,
+                role: current.role,
+                currentRank: currentClub.members.findIndex(m => m.tag === current.tag) + 1,
+                currentTrophies: current.trophies,
+                currentPrestige: current.prestige,
+                historicalTrophies: historical?.trophies || null,
+                historicalPrestige: historical?.prestige || null,
+                historicalRank: historical?.rank || null,
+                trophyChange: historical ? current.trophies - historical.trophies : null,
+                prestigeChange: historical ? current.prestige - historical.prestige : null,
+                rankChange: historical ? historical.rank - (currentClub.members.findIndex(m => m.tag === current.tag) + 1) : null,
+                isNew: !historical,
+                left: historical && !currentClub.members.find(m => m.tag === historical.tag)
+            };
+        });
+        
+        report.sort((a, b) => (b.trophyChange || 0) - (a.trophyChange || 0));
+        
+        const formattedDate = new Date(comparisonDate).toLocaleDateString('nl-NL');
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        
+        let reportHtml = `
+            <div class="modal-content" style="max-width: 800px;">
+                <h3 style="color:#ffd966;">📊 Progressie rapport - ${currentClub.name}</h3>
+                <p style="color:#ffdeae; margin-bottom: 15px;">Vergelijking met: <strong>${formattedDate}</strong></p>
+                
+                <div style="background:#2c0f05; border-radius: 16px; padding: 12px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                        <div><strong style="color:#ffd966;">📈 Top stijgers (trofeeën):</strong></div>
+                        <div><strong style="color:#ffd966;">📉 Top dalers (trofeeën):</strong></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+                        <div style="flex:1;">
+                            ${report.filter(m => (m.trophyChange || 0) > 0).slice(0, 5).map(m => 
+                                `<div style="color:#b9f6ca;">+${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`
+                            ).join('') || '<span style="color:#ffdeae;">-</span>'}
+                        </div>
+                        <div style="flex:1;">
+                            ${report.filter(m => (m.trophyChange || 0) < 0).slice(0, 5).map(m => 
+                                `<div style="color:#ffab91;">${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`
+                            ).join('') || '<span style="color:#ffdeae;">-</span>'}
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto; max-height: 400px;">
+                    <table style="width:100%; font-size:0.7rem;">
+                        <thead>
+                            <tr style="background:#63200e; position: sticky; top: 0;">
+                                <th>#</th><th>Naam</th><th>🏆 Nu</th><th>🏆 Toen</th><th>📈 Δ</th><th>⭐ Nu</th><th>⭐ Toen</th><th>⭐ Δ</th><th>📊 Pos Δ</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        `;
+        
+        report.forEach(m => {
+            const trophyDiff = m.trophyChange !== null ? (m.trophyChange > 0 ? `+${m.trophyChange}` : m.trophyChange) : '?';
+            const prestigeDiff = m.prestigeChange !== null ? (m.prestigeChange > 0 ? `+${m.prestigeChange}` : m.prestigeChange) : '?';
+            const rankDiff = m.rankChange !== null ? (m.rankChange > 0 ? `↑${m.rankChange}` : (m.rankChange < 0 ? `↓${-m.rankChange}` : '=')) : '?';
+            const trophyColor = m.trophyChange > 0 ? '#b9f6ca' : (m.trophyChange < 0 ? '#ffab91' : '#ffd966');
+            const prestigeColor = m.prestigeChange > 0 ? '#b9f6ca' : (m.prestigeChange < 0 ? '#ffab91' : '#ffd966');
+            const rankColor = m.rankChange > 0 ? '#b9f6ca' : (m.rankChange < 0 ? '#ffab91' : '#ffd966');
+            
+            let status = '';
+            let statusColor = '#ffdeae';
+            if (m.isNew) {
+                status = '🆕 Nieuw';
+                statusColor = '#4caf50';
+            } else if (m.left) {
+                status = '❌ Weg';
+                statusColor = '#c62828';
+            }
+            
+            reportHtml += `
+                <tr style="border-bottom:1px solid #e67e2240;">
+                    <td>${m.currentRank}</td>
+                    <td>${escapeHtml(m.name)}</td>
+                    <td>${m.currentTrophies.toLocaleString()}</td>
+                    <td>${m.historicalTrophies?.toLocaleString() || '?'}</td>
+                    <td style="color:${trophyColor}; font-weight:bold;">${trophyDiff}</td>
+                    <td>${m.currentPrestige}</td>
+                    <td>${m.historicalPrestige || '?'}</td>
+                    <td style="color:${prestigeColor}; font-weight:bold;">${prestigeDiff}</td>
+                    <td style="color:${rankColor}; font-weight:bold;">${rankDiff}</td>
+                    <td style="color:${statusColor};">${status}</td>
+                </tr>
+            `;
+        });
+        
+        reportHtml += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                    <button id="closeReportBtn" style="background:#ffd966;">Sluiten</button>
+                </div>
+            </div>
+        `;
+        
+        modal.innerHTML = reportHtml;
+        document.body.appendChild(modal);
+        modal.querySelector('#closeReportBtn').onclick = () => modal.remove();
+    }
+    
+    async function fetchLiveClub(tag) {
+        const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    }
+    
+    async function fetchStats() {
+        const response = await fetch(STATS_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    }
+    
+    async function loadData() {
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
+        try {
+            statsData = await fetchStats();
+            document.getElementById('lastUpdated').innerHTML = `📅 Laatste update: ${new Date(statsData.lastUpdated).toLocaleString()}`;
+            const dropdown = document.getElementById('clubDropdown');
+            const currentValue = dropdown.value;
+            dropdown.innerHTML = '<option value="">-- Selecteer een club --</option>';
+            statsData.clubs.forEach(club => {
+                const option = document.createElement('option');
+                option.value = club.tag;
+                option.textContent = `${club.name}`;
+                dropdown.appendChild(option);
+            });
+            if (currentValue && statsData.clubs.find(c => c.tag === currentValue)) {
+                dropdown.value = currentValue;
+                selectClub(currentValue);
+            }
+            document.getElementById('loading').classList.add('hidden');
+        } catch (err) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = `❌ Fout bij laden: ${err.message}`;
+        }
+    }
+    
+    async function selectClub(tag) {
+        currentClubTag = tag;
+        
+        if (authorizedClubTag !== tag) {
+            isAuthorized = false;
+            authorizedClubTag = null;
+        } else {
+            isAuthorized = true;
+        }
+        updateAuthUI();
+        adminCollapsePanel.classList.add('hidden');
+        
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
+        try {
+            const liveClub = await fetchLiveClub(tag);
+            const statsClub = statsData?.clubs?.find(c => c.tag === tag);
+            const members = liveClub.members.map(member => {
+                const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
+                return {
+                    name: member.name,
+                    tag: member.tag,
+                    role: member.role,
+                    trophies: member.trophies,
+                    prestige: statsMember?.prestige || 0,
+                    teamWins: statsMember?.teamWins || 0,
+                    showdownWins: statsMember?.showdownWins || 0,
+                    ratio: statsMember?.ratio || '0',
+                    inDiscord: statsMember?.inDiscord || false,
+                    discordName: statsMember?.discordName || null,
+                    onKickList: statsMember?.onKickList || false
+                };
+            });
+            currentClub = {
+                name: liveClub.name,
+                tag: liveClub.tag,
+                totalTrophies: liveClub.trophies,
+                requiredTrophies: liveClub.requiredTrophies || 0,
+                members: members
+            };
+            updateClubStatsDisplay();
+            displayMembers();
+            document.getElementById('detailPanel').classList.remove('hidden');
+            document.getElementById('error').classList.add('hidden');
+        } catch (err) {
+            console.error(err);
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = `❌ Fout bij laden club: ${err.message}`;
+        }
+        document.getElementById('loading').classList.add('hidden');
+    }
+    
+    function updateClubStatsDisplay() {
+        if (!currentClub) return;
+        document.getElementById('clubName').textContent = currentClub.name;
+        document.getElementById('clubTag').textContent = currentClub.tag.startsWith('#') ? currentClub.tag : `#${currentClub.tag}`;
+        document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString();
+        document.getElementById('requiredTrophies').textContent = currentClub.requiredTrophies.toLocaleString();
+        document.getElementById('memberCount').textContent = currentClub.members.length;
+        document.getElementById('memberCountDisplay').textContent = `${currentClub.members.length} leden`;
+        const avg = Math.round(currentClub.totalTrophies / currentClub.members.length);
+        document.getElementById('avgTrophies').textContent = avg.toLocaleString();
+    }
+    
+    function updateLocalMemberData(tag, updates) {
+        if (!currentClub) return;
+        const memberIndex = currentClub.members.findIndex(m => m.tag === tag);
+        if (memberIndex !== -1) {
+            currentClub.members[memberIndex] = { ...currentClub.members[memberIndex], ...updates };
+            updateClubStatsDisplay();
+            displayMembers();
+        }
+    }
+    
+    async function updateDiscordStatus(tag, inDiscord, discordName) {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
+        
+        updateLocalMemberData(tag, { inDiscord: inDiscord, discordName: discordName || null });
+        showToast(inDiscord ? `✅ ${discordName || 'Lid'} gemarkeerd als in Discord` : `❌ Lid gemarkeerd als niet in Discord`, false);
+        
+        try {
+            const response = await fetch(`${API_BASE}/api/update-json-discord`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tag: tag,
+                    inDiscord: inDiscord,
+                    discordName: discordName || null,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (!result.success) {
+                showToast('⚠️ Server sync mislukt', true);
+                await refreshCurrentClubData();
+            }
+            return result.success;
+        } catch (err) {
+            console.error(err);
+            showToast('❌ Netwerkfout', true);
+            return false;
+        }
+    }
+    
+    async function updateKicklistStatus(tag, onKickList) {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
+        
+        updateLocalMemberData(tag, { onKickList: onKickList });
+        showToast(onKickList ? `⚠️ Lid toegevoegd aan kicklijst` : `✅ Lid verwijderd van kicklijst`, false);
+        
+        try {
+            const response = await fetch(`${API_BASE}/api/update-kicklist`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tag: tag,
+                    onKickList: onKickList,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (!result.success) {
+                showToast('⚠️ Server sync mislukt', true);
+                await refreshCurrentClubData();
+            }
+            return result.success;
+        } catch (err) {
+            console.error(err);
+            showToast('❌ Netwerkfout', true);
+            return false;
+        }
+    }
+    
+    async function refreshCurrentClubData() {
+        if (!currentClubTag) return;
+        try {
+            const liveClub = await fetchLiveClub(currentClubTag);
+            const statsClub = statsData?.clubs?.find(c => c.tag === currentClubTag);
+            const members = liveClub.members.map(member => {
+                const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
+                return {
+                    name: member.name,
+                    tag: member.tag,
+                    role: member.role,
+                    trophies: member.trophies,
+                    prestige: statsMember?.prestige || 0,
+                    teamWins: statsMember?.teamWins || 0,
+                    showdownWins: statsMember?.showdownWins || 0,
+                    ratio: statsMember?.ratio || '0',
+                    inDiscord: statsMember?.inDiscord || false,
+                    discordName: statsMember?.discordName || null,
+                    onKickList: statsMember?.onKickList || false
+                };
+            });
+            currentClub = {
+                name: liveClub.name,
+                tag: liveClub.tag,
+                totalTrophies: liveClub.trophies,
+                requiredTrophies: liveClub.requiredTrophies || 0,
+                members: members
+            };
+            updateClubStatsDisplay();
+            displayMembers();
+        } catch (err) {
+            console.error('Refresh error:', err);
+        }
+    }
+    
+    function openDiscordModal(member) {
+        if (!isAuthorized) return;
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
+                <p style="color:#ffdeae; margin-bottom:10px;">Huidig: ${member.inDiscord ? '✅ In Discord' : '❌ Niet in Discord'}</p>
+                <label style="color:#ffdeae; display:block; text-align:left;">Discord gebruikersnaam:</label>
+                <input type="text" id="discordNameInput" placeholder="gebruikersnaam" value="${escapeHtml(member.discordName || '')}">
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
+                    <button id="discordYesBtn" style="background:#2e7d32; color:white; padding:8px 16px;">✅ In Discord</button>
+                    <button id="discordNoBtn" style="background:#c62828; color:white; padding:8px 16px;">❌ Niet in Discord</button>
+                </div>
+                <button id="closeModalBtn" style="margin-top:15px; background:#ffd966; padding:8px 20px;">Annuleren</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        const discordNameInput = modal.querySelector('#discordNameInput');
+        const yesBtn = modal.querySelector('#discordYesBtn');
+        const noBtn = modal.querySelector('#discordNoBtn');
+        const closeBtn = modal.querySelector('#closeModalBtn');
+        
+        const apply = async (status) => {
+            const discordName = discordNameInput.value;
+            await updateDiscordStatus(member.tag, status, discordName);
+            modal.remove();
+        };
+        yesBtn.onclick = () => apply(true);
+        noBtn.onclick = () => apply(false);
+        closeBtn.onclick = () => modal.remove();
+    }
+    
+    function openKicklistModal(member) {
+        if (!isAuthorized) return;
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
+                <p style="color:#ffdeae; margin-bottom:15px;">Huidig: ${member.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}</p>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
+                    <button id="kickYesBtn" style="background:#f39c12; color:white; padding:8px 16px;">⚠️ Toevoegen aan kicklijst</button>
+                    <button id="kickNoBtn" style="background:#2c3e50; color:white; padding:8px 16px;">✅ Verwijderen</button>
+                </div>
+                <button id="closeKickModal" style="margin-top:15px; background:#ffd966; padding:8px 20px;">Annuleren</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        const yesBtn = modal.querySelector('#kickYesBtn');
+        const noBtn = modal.querySelector('#kickNoBtn');
+        const closeBtn = modal.querySelector('#closeKickModal');
+        const apply = async (status) => {
+            await updateKicklistStatus(member.tag, status);
+            modal.remove();
+        };
+        yesBtn.onclick = () => apply(true);
+        noBtn.onclick = () => apply(false);
+        closeBtn.onclick = () => modal.remove();
+    }
+    
+    function displayMembers() {
+        if (!currentClub) return;
+        const sorted = [...currentClub.members].sort((a, b) => {
+            let aVal, bVal;
+            if (currentSort.field === 'trophies') { aVal = a.trophies; bVal = b.trophies; }
+            else if (currentSort.field === 'prestige') { aVal = a.prestige; bVal = b.prestige; }
+            else if (currentSort.field === 'ratio') { 
+                aVal = a.ratio === '∞' ? 999999 : parseFloat(a.ratio) || 0;
+                bVal = b.ratio === '∞' ? 999999 : parseFloat(b.ratio) || 0;
+            }
+            else { aVal = a.name; bVal = b.name; }
+            if (currentSort.field === 'name') {
+                return currentSort.dir === 'asc' ? aVal.localeCompare(bVal, 'nl') : bVal.localeCompare(aVal, 'nl');
+            }
+            return currentSort.dir === 'asc' ? aVal - bVal : bVal - aVal;
+        });
+        const tbody = document.getElementById('membersList');
+        const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
+        
+        if (isAuthorized && authorizedClubTag === currentClubTag) {
+            tbody.innerHTML = sorted.map(m => {
+                const roleClass = `role-${m.role}`;
+                return `
+                    <tr>
+                        <td>${escapeHtml(m.name)}</td>
+                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                        <td>${m.trophies.toLocaleString()}</td>
+                        <td><span class="prestige-badge">${m.prestige}</span></td>
+                        <td>${m.teamWins.toLocaleString()}</td>
+                        <td>${m.showdownWins.toLocaleString()}</td>
+                        <td>${m.ratio}</td>
+                        <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                            <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
+                                ${m.inDiscord ? (m.discordName ? `✓ ${escapeHtml(m.discordName)}` : '✓ In Discord') : '✗ Niet in Discord'}
+                                <span class="discord-edit">✎</span>
+                            </span>
+                        </td>
+                        <td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                            <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
+                                ${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}
+                                <span class="kicklist-edit">✎</span>
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        } else {
+            tbody.innerHTML = sorted.map(m => {
+                const roleClass = `role-${m.role}`;
+                return `
+                    <tr>
+                        <td>${escapeHtml(m.name)}</td>
+                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                        <td>${m.trophies.toLocaleString()}</td>
+                        <td><span class="prestige-badge">${m.prestige}</span></td>
+                        <td>${m.teamWins.toLocaleString()}</td>
+                        <td>${m.showdownWins.toLocaleString()}</td>
+                        <td>${m.ratio}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.sort === currentSort.field) btn.classList.add('active');
+        });
+    }
+    
+    function sortMembers(field) {
+        if (currentSort.field === field) {
+            currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.field = field;
+            currentSort.dir = 'desc';
+        }
+        displayMembers();
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    document.getElementById('clubDropdown').addEventListener('change', (e) => {
+        if (e.target.value) selectClub(e.target.value);
+    });
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+        btn.addEventListener('click', () => sortMembers(btn.dataset.sort));
+    });
+    adminToggleBtn.addEventListener('click', () => {
+        adminCollapsePanel.classList.toggle('hidden');
+    });
+    submitAuthBtn.addEventListener('click', performAuth);
+    downloadSnapshotBtn.addEventListener('click', downloadCurrentSnapshot);
+    compareGitHubBtn.addEventListener('click', compareWithGitHub);
+    
+    window.openDiscordModal = openDiscordModal;
+    window.openKicklistModal = openKicklistModal;
+    window.loadData = loadData;
+    
+    loadData();
+</script>
+</body>
+</html>
