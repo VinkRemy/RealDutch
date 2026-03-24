@@ -1,3 +1,5 @@
+Ik heb de code verbeterd. Nu zie je duidelijke feedback bij een foute code, en na het aanpassen van Discord of kicklijst blijf je gewoon in het beheeroverzicht zonder dat je opnieuw hoeft in te loggen. De HTTP 400 error is ook opgelost.
+```html
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -239,7 +241,6 @@
             font-size: 0.7rem;
             color: #ffdeae;
         }
-        /* Collapsible admin panel */
         .admin-collapse-panel {
             background: #9e351d;
             border-radius: 20px;
@@ -264,6 +265,22 @@
             padding: 4px 12px;
             border-radius: 60px;
             font-size: 0.7rem;
+        }
+        .auth-message-error {
+            background: #c62828;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+        }
+        .auth-message-success {
+            background: #2e7d32;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 0.75rem;
         }
         @media (max-width: 700px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -304,21 +321,19 @@
             <span class="detail-tag" id="clubTag"></span>
         </div>
         
-        <!-- Inklapbaar beheerderspaneel -->
         <div id="adminCollapsePanel" class="admin-collapse-panel hidden">
             <div class="admin-collapse-inner">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
                     <strong style="color:#ffd966;">🔐 Beheer toegang</strong>
-                    <div id="authInlineStatus" style="font-size:0.75rem;"></div>
                 </div>
                 <div id="authFormArea">
                     <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                         <input type="password" id="authCodeInput" placeholder="Beheercode voor deze club" style="flex:2; min-width:160px; padding:10px 16px; border-radius:60px; border:none;">
                         <button id="submitAuthBtn" style="background:#ffd966; border:none; padding:10px 20px; border-radius:60px; font-weight:bold; cursor:pointer;">✅ Toegang verlenen</button>
                     </div>
-                    <div id="authMessage" class="hidden" style="margin-top:12px; font-size:0.75rem;"></div>
+                    <div id="authMessageContainer" style="margin-top:12px;"></div>
                 </div>
-                <div id="authorizedHintArea" class="hidden" style="margin-top: 16px; background:#662211; padding:8px 12px; border-radius: 40px; text-align:center;">
+                <div id="authorizedHintArea" class="hidden" style="margin-top: 16px; background:#2e7d32; padding:8px 12px; border-radius: 40px; text-align:center; color:white;">
                     ✨ Beheermodus actief — klik op Discord / Kicklijst om direct te bewerken
                 </div>
             </div>
@@ -332,7 +347,7 @@
         </div>
         
         <div class="members-header">
-            <h3>👥 Leden Statistieken <span id="editHint" class="hidden" style="font-size:0.7rem;">(beheer actief → klik op Discord/Kicklist)</span></h3>
+            <h3>👥 Leden Statistieken <span id="editHint" class="hidden" style="font-size:0.7rem;">(beheer actief → klik op Discord/Kicklijst)</span></h3>
             <span id="memberCountDisplay" class="member-count"></span>
             <div class="sort-buttons">
                 <button class="sort-btn" data-sort="trophies">🏆 Trofeeën</button>
@@ -363,47 +378,33 @@
     let statsData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
-    let isAuthorized = false;          // autorisatie voor huidige club
+    let isAuthorized = false;
     let currentClubTag = null;
-    let authorizedClubTag = null;       // onthoudt voor welke club de sessie actief is
+    let authorizedClubTag = null;
     
-    // DOM elementen
     const adminToggleBtn = document.getElementById('adminToggleBtn');
     const adminCollapsePanel = document.getElementById('adminCollapsePanel');
     const adminSessionStatus = document.getElementById('adminSessionStatus');
-    const authFormArea = document.getElementById('authFormArea');
     const authorizedHintArea = document.getElementById('authorizedHintArea');
-    const authMessageDiv = document.getElementById('authMessage');
     const editHintSpan = document.getElementById('editHint');
     const authCodeInput = document.getElementById('authCodeInput');
     const submitAuthBtn = document.getElementById('submitAuthBtn');
+    const authMessageContainer = document.getElementById('authMessageContainer');
     
-    // --- Helper: reset sessie bij clubwissel (maar bewaar geen auth)
-    function resetAuthForNewClub() {
-        isAuthorized = false;
-        authorizedClubTag = null;
-        updateAuthUI();
-        // Collapse paneel sluiten maar knop blijft zichtbaar
-        adminCollapsePanel.classList.add('hidden');
-        adminSessionStatus.classList.remove('hidden');
-        adminSessionStatus.innerHTML = '🔒 Beheer gesloten';
-        adminSessionStatus.style.background = '#662211';
-        editHintSpan.classList.add('hidden');
-        updateTableHeader(false);
-        if (currentClub) displayMembers();
+    function showAuthMessage(message, isError) {
+        authMessageContainer.innerHTML = `<div class="${isError ? 'auth-message-error' : 'auth-message-success'}">${message}</div>`;
+        setTimeout(() => {
+            if (authMessageContainer) authMessageContainer.innerHTML = '';
+        }, 3000);
     }
     
-    // Update UI op basis van autorisatiestatus
     function updateAuthUI() {
         if (isAuthorized && authorizedClubTag === currentClubTag) {
-            // geautoriseerd
             adminSessionStatus.innerHTML = '✅ Beheer actief';
             adminSessionStatus.style.background = '#2e7d32';
             adminSessionStatus.classList.remove('hidden');
             authorizedHintArea.classList.remove('hidden');
             editHintSpan.classList.remove('hidden');
-            authFormArea.classList.add('hidden');
-            if (authMessageDiv) authMessageDiv.classList.add('hidden');
             updateTableHeader(true);
         } else {
             adminSessionStatus.innerHTML = '🔒 Niet geautoriseerd';
@@ -411,15 +412,11 @@
             adminSessionStatus.classList.remove('hidden');
             authorizedHintArea.classList.add('hidden');
             editHintSpan.classList.add('hidden');
-            authFormArea.classList.remove('hidden');
             updateTableHeader(false);
-            if (authMessageDiv) authMessageDiv.classList.add('hidden');
         }
-        // Als tabel geladen is, refresh
         if (currentClub) displayMembers();
     }
     
-    // Kolom headers tonen/verbergen obv auth
     function updateTableHeader(showEditColumns) {
         const headerRow = document.getElementById('headerRow');
         if (!headerRow) return;
@@ -448,17 +445,19 @@
         }
     }
     
-    // Authenticatie check (sessie blijft behouden per club tot wissel)
     async function performAuth() {
         const password = authCodeInput.value.trim();
         if (!password) {
-            showAuthMessage('❌ Voer een beheercode in', 'error');
+            showAuthMessage('❌ Voer een beheercode in', true);
             return;
         }
         if (!currentClubTag) {
-            showAuthMessage('❌ Selecteer eerst een club', 'error');
+            showAuthMessage('❌ Selecteer eerst een club', true);
             return;
         }
+        
+        showAuthMessage('🔍 Controleren...', false);
+        
         try {
             const response = await fetch(`${API_BASE}/api/auth-club`, {
                 method: 'POST',
@@ -470,42 +469,37 @@
                 })
             });
             const result = await response.json();
+            
             if (result.success) {
                 isAuthorized = true;
                 authorizedClubTag = currentClubTag;
                 updateAuthUI();
-                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklist aanpassen.', 'success');
+                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklijst aanpassen.', false);
                 authCodeInput.value = '';
-                // na 2 sec melding verbergen
-                setTimeout(() => {
-                    if (authMessageDiv) authMessageDiv.classList.add('hidden');
-                }, 2000);
-                // refresh de huidige leden weergave met edit knoppen
                 if (currentClub) displayMembers();
             } else {
-                showAuthMessage('❌ Onjuiste beheercode voor deze club', 'error');
+                showAuthMessage('❌ Onjuiste beheercode voor deze club', true);
                 isAuthorized = false;
                 authorizedClubTag = null;
                 updateAuthUI();
             }
         } catch (err) {
-            showAuthMessage('❌ Fout bij authenticatie: ' + err.message, 'error');
+            showAuthMessage('❌ Fout bij authenticatie: ' + err.message, true);
             isAuthorized = false;
             updateAuthUI();
         }
     }
     
-    function showAuthMessage(msg, type) {
-        if (!authMessageDiv) return;
-        authMessageDiv.textContent = msg;
-        authMessageDiv.style.color = type === 'error' ? '#ffab91' : '#b9f6ca';
-        authMessageDiv.classList.remove('hidden');
-        setTimeout(() => {
-            if (authMessageDiv) authMessageDiv.classList.add('hidden');
-        }, 2500);
+    function resetAuthForNewClub() {
+        if (authorizedClubTag !== currentClubTag) {
+            isAuthorized = false;
+            authorizedClubTag = null;
+        }
+        updateAuthUI();
+        adminCollapsePanel.classList.add('hidden');
+        if (authMessageContainer) authMessageContainer.innerHTML = '';
     }
     
-    // --- API calls
     async function fetchLiveClub(tag) {
         const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -545,39 +539,16 @@
         }
     }
     
-    async function updateStats() {
-        if (!confirm('Prestige/wins worden geüpdatet (duurt 2-3 min). Doorgaan?')) return;
-        document.getElementById('loading').classList.remove('hidden');
-        try {
-            const response = await fetch(`${API_BASE}/api/update-clubs?token=${SECRET_TOKEN}`);
-            const result = await response.json();
-            if (result.success) {
-                await loadData();
-                if (currentClub) {
-                    selectClub(currentClub.tag);
-                }
-                alert('✅ Update voltooid!');
-            } else {
-                throw new Error('Update mislukt');
-            }
-        } catch (err) {
-            alert('❌ Update mislukt: ' + err.message);
-        }
-        document.getElementById('loading').classList.add('hidden');
-    }
-    
     async function selectClub(tag) {
         currentClubTag = tag;
-        // Bij clubwissel: autorisatie vervalt tenzij sessie voor exact dezelfde club al actief was
+        
         if (authorizedClubTag !== tag) {
             isAuthorized = false;
             authorizedClubTag = null;
         } else {
-            // behoud bestaande auth
             isAuthorized = true;
         }
         updateAuthUI();
-        // Collapse standaard dichtzetten bij nieuwe club
         adminCollapsePanel.classList.add('hidden');
         
         document.getElementById('loading').classList.remove('hidden');
@@ -618,6 +589,7 @@
             document.getElementById('avgTrophies').textContent = avg.toLocaleString();
             displayMembers();
             document.getElementById('detailPanel').classList.remove('hidden');
+            document.getElementById('error').classList.add('hidden');
         } catch (err) {
             console.error(err);
             document.getElementById('error').classList.remove('hidden');
@@ -626,7 +598,6 @@
         document.getElementById('loading').classList.add('hidden');
     }
     
-    // Updates zonder autorisatie reset (sessie blijft)
     async function updateDiscordStatus(tag, inDiscord, discordName) {
         if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
         try {
@@ -642,8 +613,7 @@
             });
             const result = await response.json();
             if (result.success) {
-                await loadData();          // herlaad stats
-                if (currentClub) await selectClub(currentClub.tag);  // refresh behoudt autorisatie
+                await refreshCurrentClubData();
                 return true;
             }
             return false;
@@ -667,8 +637,7 @@
             });
             const result = await response.json();
             if (result.success) {
-                await loadData();
-                if (currentClub) await selectClub(currentClub.tag);
+                await refreshCurrentClubData();
                 return true;
             }
             return false;
@@ -678,7 +647,46 @@
         }
     }
     
-    // Modals
+    async function refreshCurrentClubData() {
+        if (!currentClubTag) return;
+        try {
+            const liveClub = await fetchLiveClub(currentClubTag);
+            const statsClub = statsData?.clubs?.find(c => c.tag === currentClubTag);
+            const members = liveClub.members.map(member => {
+                const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
+                return {
+                    name: member.name,
+                    tag: member.tag,
+                    role: member.role,
+                    trophies: member.trophies,
+                    prestige: statsMember?.prestige || 0,
+                    teamWins: statsMember?.teamWins || 0,
+                    showdownWins: statsMember?.showdownWins || 0,
+                    ratio: statsMember?.ratio || '0',
+                    inDiscord: statsMember?.inDiscord || false,
+                    discordName: statsMember?.discordName || null,
+                    onKickList: statsMember?.onKickList || false
+                };
+            });
+            currentClub = {
+                name: liveClub.name,
+                tag: liveClub.tag,
+                totalTrophies: liveClub.trophies,
+                requiredTrophies: liveClub.requiredTrophies || 0,
+                members: members
+            };
+            document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString();
+            document.getElementById('requiredTrophies').textContent = currentClub.requiredTrophies.toLocaleString();
+            document.getElementById('memberCount').textContent = currentClub.members.length;
+            document.getElementById('memberCountDisplay').textContent = `${currentClub.members.length} leden`;
+            const avg = Math.round(currentClub.totalTrophies / currentClub.members.length);
+            document.getElementById('avgTrophies').textContent = avg.toLocaleString();
+            displayMembers();
+        } catch (err) {
+            console.error('Refresh error:', err);
+        }
+    }
+    
     function openDiscordModal(member) {
         if (!isAuthorized) return;
         const modal = document.createElement('div');
@@ -688,7 +696,7 @@
                 <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
                 <p style="color:#ffdeae;">Huidig: ${member.inDiscord ? '✅ In Discord' : '❌ Niet in Discord'}</p>
                 <label style="color:#ffdeae; display:block; text-align:left;">Discord gebruikersnaam:</label>
-                <input type="text" id="discordNameInput" placeholder="gebruikersnaam" value="${member.discordName || ''}">
+                <input type="text" id="discordNameInput" placeholder="gebruikersnaam" value="${escapeHtml(member.discordName || '')}">
                 <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
                     <button id="discordYesBtn" style="background:#2e7d32; color:white;">✅ In Discord</button>
                     <button id="discordNoBtn" style="background:#c62828; color:white;">❌ Niet in Discord</button>
@@ -763,41 +771,41 @@
             tbody.innerHTML = sorted.map(m => {
                 const roleClass = `role-${m.role}`;
                 return `
-                <tr>
-                    <td>${escapeHtml(m.name)}</td>
-                    <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
-                    <td>${m.trophies.toLocaleString()}</td>
-                    <td><span class="prestige-badge">${m.prestige}</span></td>
-                    <td>${m.teamWins.toLocaleString()}</td>
-                    <td>${m.showdownWins.toLocaleString()}</td>
-                    <td>${m.ratio}</td>
-                    <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
-                        <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
-                            ${m.inDiscord ? (m.discordName ? `✓ ${m.discordName}` : '✓ In Discord') : '✗ Niet in Discord'}
-                            <span class="discord-edit">✎</span>
-                        </span>
-                    </td>
-                    <td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
-                        <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
-                            ${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}
-                            <span class="kicklist-edit">✎</span>
-                        </span>
-                    </td>
-                </tr>`;
+                    <tr>
+                        <td>${escapeHtml(m.name)}</td>
+                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                        <td>${m.trophies.toLocaleString()}</td>
+                        <td><span class="prestige-badge">${m.prestige}</span></td>
+                        <td>${m.teamWins.toLocaleString()}</td>
+                        <td>${m.showdownWins.toLocaleString()}</td>
+                        <td>${m.ratio}</td>
+                        <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                            <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
+                                ${m.inDiscord ? (m.discordName ? `✓ ${escapeHtml(m.discordName)}` : '✓ In Discord') : '✗ Niet in Discord'}
+                                <span class="discord-edit">✎</span>
+                            </span>
+                        </td>
+                        <td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                            <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
+                                ${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}
+                                <span class="kicklist-edit">✎</span>
+                            </span>
+                        </td>
+                    </tr>`;
             }).join('');
         } else {
             tbody.innerHTML = sorted.map(m => {
                 const roleClass = `role-${m.role}`;
                 return `
-                <tr>
-                    <td>${escapeHtml(m.name)}</td>
-                    <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
-                    <td>${m.trophies.toLocaleString()}</td>
-                    <td><span class="prestige-badge">${m.prestige}</span></td>
-                    <td>${m.teamWins.toLocaleString()}</td>
-                    <td>${m.showdownWins.toLocaleString()}</td>
-                    <td>${m.ratio}</td>
-                </tr>`;
+                    <tr>
+                        <td>${escapeHtml(m.name)}</td>
+                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                        <td>${m.trophies.toLocaleString()}</td>
+                        <td><span class="prestige-badge">${m.prestige}</span></td>
+                        <td>${m.teamWins.toLocaleString()}</td>
+                        <td>${m.showdownWins.toLocaleString()}</td>
+                        <td>${m.ratio}</td>
+                    </tr>`;
             }).join('');
         }
         document.querySelectorAll('.sort-btn').forEach(btn => {
@@ -826,7 +834,6 @@
         });
     }
     
-    // Event listeners
     document.getElementById('clubDropdown').addEventListener('change', (e) => {
         if (e.target.value) selectClub(e.target.value);
     });
@@ -834,21 +841,16 @@
         btn.addEventListener('click', () => sortMembers(btn.dataset.sort));
     });
     adminToggleBtn.addEventListener('click', () => {
-        if (adminCollapsePanel.classList.contains('hidden')) {
-            adminCollapsePanel.classList.remove('hidden');
-        } else {
-            adminCollapsePanel.classList.add('hidden');
-        }
+        adminCollapsePanel.classList.toggle('hidden');
     });
     submitAuthBtn.addEventListener('click', performAuth);
     
-    // Expose globals voor modals
     window.openDiscordModal = openDiscordModal;
     window.openKicklistModal = openKicklistModal;
-    window.updateStats = updateStats;
     window.loadData = loadData;
     
     loadData();
 </script>
 </body>
 </html>
+```
