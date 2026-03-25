@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RealDutch • Over ons</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Georgia', serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header met RealDutch branding */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-family: 'Georgia', serif;
+            color: #ffd966;
+            text-shadow: 4px 4px 0 #9b2e1a;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ffdca8;
+            margin-top: -10px;
+        }
+
+        /* Navigatie knoppen */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: #ffd966;
+            color: #5a2412;
+            padding: 12px 28px;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: #ffedb5;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.active {
+            background: #ffd966;
+            box-shadow: 0 0 0 3px #ffd966, 0 0 0 6px #9b2e1a;
+        }
+
+        /* Hoofd content */
+        .main-content {
+            background: #cc4125;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Welkom sectie */
+        .welcome-section {
+            background: linear-gradient(135deg, #b33c21, #9e351d);
+            padding: 40px;
+            text-align: center;
+            border-bottom: 3px solid #ffd966;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            color: #ffd966;
+            margin-bottom: 15px;
+        }
+
+        .welcome-section p {
+            font-size: 1.1rem;
+            color: #ffefbf;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .founding-date {
+            display: inline-block;
+            background: #ffd966;
+            color: #5a2412;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+
+        /* Info blokken */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            padding: 40px;
+        }
+
+        .info-card {
+            background: #9e351d;
+            border-radius: 24px;
+            padding: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-card h2 {
+            color: #ffd966;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card p {
+            color: #ffefbf;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-card li {
+            color: #ffdeae;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card li:last-child {
+            border-bottom: none;
+        }
+
+        .club-badge {
+            background: #ffd966;
+            color: #5a2412;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+        }
+
+        /* Club lijst */
+        .clubs-section {
+            padding: 0 40px 40px 40px;
+        }
+
+        .clubs-section h2 {
+            color: #ffd966;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .clubs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .club-item {
+            background: #9e351d;
+            border-radius: 20px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+            border-left: 4px solid #ffd966;
+        }
+
+        .club-item:hover {
+            background: #b33c21;
+            transform: translateX(5px);
+        }
+
+        .club-name {
+            font-weight: bold;
+            color: #ffefbf;
+            font-size: 1.1rem;
+        }
+
+        .club-tier {
+            background: #ffd966;
+            color: #5a2412;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .club-founded {
+            font-size: 0.7rem;
+            color: #ffdeae;
+            margin-top: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #8b2c16;
+            padding: 20px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer p {
+            color: #ffdeae;
+            font-size: 0.8rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            color: #ffd966;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #fff;
+        }
+
+        /* Discord knop */
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #5865F2;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .discord-btn:hover {
+            background: #4752c4;
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 700px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            .welcome-section {
+                padding: 30px 20px;
+            }
+            .welcome-section h1 {
+                font-size: 1.8rem;
+            }
+            .info-grid {
+                padding: 20px;
+                grid-template-columns: 1fr;
+            }
+            .clubs-section {
+                padding: 0 20px 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">RealDutch</div>
+        <div class="subtitle">Brawl Stars • Nederlandse Club Familie</div>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="index.html" class="nav-btn">🏆 Club Statistieken</a>
+        <a href="info.html" class="nav-btn active">ℹ️ Over RealDutch</a>
+    </div>
+
+    <div class="main-content">
+        <div class="welcome-section">
+            <h1>🇳🇱 Welkom bij RealDutch</h1>
+            <p>De grootste Nederlandstalige Brawl Stars clubfamilie!<br>
+            Wij zijn een hechte community van enthousiaste Brawl Stars spelers die samen strijden, groeien en plezier maken.</p>
+            <div class="founding-date">🎂 Opgericht op 12 december 2018</div>
+            <a href="https://discord.gg/RETwzbQPUe" class="discord-btn" target="_blank">💬 Join onze Discord</a>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h2>🏆 Wat is RealDutch?</h2>
+                <p>RealDutch is een Nederlandstalige Brawl Stars clubfamilie met meerdere clubs voor verschillende niveaus. Of je nu net begint of een doorgewinterde pro bent, er is altijd een plek voor jou!</p>
+                <p>Sinds de oprichting in december 2018 zijn we uitgegroeid tot één van de grootste Nederlandstalige communities in Brawl Stars.</p>
+            </div>
+
+            <div class="info-card">
+                <h2>⭐ Onze Missie</h2>
+                <p>Wij geloven in:</p>
+                <ul>
+                    <li>🤝 <strong>Samenwerking</strong> - Samen spelen is beter dan alleen</li>
+                    <li>📈 <strong>Groeien</strong> - Elke speler kan zich ontwikkelen</li>
+                    <li>🎯 <strong>Plezier</strong> - Brawl Stars moet leuk blijven!</li>
+                    <li>🏅 <strong>Competitie</strong> - Strijden voor de top</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h2>💎 Wat bieden wij?</h2>
+                <ul>
+                    <li>🎮 <strong>Actieve Discord community</strong> met 500+ leden</li>
+                    <li>🏆 <strong>Meerdere clubs</strong> voor elk niveau</li>
+                    <li>📊 <strong>Live statistieken</strong> via onze website</li>
+                    <li>🎯 <strong>Mega Pig evenementen</strong> elke maand</li>
+                    <li>🤝 <strong>Team play & scrims</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="clubs-section">
+            <h2>📋 Onze Clubs</h2>
+            <div class="clubs-grid">
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch <span class="club-badge">Hoofdclub</span></div>
+                        <div class="club-founded">Opgericht: december 2018</div>
+                    </div>
+                    <div class="club-tier">Tier S</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch II <span class="club-badge">Tweede club</span></div>
+                        <div class="club-founded">Opgericht: 2019</div>
+                    </div>
+                    <div class="club-tier">Tier A+</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch Elite</div>
+                        <div class="club-founded">Opgericht: 2020</div>
+                    </div>
+                    <div class="club-tier">Tier A</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch Force</div>
+                        <div class="club-founded">Opgericht: 2020</div>
+                    </div>
+                    <div class="club-tier">Tier B</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch Glory</div>
+                        <div class="club-founded">Opgericht: 2021</div>
+                    </div>
+                    <div class="club-tier">Tier B</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch Stars</div>
+                        <div class="club-founded">Opgericht: 2021</div>
+                    </div>
+                    <div class="club-tier">Tier B</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch Light</div>
+                        <div class="club-founded">Opgericht: 2022</div>
+                    </div>
+                    <div class="club-tier">Tier C</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch Nova</div>
+                        <div class="club-founded">Opgericht: 2023</div>
+                    </div>
+                    <div class="club-tier">Tier C</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch Minis</div>
+                        <div class="club-founded">Opgericht: 2023</div>
+                    </div>
+                    <div class="club-tier">Tier C</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch Mini2</div>
+                        <div class="club-founded">Opgericht: 2024</div>
+                    </div>
+                    <div class="club-tier">Tier C</div>
+                </div>
+                <div class="club-item">
+                    <div>
+                        <div class="club-name">RealDutch OG</div>
+                        <div class="club-founded">Opgericht: 2024</div>
+                    </div>
+                    <div class="club-tier">Tier F</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🏆 RealDutch • Brawl Stars Clubfamilie sinds 12 december 2018</p>
+            <p>🇳🇱 De grootste Nederlandstalige Brawl Stars community</p>
+            <div class="social-links">
+                <a href="https://discord.gg/RETwzbQPUe" target="_blank">💬 Discord</a>
+                <a href="#" target="_blank">🐦 Twitter</a>
+                <a href="#" target="_blank">📷 Instagram</a>
+                <a href="#" target="_blank">▶️ YouTube</a>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.7rem;">© 2018-2026 RealDutch • Alle rechten voorbehouden</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
