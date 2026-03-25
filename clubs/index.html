@@ -300,7 +300,6 @@
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        /* Tabel in modal styling */
         .modal-body table {
             width: 100%;
             border-collapse: collapse;
@@ -362,7 +361,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
                     <strong style="color:#ffd966;">🔐 Beheer toegang</strong>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button>
+                        <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot (Alle clubs)</button>
                         <button id="progressHistoryBtn" class="download-report-btn" style="background:#ff9800;">📊 Progressie History</button>
                     </div>
                 </div>
@@ -402,10 +401,10 @@
                 <thead id="tableHeader">
                     <tr id="headerRow">
                         <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
-                     </tr>
+                      </tr>
                 </thead>
                 <tbody id="membersList"></tbody>
-             </table>
+              </table>
         </div>
     </div>
 </div>
@@ -417,9 +416,13 @@
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/VinkRemy/RealDutch/refs/heads/main/clubs/';
     
     // ==================== HIER ZET JE DE VERSIES DIE BESCHIKBAAR ZIJN ====================
-    // Voeg hier de datums toe van de snapshots die je hebt geüpload naar GitHub
+    // Voeg hier alle snapshots toe die je hebt geüpload naar GitHub
     const AVAILABLE_VERSIONS = [
-        { label: "24 maart 2026", filename: "RealDutch_2026-03-24.json", date: "2026-03-24" }
+        { label: "1 maart 2026", filename: "snapshot_2026-03-01.json", date: "2026-03-01" },
+        { label: "1 april 2026", filename: "snapshot_2026-04-01.json", date: "2026-04-01" },
+        { label: "1 mei 2026", filename: "snapshot_2026-05-01.json", date: "2026-05-01" },
+        { label: "1 juni 2026", filename: "snapshot_2026-06-01.json", date: "2026-06-01" }
+        // Voeg hier meer versies toe
     ];
     // ================================================================================
     
@@ -543,37 +546,43 @@
         }
     }
     
+    // Download snapshot van ALLE clubs
     function downloadCurrentSnapshot() {
         if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
             showToast('❌ Geen toegang', true);
             return;
         }
         
-        const snapshot = {
+        // Verzamel alle clubs data
+        const allClubsSnapshot = {
             date: new Date().toISOString(),
-            club: {
-                name: currentClub.name,
-                tag: currentClub.tag,
-                totalTrophies: currentClub.totalTrophies
-            },
-            members: currentClub.members.map((m, index) => ({
-                rank: index + 1,
-                name: m.name,
-                tag: m.tag,
-                trophies: m.trophies,
-                prestige: m.prestige,
-                role: m.role,
-                inDiscord: m.inDiscord,
-                onKickList: m.onKickList
+            clubs: statsData.clubs.map(club => ({
+                name: club.name,
+                tag: club.tag,
+                totalTrophies: club.totalTrophies,
+                requiredTrophies: club.requiredTrophies,
+                members: club.members.map(m => ({
+                    rank: club.members.findIndex(x => x.tag === m.tag) + 1,
+                    name: m.name,
+                    tag: m.tag,
+                    trophies: m.trophies,
+                    prestige: m.prestige,
+                    role: m.role,
+                    inDiscord: m.inDiscord,
+                    onKickList: m.onKickList,
+                    teamWins: m.teamWins,
+                    showdownWins: m.showdownWins,
+                    ratio: m.ratio
+                }))
             }))
         };
         
-        const dataStr = JSON.stringify(snapshot, null, 2);
+        const dataStr = JSON.stringify(allClubsSnapshot, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${currentClub.name.replace(/ /g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `snapshot_${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -582,7 +591,7 @@
         showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
     }
     
-    // Progressie History met dropdown
+    // Progressie History - alleen voor de geselecteerde club
     function showProgressHistory() {
         if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
             showToast('❌ Geen toegang', true);
@@ -592,12 +601,9 @@
         const modalOverlay = document.createElement('div');
         modalOverlay.className = 'modal-overlay';
         
-        // Filter beschikbare versies voor deze club (alleen de filename die bij de clubnaam past)
-        const clubVersions = AVAILABLE_VERSIONS.filter(v => v.filename.startsWith(currentClub.name.replace(/ /g, '_')));
-        
         let dropdownHtml = '<option value="">-- Kies een versie --</option>';
-        clubVersions.forEach(version => {
-            dropdownHtml += `<option value="${version.filename}" data-date="${version.date}">${version.label}</option>`;
+        AVAILABLE_VERSIONS.forEach(version => {
+            dropdownHtml += `<option value="${version.filename}" data-label="${version.label}">${version.label}</option>`;
         });
         
         modalOverlay.innerHTML = `
@@ -624,11 +630,8 @@
         const progressContainer = modalOverlay.querySelector('#progressReportContainer');
         const closeBtn = modalOverlay.querySelector('#closeModalBtn');
         
-        // Sluiten bij klik op overlay (buiten de modal)
         modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                modalOverlay.remove();
-            }
+            if (e.target === modalOverlay) modalOverlay.remove();
         });
         
         closeBtn.onclick = () => modalOverlay.remove();
@@ -651,7 +654,15 @@
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const historicalData = await response.json();
                 
-                const reportHtml = generateComparisonReportHTML(historicalData, label);
+                // Zoek de historische data voor de huidige club
+                const historicalClub = historicalData.clubs?.find(c => c.name === currentClub.name);
+                
+                if (!historicalClub) {
+                    progressContainer.innerHTML = `<p style="color:#ffab91; text-align:center;">⚠️ Geen data gevonden voor ${currentClub.name} in deze snapshot</p>`;
+                    return;
+                }
+                
+                const reportHtml = generateComparisonReportHTML(historicalClub, label);
                 progressContainer.innerHTML = reportHtml;
             } catch (err) {
                 progressContainer.innerHTML = `<p style="color:#ffab91; text-align:center;">❌ Kan snapshot niet laden: ${err.message}</p>`;
@@ -659,11 +670,11 @@
         };
     }
     
-    function generateComparisonReportHTML(historicalData, comparisonLabel) {
+    function generateComparisonReportHTML(historicalClub, comparisonLabel) {
         const currentMembers = currentClub.members;
         
         const report = currentMembers.map(current => {
-            const historical = historicalData.members?.find(h => h.tag === current.tag);
+            const historical = historicalClub.members?.find(h => h.tag === current.tag);
             return {
                 name: current.name,
                 tag: current.tag,
