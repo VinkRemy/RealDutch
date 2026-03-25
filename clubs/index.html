@@ -54,7 +54,7 @@
             gap: 12px;
             flex-wrap: wrap;
         }
-        .admin-toggle-btn, .download-report-btn {
+        .admin-toggle-btn, .download-report-btn, .save-btn {
             background: #ffd966;
             border: none;
             padding: 6px 16px;
@@ -70,7 +70,9 @@
         }
         .download-report-btn { background: #4caf50; color: white; }
         .download-report-btn:hover { background: #45a049; }
-        .admin-toggle-btn:hover { background: #ffedb5; transform: scale(0.98); }
+        .save-btn { background: #ff9800; color: white; }
+        .save-btn:hover { background: #e68900; }
+        .admin-toggle-btn:hover, .save-btn:hover { transform: scale(0.98); }
         .detail-tag { background: #8b2c16; padding: 5px 14px; border-radius: 40px; color: #ffdeae; font-family: monospace; }
         .stats-grid {
             display: grid;
@@ -337,6 +339,11 @@
     
     <div id="lastUpdated" class="last-updated"></div>
     
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px; gap: 10px;">
+        <button class="refresh-btn" onclick="loadData()">🔄 Refresh Stats</button>
+        <button class="save-btn" onclick="updateStats()">📡 Update Prestige/Wins</button>
+    </div>
+    
     <div class="club-selector">
         <select id="clubDropdown" class="club-dropdown">
             <option value="">-- Selecteer een club --</option>
@@ -401,10 +408,10 @@
                 <thead id="tableHeader">
                     <tr id="headerRow">
                         <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
-                      </tr>
+                       </tr>
                 </thead>
                 <tbody id="membersList"></tbody>
-              </table>
+            </table>
         </div>
     </div>
 </div>
@@ -440,6 +447,14 @@
     const authMessageContainer = document.getElementById('authMessageContainer');
     const downloadSnapshotBtn = document.getElementById('downloadSnapshotBtn');
     const progressHistoryBtn = document.getElementById('progressHistoryBtn');
+    
+    // Enter toets op authCodeInput
+    authCodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performAuth();
+        }
+    });
     
     function showToast(message, isError = false) {
         const toast = document.createElement('div');
@@ -1084,15 +1099,15 @@
             tbody.innerHTML = sorted.map(m => {
                 const roleClass = `role-${m.role}`;
                 return `
-                     <tr>
-                         <td>${escapeHtml(m.name)}</td>
-                         <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
-                         <td>${m.trophies.toLocaleString()}</td>
-                         <td><span class="prestige-badge">${m.prestige}</span></td>
-                         <td>${m.teamWins.toLocaleString()}</td>
-                         <td>${m.showdownWins.toLocaleString()}</td>
-                         <td>${m.ratio}</td>
-                     </tr>
+                    <tr>
+                        <td>${escapeHtml(m.name)}</td>
+                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                        <td>${m.trophies.toLocaleString()}</td>
+                        <td><span class="prestige-badge">${m.prestige}</span></td>
+                        <td>${m.teamWins.toLocaleString()}</td>
+                        <td>${m.showdownWins.toLocaleString()}</td>
+                        <td>${m.ratio}</td>
+                    </tr>
                 `;
             }).join('');
         }
@@ -1135,13 +1150,6 @@
     submitAuthBtn.addEventListener('click', performAuth);
     downloadSnapshotBtn.addEventListener('click', downloadCurrentSnapshot);
     progressHistoryBtn.addEventListener('click', showProgressHistory);
-    
-    // Update stats knop
-    const updateStatsBtn = document.createElement('button');
-    updateStatsBtn.className = 'save-btn';
-    updateStatsBtn.innerHTML = '📡 Update Prestige/Wins';
-    updateStatsBtn.onclick = updateStats;
-    document.querySelector('.refresh-btn').parentElement.appendChild(updateStatsBtn);
     
     window.openDiscordModal = openDiscordModal;
     window.openKicklistModal = openKicklistModal;
