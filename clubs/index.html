@@ -332,8 +332,10 @@
     </div>
     
     <div class="note">
-        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | <div id="lastUpdated"></div>
+        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | Beheerders kunnen instellingen aanpassen
     </div>
+    
+    <div id="lastUpdated" class="last-updated"></div>
     
     <div class="club-selector">
         <select id="clubDropdown" class="club-dropdown">
@@ -359,7 +361,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
                     <strong style="color:#ffd966;">🔐 Beheer toegang</strong>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot (Alle clubs)</button>
+                        <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button>
                         <button id="progressHistoryBtn" class="download-report-btn" style="background:#ff9800;">📊 Progressie History</button>
                     </div>
                 </div>
@@ -409,18 +411,19 @@
 
 <script>
     const API_BASE = 'https://api.realdutch.club';
-    const STATS_URL = 'https://json.realdutch.club/clubs-data.json';
+    const COMBINED_URL = `${API_BASE}/api/combined-data`;
+    const UPDATE_STATS_URL = `${API_BASE}/api/update-stats`;
+    const UPDATE_SETTINGS_URL = `${API_BASE}/api/update-settings`;
     const SECRET_TOKEN = 'realdutch-secret-2024';
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/VinkRemy/RealDutch/refs/heads/main/clubs/';
     
-    // ==================== HIER ZET JE DE VERSIES DIE BESCHIKBAAR ZIJN ====================
-    // Voeg hier alle snapshots toe die je hebt geüpload naar GitHub
+    // Beschikbare versies voor progressie history
     const AVAILABLE_VERSIONS = [
-        { label: "25 maart 2026", filename: "snapshot_2026-03-25.json", date: "2026-03-25" }
+        { label: "1 maart 2026", filename: "snapshot_2026-03-01.json", date: "2026-03-01" },
+        { label: "1 april 2026", filename: "snapshot_2026-04-01.json", date: "2026-04-01" }
     ];
-    // ================================================================================
     
-    let statsData = null;
+    let combinedData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
     let isAuthorized = false;
@@ -452,10 +455,6 @@
         setTimeout(() => {
             if (authMessageContainer) authMessageContainer.innerHTML = '';
         }, 3000);
-    }
-    
-    function closeModal(modalElement) {
-        if (modalElement && modalElement.remove) modalElement.remove();
     }
     
     function updateAuthUI() {
@@ -524,7 +523,7 @@
                 isAuthorized = true;
                 authorizedClubTag = currentClubTag;
                 updateAuthUI();
-                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklijst aanpassen en rapporten downloaden.', false);
+                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklijst aanpassen.', false);
                 authCodeInput.value = '';
                 if (currentClub) displayMembers();
             } else {
@@ -542,15 +541,14 @@
     
     // Download snapshot van ALLE clubs
     function downloadCurrentSnapshot() {
-        if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag || !combinedData) {
             showToast('❌ Geen toegang', true);
             return;
         }
         
-        // Verzamel alle clubs data
         const allClubsSnapshot = {
             date: new Date().toISOString(),
-            clubs: statsData.clubs.map(club => ({
+            clubs: combinedData.clubs.map(club => ({
                 name: club.name,
                 tag: club.tag,
                 totalTrophies: club.totalTrophies,
@@ -562,8 +560,6 @@
                     trophies: m.trophies,
                     prestige: m.prestige,
                     role: m.role,
-                    inDiscord: m.inDiscord,
-                    onKickList: m.onKickList,
                     teamWins: m.teamWins,
                     showdownWins: m.showdownWins,
                     ratio: m.ratio
@@ -585,7 +581,7 @@
         showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
     }
     
-    // Progressie History - alleen voor de geselecteerde club
+    // Progressie History
     function showProgressHistory() {
         if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
             showToast('❌ Geen toegang', true);
@@ -648,7 +644,6 @@
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const historicalData = await response.json();
                 
-                // Zoek de historische data voor de huidige club
                 const historicalClub = historicalData.clubs?.find(c => c.name === currentClub.name);
                 
                 if (!historicalClub) {
@@ -760,14 +755,14 @@
         return html;
     }
     
-    async function fetchLiveClub(tag) {
-        const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
+    async function fetchCombinedData() {
+        const response = await fetch(COMBINED_URL);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     }
     
-    async function fetchStats() {
-        const response = await fetch(STATS_URL);
+    async function fetchLiveClub(tag) {
+        const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     }
@@ -776,21 +771,24 @@
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('error').classList.add('hidden');
         try {
-            statsData = await fetchStats();
-            document.getElementById('lastUpdated').innerHTML = `📅 Laatste update: ${new Date(statsData.lastUpdated).toLocaleString()}`;
+            combinedData = await fetchCombinedData();
+            document.getElementById('lastUpdated').innerHTML = `📅 Laatste update: ${new Date(combinedData.lastUpdated).toLocaleString()}`;
+            
             const dropdown = document.getElementById('clubDropdown');
             const currentValue = dropdown.value;
             dropdown.innerHTML = '<option value="">-- Selecteer een club --</option>';
-            statsData.clubs.forEach(club => {
+            combinedData.clubs.forEach(club => {
                 const option = document.createElement('option');
                 option.value = club.tag;
                 option.textContent = `${club.name}`;
                 dropdown.appendChild(option);
             });
-            if (currentValue && statsData.clubs.find(c => c.tag === currentValue)) {
+            
+            if (currentValue && combinedData.clubs.find(c => c.tag === currentValue)) {
                 dropdown.value = currentValue;
                 selectClub(currentValue);
             }
+            
             document.getElementById('loading').classList.add('hidden');
         } catch (err) {
             document.getElementById('loading').classList.add('hidden');
@@ -815,7 +813,8 @@
         document.getElementById('error').classList.add('hidden');
         try {
             const liveClub = await fetchLiveClub(tag);
-            const statsClub = statsData?.clubs?.find(c => c.tag === tag);
+            const statsClub = combinedData?.clubs?.find(c => c.tag === tag);
+            
             const members = liveClub.members.map(member => {
                 const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
                 return {
@@ -832,6 +831,7 @@
                     onKickList: statsMember?.onKickList || false
                 };
             });
+            
             currentClub = {
                 name: liveClub.name,
                 tag: liveClub.tag,
@@ -839,7 +839,16 @@
                 requiredTrophies: liveClub.requiredTrophies || 0,
                 members: members
             };
-            updateClubStatsDisplay();
+            
+            document.getElementById('clubName').textContent = currentClub.name;
+            document.getElementById('clubTag').textContent = currentClub.tag.startsWith('#') ? currentClub.tag : `#${currentClub.tag}`;
+            document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString();
+            document.getElementById('requiredTrophies').textContent = currentClub.requiredTrophies.toLocaleString();
+            document.getElementById('memberCount').textContent = currentClub.members.length;
+            document.getElementById('memberCountDisplay').textContent = `${currentClub.members.length} leden`;
+            const avg = Math.round(currentClub.totalTrophies / currentClub.members.length);
+            document.getElementById('avgTrophies').textContent = avg.toLocaleString();
+            
             displayMembers();
             document.getElementById('detailPanel').classList.remove('hidden');
             document.getElementById('error').classList.add('hidden');
@@ -851,36 +860,23 @@
         document.getElementById('loading').classList.add('hidden');
     }
     
-    function updateClubStatsDisplay() {
-        if (!currentClub) return;
-        document.getElementById('clubName').textContent = currentClub.name;
-        document.getElementById('clubTag').textContent = currentClub.tag.startsWith('#') ? currentClub.tag : `#${currentClub.tag}`;
-        document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString();
-        document.getElementById('requiredTrophies').textContent = currentClub.requiredTrophies.toLocaleString();
-        document.getElementById('memberCount').textContent = currentClub.members.length;
-        document.getElementById('memberCountDisplay').textContent = `${currentClub.members.length} leden`;
-        const avg = Math.round(currentClub.totalTrophies / currentClub.members.length);
-        document.getElementById('avgTrophies').textContent = avg.toLocaleString();
-    }
-    
-    function updateLocalMemberData(tag, updates) {
-        if (!currentClub) return;
-        const memberIndex = currentClub.members.findIndex(m => m.tag === tag);
-        if (memberIndex !== -1) {
-            currentClub.members[memberIndex] = { ...currentClub.members[memberIndex], ...updates };
-            updateClubStatsDisplay();
-            displayMembers();
-        }
-    }
-    
     async function updateDiscordStatus(tag, inDiscord, discordName) {
         if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
         
-        updateLocalMemberData(tag, { inDiscord: inDiscord, discordName: discordName || null });
+        // Update lokaal direct
+        if (currentClub) {
+            const member = currentClub.members.find(m => m.tag === tag);
+            if (member) {
+                member.inDiscord = inDiscord;
+                member.discordName = discordName || null;
+                displayMembers();
+            }
+        }
+        
         showToast(inDiscord ? `✅ ${discordName || 'Lid'} gemarkeerd als in Discord` : `❌ Lid gemarkeerd als niet in Discord`, false);
         
         try {
-            const response = await fetch(`${API_BASE}/api/update-json-discord`, {
+            const response = await fetch(UPDATE_SETTINGS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -893,7 +889,6 @@
             const result = await response.json();
             if (!result.success) {
                 showToast('⚠️ Server sync mislukt', true);
-                await refreshCurrentClubData();
             }
             return result.success;
         } catch (err) {
@@ -906,11 +901,19 @@
     async function updateKicklistStatus(tag, onKickList) {
         if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
         
-        updateLocalMemberData(tag, { onKickList: onKickList });
+        // Update lokaal direct
+        if (currentClub) {
+            const member = currentClub.members.find(m => m.tag === tag);
+            if (member) {
+                member.onKickList = onKickList;
+                displayMembers();
+            }
+        }
+        
         showToast(onKickList ? `⚠️ Lid toegevoegd aan kicklijst` : `✅ Lid verwijderd van kicklijst`, false);
         
         try {
-            const response = await fetch(`${API_BASE}/api/update-kicklist`, {
+            const response = await fetch(UPDATE_SETTINGS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -922,7 +925,6 @@
             const result = await response.json();
             if (!result.success) {
                 showToast('⚠️ Server sync mislukt', true);
-                await refreshCurrentClubData();
             }
             return result.success;
         } catch (err) {
@@ -932,38 +934,24 @@
         }
     }
     
-    async function refreshCurrentClubData() {
-        if (!currentClubTag) return;
+    async function updateStats() {
+        if (!confirm('Prestige/wins worden geüpdatet (duurt 2-3 min). Doorgaan?')) return;
+        showToast('📊 Update gestart, even geduld...', false);
+        
         try {
-            const liveClub = await fetchLiveClub(currentClubTag);
-            const statsClub = statsData?.clubs?.find(c => c.tag === currentClubTag);
-            const members = liveClub.members.map(member => {
-                const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
-                return {
-                    name: member.name,
-                    tag: member.tag,
-                    role: member.role,
-                    trophies: member.trophies,
-                    prestige: statsMember?.prestige || 0,
-                    teamWins: statsMember?.teamWins || 0,
-                    showdownWins: statsMember?.showdownWins || 0,
-                    ratio: statsMember?.ratio || '0',
-                    inDiscord: statsMember?.inDiscord || false,
-                    discordName: statsMember?.discordName || null,
-                    onKickList: statsMember?.onKickList || false
-                };
-            });
-            currentClub = {
-                name: liveClub.name,
-                tag: liveClub.tag,
-                totalTrophies: liveClub.trophies,
-                requiredTrophies: liveClub.requiredTrophies || 0,
-                members: members
-            };
-            updateClubStatsDisplay();
-            displayMembers();
+            const response = await fetch(`${UPDATE_STATS_URL}?token=${SECRET_TOKEN}`);
+            const result = await response.json();
+            if (result.success) {
+                await loadData();
+                if (currentClub) {
+                    selectClub(currentClub.tag);
+                }
+                showToast('✅ Stats update voltooid!', false);
+            } else {
+                throw new Error('Update failed');
+            }
         } catch (err) {
-            console.error('Refresh error:', err);
+            showToast('❌ Update mislukt: ' + err.message, true);
         }
     }
     
@@ -1096,18 +1084,19 @@
             tbody.innerHTML = sorted.map(m => {
                 const roleClass = `role-${m.role}`;
                 return `
-                    <tr>
-                        <td>${escapeHtml(m.name)}</td>
-                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
-                        <td>${m.trophies.toLocaleString()}</td>
-                        <td><span class="prestige-badge">${m.prestige}</span></td>
-                        <td>${m.teamWins.toLocaleString()}</td>
-                        <td>${m.showdownWins.toLocaleString()}</td>
-                        <td>${m.ratio}</td>
-                    </tr>
+                     <tr>
+                         <td>${escapeHtml(m.name)}</td>
+                         <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                         <td>${m.trophies.toLocaleString()}</td>
+                         <td><span class="prestige-badge">${m.prestige}</span></td>
+                         <td>${m.teamWins.toLocaleString()}</td>
+                         <td>${m.showdownWins.toLocaleString()}</td>
+                         <td>${m.ratio}</td>
+                     </tr>
                 `;
             }).join('');
         }
+        
         document.querySelectorAll('.sort-btn').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.sort === currentSort.field) btn.classList.add('active');
@@ -1147,9 +1136,17 @@
     downloadSnapshotBtn.addEventListener('click', downloadCurrentSnapshot);
     progressHistoryBtn.addEventListener('click', showProgressHistory);
     
+    // Update stats knop
+    const updateStatsBtn = document.createElement('button');
+    updateStatsBtn.className = 'save-btn';
+    updateStatsBtn.innerHTML = '📡 Update Prestige/Wins';
+    updateStatsBtn.onclick = updateStats;
+    document.querySelector('.refresh-btn').parentElement.appendChild(updateStatsBtn);
+    
     window.openDiscordModal = openDiscordModal;
     window.openKicklistModal = openKicklistModal;
     window.loadData = loadData;
+    window.updateStats = updateStats;
     
     loadData();
 </script>
