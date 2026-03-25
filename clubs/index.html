@@ -54,7 +54,7 @@
             gap: 12px;
             flex-wrap: wrap;
         }
-        .admin-toggle-btn, .download-report-btn, .save-btn {
+        .admin-toggle-btn, .download-report-btn {
             background: #ffd966;
             border: none;
             padding: 6px 16px;
@@ -70,9 +70,7 @@
         }
         .download-report-btn { background: #4caf50; color: white; }
         .download-report-btn:hover { background: #45a049; }
-        .save-btn { background: #ff9800; color: white; }
-        .save-btn:hover { background: #e68900; }
-        .admin-toggle-btn:hover, .save-btn:hover { transform: scale(0.98); }
+        .admin-toggle-btn:hover { transform: scale(0.98); }
         .detail-tag { background: #8b2c16; padding: 5px 14px; border-radius: 40px; color: #ffdeae; font-family: monospace; }
         .stats-grid {
             display: grid;
@@ -339,11 +337,6 @@
     
     <div id="lastUpdated" class="last-updated"></div>
     
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px; gap: 10px;">
-        <button class="refresh-btn" onclick="loadData()">🔄 Refresh Stats</button>
-        <button class="save-btn" onclick="updateStats()">📡 Update Prestige/Wins</button>
-    </div>
-    
     <div class="club-selector">
         <select id="clubDropdown" class="club-dropdown">
             <option value="">-- Selecteer een club --</option>
@@ -408,7 +401,7 @@
                 <thead id="tableHeader">
                     <tr id="headerRow">
                         <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
-                       </tr>
+                        </tr>
                 </thead>
                 <tbody id="membersList"></tbody>
             </table>
@@ -419,12 +412,10 @@
 <script>
     const API_BASE = 'https://api.realdutch.club';
     const COMBINED_URL = `${API_BASE}/api/combined-data`;
-    const UPDATE_STATS_URL = `${API_BASE}/api/update-stats`;
     const UPDATE_SETTINGS_URL = `${API_BASE}/api/update-settings`;
     const SECRET_TOKEN = 'realdutch-secret-2024';
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/VinkRemy/RealDutch/refs/heads/main/clubs/';
     
-    // Beschikbare versies voor progressie history
     const AVAILABLE_VERSIONS = [
         { label: "1 maart 2026", filename: "snapshot_2026-03-01.json", date: "2026-03-01" },
         { label: "1 april 2026", filename: "snapshot_2026-04-01.json", date: "2026-04-01" }
@@ -448,7 +439,6 @@
     const downloadSnapshotBtn = document.getElementById('downloadSnapshotBtn');
     const progressHistoryBtn = document.getElementById('progressHistoryBtn');
     
-    // Enter toets op authCodeInput
     authCodeInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -554,7 +544,6 @@
         }
     }
     
-    // Download snapshot van ALLE clubs
     function downloadCurrentSnapshot() {
         if (!isAuthorized || authorizedClubTag !== currentClubTag || !combinedData) {
             showToast('❌ Geen toegang', true);
@@ -596,7 +585,6 @@
         showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
     }
     
-    // Progressie History
     function showProgressHistory() {
         if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
             showToast('❌ Geen toegang', true);
@@ -878,7 +866,6 @@
     async function updateDiscordStatus(tag, inDiscord, discordName) {
         if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
         
-        // Update lokaal direct
         if (currentClub) {
             const member = currentClub.members.find(m => m.tag === tag);
             if (member) {
@@ -887,8 +874,6 @@
                 displayMembers();
             }
         }
-        
-        showToast(inDiscord ? `✅ ${discordName || 'Lid'} gemarkeerd als in Discord` : `❌ Lid gemarkeerd als niet in Discord`, false);
         
         try {
             const response = await fetch(UPDATE_SETTINGS_URL, {
@@ -902,10 +887,13 @@
                 })
             });
             const result = await response.json();
-            if (!result.success) {
+            if (result.success) {
+                showToast(inDiscord ? `✅ ${discordName || 'Lid'} gemarkeerd als in Discord` : `❌ Lid gemarkeerd als niet in Discord`, false);
+                return true;
+            } else {
                 showToast('⚠️ Server sync mislukt', true);
+                return false;
             }
-            return result.success;
         } catch (err) {
             console.error(err);
             showToast('❌ Netwerkfout', true);
@@ -916,7 +904,6 @@
     async function updateKicklistStatus(tag, onKickList) {
         if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
         
-        // Update lokaal direct
         if (currentClub) {
             const member = currentClub.members.find(m => m.tag === tag);
             if (member) {
@@ -924,8 +911,6 @@
                 displayMembers();
             }
         }
-        
-        showToast(onKickList ? `⚠️ Lid toegevoegd aan kicklijst` : `✅ Lid verwijderd van kicklijst`, false);
         
         try {
             const response = await fetch(UPDATE_SETTINGS_URL, {
@@ -938,35 +923,17 @@
                 })
             });
             const result = await response.json();
-            if (!result.success) {
+            if (result.success) {
+                showToast(onKickList ? `⚠️ Lid toegevoegd aan kicklijst` : `✅ Lid verwijderd van kicklijst`, false);
+                return true;
+            } else {
                 showToast('⚠️ Server sync mislukt', true);
+                return false;
             }
-            return result.success;
         } catch (err) {
             console.error(err);
             showToast('❌ Netwerkfout', true);
             return false;
-        }
-    }
-    
-    async function updateStats() {
-        if (!confirm('Prestige/wins worden geüpdatet (duurt 2-3 min). Doorgaan?')) return;
-        showToast('📊 Update gestart, even geduld...', false);
-        
-        try {
-            const response = await fetch(`${UPDATE_STATS_URL}?token=${SECRET_TOKEN}`);
-            const result = await response.json();
-            if (result.success) {
-                await loadData();
-                if (currentClub) {
-                    selectClub(currentClub.tag);
-                }
-                showToast('✅ Stats update voltooid!', false);
-            } else {
-                throw new Error('Update failed');
-            }
-        } catch (err) {
-            showToast('❌ Update mislukt: ' + err.message, true);
         }
     }
     
@@ -1154,7 +1121,6 @@
     window.openDiscordModal = openDiscordModal;
     window.openKicklistModal = openKicklistModal;
     window.loadData = loadData;
-    window.updateStats = updateStats;
     
     loadData();
 </script>
