@@ -2618,6 +2618,58 @@
       ]
     },
     {
+      "name": "RealDutch Fight",
+      "tag": "2QQCPLVUY",
+      "totalTrophies": 47560,
+      "requiredTrophies": 0,
+      "members": [
+        {
+          "rank": 1,
+          "name": "Remy",
+          "tag": "#228LJGYC9",
+          "trophies": 36634,
+          "prestige": 5,
+          "role": "president",
+          "teamWins": 3853,
+          "showdownWins": 3163,
+          "ratio": "1.22"
+        },
+        {
+          "rank": 2,
+          "name": "Tijn is pro 10",
+          "tag": "#2J0G8R9C8R",
+          "trophies": 5013,
+          "prestige": 1,
+          "role": "senior",
+          "teamWins": 11,
+          "showdownWins": 280,
+          "ratio": "0.04"
+        },
+        {
+          "rank": 3,
+          "name": "RD|𝕳tein🥊⁴",
+          "tag": "#Q0L0Q9LQ8",
+          "trophies": 4264,
+          "prestige": 0,
+          "role": "senior",
+          "teamWins": 104,
+          "showdownWins": 225,
+          "ratio": "0.46"
+        },
+        {
+          "rank": 4,
+          "name": "Thomas 6",
+          "tag": "#GP80LP0YU",
+          "trophies": 1649,
+          "prestige": 0,
+          "role": "vicePresident",
+          "teamWins": 26,
+          "showdownWins": 124,
+          "ratio": "0.21"
+        }
+      ]
+    },
+    {
       "name": "RealDutch Minis",
       "tag": "2RY829PPO",
       "totalTrophies": 424561,
