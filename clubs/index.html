@@ -328,7 +328,7 @@
         }
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 350px;
             margin: 20px 0;
         }
         .player-stats-summary {
@@ -342,7 +342,7 @@
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             th, td { font-size: 0.65rem; padding: 6px 4px; }
             .detail-club-name { font-size: 1.2rem; }
-            .chart-container { height: 250px; }
+            .chart-container { height: 280px; }
         }
     </style>
 </head>
@@ -628,12 +628,19 @@
         }
     }
     
+    function formatYAxisTicks(value) {
+        if (value >= 1000) {
+            return (value / 1000).toFixed(0) + 'k';
+        }
+        return value.toString();
+    }
+    
     async function showPlayerProgressChart(member) {
         const modalOverlay = document.createElement('div');
         modalOverlay.className = 'modal-overlay';
         
         modalOverlay.innerHTML = `
-            <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-content" style="max-width: 850px;">
                 <div class="modal-header">
                     <h3 style="color:#ffd966;">📈 Progressie Grafiek: ${escapeHtml(member.name)}</h3>
                     <p style="color:#ffdeae; margin-top: 8px;">Evolutie van trofeeën en prestige over tijd</p>
@@ -650,7 +657,7 @@
                         <canvas id="playerChart"></canvas>
                     </div>
                     <div style="font-size: 0.7rem; color: #ffdeae; text-align: center; margin-top: 10px;">
-                        📊 Laden van historische data...
+                        📊 De Y-as toont trofeeën (in duizenden) en prestige (normale waarden) op dezelfde schaal
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -713,8 +720,20 @@
         const ctx = canvas.getContext('2d');
         
         const labels = historicalDataPoints.map(p => p.date);
+        
         const trophyData = historicalDataPoints.map(p => p.trophies);
-        const prestigeData = historicalDataPoints.map(p => p.prestige);
+        const prestigeScaledData = historicalDataPoints.map(p => p.prestige * 1000);
+        
+        const allValues = [...trophyData, ...prestigeScaledData];
+        const minValue = Math.min(...allValues);
+        const maxValue = Math.max(...allValues);
+        const range = maxValue - minValue;
+        const padding = range * 0.05;
+        
+        let yMin = Math.max(0, minValue - padding);
+        let yMax = maxValue + padding;
+        
+        if (yMax <= 0) yMax = 1000;
         
         new Chart(ctx, {
             type: 'line',
@@ -732,11 +751,12 @@
                         pointBackgroundColor: '#ffd966',
                         pointBorderColor: '#5a2412',
                         pointRadius: 5,
-                        pointHoverRadius: 8
+                        pointHoverRadius: 8,
+                        yAxisID: 'y'
                     },
                     {
-                        label: '⭐ Prestige',
-                        data: prestigeData,
+                        label: '⭐ Prestige (×1000)',
+                        data: prestigeScaledData,
                         borderColor: '#4caf50',
                         backgroundColor: 'rgba(76, 175, 80, 0.1)',
                         borderWidth: 3,
@@ -745,7 +765,8 @@
                         pointBackgroundColor: '#4caf50',
                         pointBorderColor: '#2c0f05',
                         pointRadius: 5,
-                        pointHoverRadius: 8
+                        pointHoverRadius: 8,
+                        yAxisID: 'y'
                     }
                 ]
             },
@@ -768,20 +789,45 @@
                                 if (context.dataset.label.includes('Trofeeën')) {
                                     return `${label}: ${value.toLocaleString()}`;
                                 }
-                                return `${label}: ${value}`;
+                                if (context.dataset.label.includes('Prestige')) {
+                                    const actualPrestige = value / 1000;
+                                    return `${label}: ${actualPrestige} (${value.toLocaleString()} op schaal)`;
+                                }
+                                return `${label}: ${value.toLocaleString()}`;
                             }
                         }
                     }
                 },
                 scales: {
                     y: {
-                        grid: { color: '#e67e2240' },
+                        position: 'left',
+                        min: yMin,
+                        max: yMax,
+                        grid: { 
+                            color: '#e67e2240',
+                            drawBorder: true,
+                            drawOnChartArea: true
+                        },
                         title: {
                             display: true,
-                            text: 'Waarde',
-                            color: '#ffdeae'
+                            text: 'Trofeeën / Prestige (×1000)',
+                            color: '#ffdeae',
+                            font: { weight: 'bold', size: 11 }
                         },
-                        ticks: { color: '#ffdeae' }
+                        ticks: { 
+                            color: '#ffdeae',
+                            callback: function(value) {
+                                return formatYAxisTicks(value);
+                            },
+                            stepSize: function() {
+                                const range = yMax - yMin;
+                                if (range > 50000) return 10000;
+                                if (range > 20000) return 5000;
+                                if (range > 10000) return 2000;
+                                if (range > 5000) return 1000;
+                                return 500;
+                            }()
+                        }
                     },
                     x: {
                         grid: { color: '#e67e2240' },
@@ -795,6 +841,14 @@
                             maxRotation: 45,
                             minRotation: 45
                         }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 10,
+                        left: 10,
+                        right: 10
                     }
                 }
             }
@@ -936,7 +990,7 @@
                     <thead>
                         <tr style="background:#63200e; position: sticky; top: 0;">
                             <th>#</th><th>Naam</th><th>🏆 Nu</th><th>🏆 Toen</th><th>📈 Δ</th><th>⭐ Nu</th><th>⭐ Toen</th><th>⭐ Δ</th><th>📊 Pos Δ</th><th>Status</th>
-                         </tr>
+                        </tr>
                     </thead>
                     <tbody>
         `;
