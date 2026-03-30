@@ -332,18 +332,47 @@
             margin: 20px 0;
         }
         .player-stats-summary {
-            background: #9e351d;
-            border-radius: 16px;
-            padding: 15px;
+            background: linear-gradient(135deg, #2c0f05 0%, #5a2412 100%);
+            border-radius: 20px;
+            padding: 20px;
             margin-bottom: 20px;
             text-align: center;
-            color: white;
+            border: 1px solid #ffd966;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .player-stats-summary > div {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .player-stats-summary > div > div {
+            background: rgba(0,0,0,0.4);
+            padding: 12px 24px;
+            border-radius: 60px;
+            transition: transform 0.2s;
+        }
+        .player-stats-summary > div > div:hover {
+            transform: translateY(-2px);
+            background: rgba(0,0,0,0.6);
+        }
+        .player-stats-summary strong {
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        .player-stats-summary span {
+            color: #ffffff;
+            font-weight: bold;
+            margin-left: 8px;
+            font-size: 1rem;
         }
         @media (max-width: 700px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             th, td { font-size: 0.65rem; padding: 6px 4px; }
             .detail-club-name { font-size: 1.2rem; }
             .chart-container { height: 280px; }
+            .player-stats-summary > div > div { padding: 8px 16px; }
+            .player-stats-summary span { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -439,15 +468,7 @@
     const SECRET_TOKEN = 'realdutch-secret-2024';
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/VinkRemy/RealDutch/refs/heads/main/clubs/';
     
-    const AVAILABLE_VERSIONS = [
-        { label: "25 maart 2026", filename: "snapshot_2026-03-25.json", date: "2026-03-25" },
-        { label: "26 maart 2026", filename: "snapshot_2026-03-26.json", date: "2026-03-26" },
-        { label: "27 maart 2026", filename: "snapshot_2026-03-27.json", date: "2026-03-27" },
-        { label: "28 maart 2026", filename: "snapshot_2026-03-28.json", date: "2026-03-28" },
-        { label: "29 maart 2026", filename: "snapshot_2026-03-29.json", date: "2026-03-29" },
-        { label: "30 maart 2026", filename: "snapshot_2026-03-30.json", date: "2026-03-30" }
-    ];
-    
+    let AVAILABLE_VERSIONS = [];
     let combinedData = null;
     let currentClub = null;
     let currentSort = { field: 'trophies', dir: 'desc' };
@@ -525,6 +546,37 @@
                 <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
             `;
         }
+    }
+    
+    async function loadAvailableSnapshots() {
+        try {
+            const response = await fetch(`${API_BASE}/api/snapshots`);
+            const data = await response.json();
+            
+            if (data.snapshots && data.snapshots.length > 0) {
+                AVAILABLE_VERSIONS = data.snapshots.map(s => ({
+                    label: s.date.replace(/-/g, ' '),
+                    filename: s.filename,
+                    date: s.date
+                }));
+            } else {
+                useDefaultSnapshots();
+            }
+        } catch (err) {
+            console.warn('Could not load snapshots from API, using default list', err);
+            useDefaultSnapshots();
+        }
+    }
+    
+    function useDefaultSnapshots() {
+        AVAILABLE_VERSIONS = [
+            { label: "25 maart 2026", filename: "snapshot_2026-03-25.json", date: "2026-03-25" },
+            { label: "26 maart 2026", filename: "snapshot_2026-03-26.json", date: "2026-03-26" },
+            { label: "27 maart 2026", filename: "snapshot_2026-03-27.json", date: "2026-03-27" },
+            { label: "28 maart 2026", filename: "snapshot_2026-03-28.json", date: "2026-03-28" },
+            { label: "29 maart 2026", filename: "snapshot_2026-03-29.json", date: "2026-03-29" },
+            { label: "30 maart 2026", filename: "snapshot_2026-03-30.json", date: "2026-03-30" }
+        ];
     }
     
     async function performAuth() {
@@ -636,6 +688,16 @@
         return value.toString();
     }
     
+    function getRoleDisplay(role) {
+        const roleMap = {
+            president: 'President',
+            vicePresident: 'Vice Pres',
+            senior: 'Senior',
+            member: 'Member'
+        };
+        return roleMap[role] || 'Member';
+    }
+    
     async function showPlayerProgressChart(member) {
         const modalOverlay = document.createElement('div');
         modalOverlay.className = 'modal-overlay';
@@ -648,10 +710,19 @@
                 </div>
                 <div class="modal-body">
                     <div class="player-stats-summary">
-                        <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
-                            <div><strong style="color:#ffd966;">🎮 Huidige trofeeën:</strong> ${member.trophies.toLocaleString()}</div>
-                            <div><strong style="color:#ffd966;">⭐ Huidige prestige:</strong> ${member.prestige}</div>
-                            <div><strong style="color:#ffd966;">📊 Role:</strong> ${member.role}</div>
+                        <div>
+                            <div>
+                                <strong style="color: #ffd966;">🎮 Trofeeën</strong>
+                                <span>${member.trophies.toLocaleString()}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4caf50;">⭐ Prestige</strong>
+                                <span>${member.prestige}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #ff9800;">📊 Role</strong>
+                                <span>${getRoleDisplay(member.role)}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="chart-container">
@@ -675,8 +746,6 @@
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) modalOverlay.remove();
         });
-        
-        const loadingDiv = modalOverlay.querySelector('.modal-body > div:last-child');
         
         const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
         
@@ -714,8 +783,6 @@
         } else {
             historicalDataPoints.push(currentPoint);
         }
-        
-        if (loadingDiv) loadingDiv.style.display = 'none';
         
         const canvas = modalOverlay.querySelector('#playerChart');
         const ctx = canvas.getContext('2d');
@@ -756,7 +823,7 @@
                         yAxisID: 'y'
                     },
                     {
-                        label: '⭐ Prestige',
+                        label: '⭐ Prestige (×1000)',
                         data: prestigeScaledData,
                         borderColor: '#4caf50',
                         backgroundColor: 'rgba(76, 175, 80, 0.1)',
@@ -792,7 +859,7 @@
                                 }
                                 if (context.dataset.label.includes('Prestige')) {
                                     const actualPrestige = value / 1000;
-                                    return `${label}: ${actualPrestige}`;
+                                    return `⭐ Prestige: ${actualPrestige}`;
                                 }
                                 return `${label}: ${value.toLocaleString()}`;
                             }
@@ -1055,6 +1122,8 @@
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('error').classList.add('hidden');
         try {
+            await loadAvailableSnapshots();
+            
             combinedData = await fetchCombinedData();
             document.getElementById('lastUpdated').innerHTML = `📅 Laatste update: ${new Date(combinedData.lastUpdated).toLocaleString()}`;
             
