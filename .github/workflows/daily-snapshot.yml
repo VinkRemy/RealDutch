@@ -1,0 +1,114 @@
+name: Daily Snapshot
+
+on:
+  schedule:
+    # Runs at 16:00 UTC every day
+    - cron: '0 16 * * *'
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  create-snapshot:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-js: '20'
+          
+      - name: Create snapshot script
+        run: |
+          cat > create-snapshot.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          
+          const API_BASE = 'https://api.realdutch.club';
+          
+          async function fetchCombinedData() {
+            const response = await fetch(`${API_BASE}/api/combined-data`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+          }
+          
+          async function fetchClub(tag) {
+            const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+          }
+          
+          async function createSnapshot() {
+            console.log('📸 Creating daily snapshot...');
+            
+            const combinedData = await fetchCombinedData();
+            
+            const clubsData = [];
+            
+            for (const club of combinedData.clubs) {
+              console.log(`Fetching live data for ${club.name}...`);
+              const liveClub = await fetchClub(club.tag);
+              
+              const membersWithStats = liveClub.members.map(member => {
+                const statsMember = club.members?.find(sm => sm.tag === member.tag);
+                return {
+                  rank: liveClub.members.findIndex(x => x.tag === member.tag) + 1,
+                  name: member.name,
+                  tag: member.tag,
+                  trophies: member.trophies,
+                  prestige: statsMember?.prestige || 0,
+                  role: member.role,
+                  teamWins: statsMember?.teamWins || 0,
+                  showdownWins: statsMember?.showdownWins || 0,
+                  ratio: statsMember?.ratio || '0',
+                  inDiscord: statsMember?.inDiscord || false,
+                  discordName: statsMember?.discordName || null,
+                  onKickList: statsMember?.onKickList || false
+                };
+              });
+              
+              clubsData.push({
+                name: liveClub.name,
+                tag: liveClub.tag,
+                totalTrophies: liveClub.trophies,
+                requiredTrophies: liveClub.requiredTrophies || 0,
+                members: membersWithStats
+              });
+            }
+            
+            const snapshot = {
+              date: new Date().toISOString(),
+              clubs: clubsData
+            };
+            
+            const dateStr = new Date().toISOString().split('T')[0];
+            const filename = `snapshot_${dateStr}.json`;
+            const filePath = path.join('clubs', filename);
+            
+            fs.mkdirSync('clubs', { recursive: true });
+            fs.writeFileSync(filePath, JSON.stringify(snapshot, null, 2));
+            
+            console.log(`✅ Snapshot saved to ${filePath}`);
+            return { filename, filePath };
+          }
+          
+          createSnapshot()
+            .then(() => process.exit(0))
+            .catch(err => {
+              console.error('❌ Error creating snapshot:', err);
+              process.exit(1);
+            });
+          EOF
+          
+      - name: Run snapshot creation
+        run: node create-snapshot.js
+          
+      - name: Commit and push snapshot
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add clubs/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "📸 Daily snapshot $(date +'%Y-%m-%d')" && git push)
