@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" type="image/png" href="/RealDutch.png">
     <title>RealDutch • Club Statistieken</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -186,6 +187,13 @@
             font-size: 0.6rem;
             margin-left: 8px;
         }
+        .clickable-row {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .clickable-row:hover {
+            background: #9e351d80;
+        }
         .loading, .error { text-align: center; padding: 40px; background: #c24a2a; border-radius: 24px; color: #ffdca8; }
         .hidden { display: none; }
         .modal-overlay {
@@ -318,10 +326,23 @@
             position: sticky;
             top: 0;
         }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        .player-stats-summary {
+            background: #9e351d;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
         @media (max-width: 700px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             th, td { font-size: 0.65rem; padding: 6px 4px; }
             .detail-club-name { font-size: 1.2rem; }
+            .chart-container { height: 250px; }
         }
     </style>
 </head>
@@ -333,7 +354,7 @@
     </div>
     
     <div class="note">
-        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | <div id="lastUpdated"></div>
+        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | Klik op een speler in progressie-overzicht voor grafiek
     </div>
     
     <div id="lastUpdated" class="last-updated"></div>
@@ -402,7 +423,7 @@
                 <thead id="tableHeader">
                     <tr id="headerRow">
                         <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
-                        </tr>
+                    </tr>
                 </thead>
                 <tbody id="membersList"></tbody>
             </table>
@@ -432,6 +453,7 @@
     let isAuthorized = false;
     let currentClubTag = null;
     let authorizedClubTag = null;
+    let cachedHistoricalData = {};
     
     const adminToggleBtn = document.getElementById('adminToggleBtn');
     const adminCollapsePanel = document.getElementById('adminCollapsePanel');
@@ -590,6 +612,195 @@
         showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
     }
     
+    async function loadHistoricalSnapshot(filename) {
+        if (cachedHistoricalData[filename]) return cachedHistoricalData[filename];
+        
+        try {
+            const githubUrl = `${GITHUB_RAW_BASE}${filename}`;
+            const response = await fetch(githubUrl);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            cachedHistoricalData[filename] = data;
+            return data;
+        } catch (err) {
+            console.error(`Failed to load ${filename}:`, err);
+            return null;
+        }
+    }
+    
+    async function showPlayerProgressChart(member) {
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        
+        modalOverlay.innerHTML = `
+            <div class="modal-content" style="max-width: 800px;">
+                <div class="modal-header">
+                    <h3 style="color:#ffd966;">📈 Progressie Grafiek: ${escapeHtml(member.name)}</h3>
+                    <p style="color:#ffdeae; margin-top: 8px;">Evolutie van trofeeën en prestige over tijd</p>
+                </div>
+                <div class="modal-body">
+                    <div class="player-stats-summary">
+                        <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                            <div><strong style="color:#ffd966;">🎮 Huidige trofeeën:</strong> ${member.trophies.toLocaleString()}</div>
+                            <div><strong style="color:#ffd966;">⭐ Huidige prestige:</strong> ${member.prestige}</div>
+                            <div><strong style="color:#ffd966;">📊 Role:</strong> ${member.role}</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="playerChart"></canvas>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #ffdeae; text-align: center; margin-top: 10px;">
+                        📊 Laden van historische data...
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="closeChartModal" style="background:#ffd966;">Sluiten</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modalOverlay);
+        
+        const closeBtn = modalOverlay.querySelector('#closeChartModal');
+        closeBtn.onclick = () => modalOverlay.remove();
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.remove();
+        });
+        
+        const loadingDiv = modalOverlay.querySelector('.modal-body > div:last-child');
+        
+        const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        const historicalDataPoints = [];
+        
+        for (const version of sortedVersions) {
+            const snapshot = await loadHistoricalSnapshot(version.filename);
+            if (snapshot && snapshot.clubs) {
+                const historicalClub = snapshot.clubs.find(c => c.name === currentClub.name);
+                if (historicalClub && historicalClub.members) {
+                    const historicalMember = historicalClub.members.find(m => m.tag === member.tag);
+                    if (historicalMember) {
+                        historicalDataPoints.push({
+                            date: version.label,
+                            trophies: historicalMember.trophies,
+                            prestige: historicalMember.prestige
+                        });
+                    }
+                }
+            }
+        }
+        
+        const currentPoint = {
+            date: "Huidig",
+            trophies: member.trophies,
+            prestige: member.prestige
+        };
+        
+        if (historicalDataPoints.length > 0) {
+            const lastHistorical = historicalDataPoints[historicalDataPoints.length - 1];
+            if (lastHistorical.date !== currentPoint.date && 
+                (lastHistorical.trophies !== currentPoint.trophies || lastHistorical.prestige !== currentPoint.prestige)) {
+                historicalDataPoints.push(currentPoint);
+            }
+        } else {
+            historicalDataPoints.push(currentPoint);
+        }
+        
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        
+        const canvas = modalOverlay.querySelector('#playerChart');
+        const ctx = canvas.getContext('2d');
+        
+        const labels = historicalDataPoints.map(p => p.date);
+        const trophyData = historicalDataPoints.map(p => p.trophies);
+        const prestigeData = historicalDataPoints.map(p => p.prestige);
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '🏆 Trofeeën',
+                        data: trophyData,
+                        borderColor: '#ffd966',
+                        backgroundColor: 'rgba(255, 217, 102, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#ffd966',
+                        pointBorderColor: '#5a2412',
+                        pointRadius: 5,
+                        pointHoverRadius: 8
+                    },
+                    {
+                        label: '⭐ Prestige',
+                        data: prestigeData,
+                        borderColor: '#4caf50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#4caf50',
+                        pointBorderColor: '#2c0f05',
+                        pointRadius: 5,
+                        pointHoverRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#ffdeae',
+                            font: { size: 12, weight: 'bold' }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw;
+                                if (context.dataset.label.includes('Trofeeën')) {
+                                    return `${label}: ${value.toLocaleString()}`;
+                                }
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: '#e67e2240' },
+                        title: {
+                            display: true,
+                            text: 'Waarde',
+                            color: '#ffdeae'
+                        },
+                        ticks: { color: '#ffdeae' }
+                    },
+                    x: {
+                        grid: { color: '#e67e2240' },
+                        title: {
+                            display: true,
+                            text: 'Datum',
+                            color: '#ffdeae'
+                        },
+                        ticks: { 
+                            color: '#ffdeae',
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
     function showProgressHistory() {
         if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
             showToast('❌ Geen toegang', true);
@@ -608,7 +819,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 style="color:#ffd966;">📊 Progressie History - ${currentClub.name}</h3>
-                    <p style="color:#ffdeae; margin-top: 8px;">Kies een eerdere snapshot om de progressie te bekijken</p>
+                    <p style="color:#ffdeae; margin-top: 8px;">Kies een eerdere snapshot om de progressie te bekijken. <strong>Klik op een speler voor grafiek!</strong></p>
                 </div>
                 <div class="modal-body">
                     <select id="versionSelect">
@@ -647,12 +858,8 @@
             progressContainer.innerHTML = '<p style="color:#ffdeae; text-align:center;">📥 Snapshot wordt opgehaald...</p>';
             
             try {
-                const githubUrl = `${GITHUB_RAW_BASE}${filename}`;
-                const response = await fetch(githubUrl);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const historicalData = await response.json();
-                
-                const historicalClub = historicalData.clubs?.find(c => c.name === currentClub.name);
+                const snapshot = await loadHistoricalSnapshot(filename);
+                const historicalClub = snapshot?.clubs?.find(c => c.name === currentClub.name);
                 
                 if (!historicalClub) {
                     progressContainer.innerHTML = `<p style="color:#ffab91; text-align:center;">⚠️ Geen data gevonden voor ${currentClub.name} in deze snapshot</p>`;
@@ -661,6 +868,17 @@
                 
                 const reportHtml = generateComparisonReportHTML(historicalClub, label);
                 progressContainer.innerHTML = reportHtml;
+                
+                const rows = progressContainer.querySelectorAll('.clickable-row');
+                rows.forEach(row => {
+                    row.addEventListener('click', () => {
+                        const playerTag = row.getAttribute('data-player-tag');
+                        const player = currentClub.members.find(m => m.tag === playerTag);
+                        if (player) {
+                            showPlayerProgressChart(player);
+                        }
+                    });
+                });
             } catch (err) {
                 progressContainer.innerHTML = `<p style="color:#ffab91; text-align:center;">❌ Kan snapshot niet laden: ${err.message}</p>`;
             }
@@ -708,6 +926,9 @@
                         ${topDalers.length ? topDalers.map(m => `<div style="color:#ffab91; margin-top:5px;">${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`).join('') : '<div style="color:#ffdeae;">-</div>'}
                     </div>
                 </div>
+                <div style="margin-top: 12px; text-align: center; color: #ffdeae; font-size: 0.7rem;">
+                    💡 <strong>Klik op een speler</strong> om de volledige progressie grafiek te zien!
+                </div>
             </div>
             
             <div style="overflow-x: auto; max-height: 400px;">
@@ -715,7 +936,7 @@
                     <thead>
                         <tr style="background:#63200e; position: sticky; top: 0;">
                             <th>#</th><th>Naam</th><th>🏆 Nu</th><th>🏆 Toen</th><th>📈 Δ</th><th>⭐ Nu</th><th>⭐ Toen</th><th>⭐ Δ</th><th>📊 Pos Δ</th><th>Status</th>
-                        </tr>
+                         </tr>
                     </thead>
                     <tbody>
         `;
@@ -739,9 +960,9 @@
             }
             
             html += `
-                <tr style="border-bottom:1px solid #e67e2240;">
-                    <td>${m.currentRank}</td>
-                    <td>${escapeHtml(m.name)}</td>
+                <tr class="clickable-row" data-player-tag="${escapeHtml(m.tag)}" style="border-bottom:1px solid #e67e2240; cursor: pointer;">
+                    <td style="font-weight: bold;">${m.currentRank}</td>
+                    <td style="font-weight: bold;">${escapeHtml(m.name)}</td>
                     <td>${m.currentTrophies.toLocaleString()}</td>
                     <td>${m.historicalTrophies?.toLocaleString() || '?'}</td>
                     <td style="color:${trophyColor}; font-weight:bold;">${trophyDiff}</td>
@@ -1125,6 +1346,7 @@
     
     window.openDiscordModal = openDiscordModal;
     window.openKicklistModal = openKicklistModal;
+    window.showPlayerProgressChart = showPlayerProgressChart;
     window.loadData = loadData;
     
     loadData();
