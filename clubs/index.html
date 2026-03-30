@@ -755,7 +755,7 @@
                         yAxisID: 'y'
                     },
                     {
-                        label: '⭐ Prestige (×1000)',
+                        label: '⭐ Prestige',
                         data: prestigeScaledData,
                         borderColor: '#4caf50',
                         backgroundColor: 'rgba(76, 175, 80, 0.1)',
@@ -791,7 +791,7 @@
                                 }
                                 if (context.dataset.label.includes('Prestige')) {
                                     const actualPrestige = value / 1000;
-                                    return `${label}: ${actualPrestige} (${value.toLocaleString()} op schaal)`;
+                                    return `${label}: ${actualPrestige}`;
                                 }
                                 return `${label}: ${value.toLocaleString()}`;
                             }
