@@ -550,7 +550,7 @@
     
     async function loadAvailableSnapshots() {
         try {
-            const response = await fetch(`${API_BASE}/api/snapshots`);
+            const response = await fetch(`/clubs`);
             const data = await response.json();
             
             if (data.snapshots && data.snapshots.length > 0) {
