@@ -2,9 +2,8 @@ name: Daily Snapshot
 
 on:
   schedule:
-    # Runs at 16:00 UTC every day
-    - cron: '21 14 * * *'
-  workflow_dispatch:  # Allows manual trigger
+    - cron: '33 14 * * *'
+  workflow_dispatch:
 
 jobs:
   create-snapshot:
@@ -14,12 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}  # Gebruik PAT token
           
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-js: '20'
+          node-version: '20'
           
       - name: Create snapshot script
         run: |
@@ -112,3 +111,5 @@ jobs:
           git config --global user.email 'actions@github.com'
           git add clubs/
           git diff --quiet && git diff --staged --quiet || (git commit -m "📸 Daily snapshot $(date +'%Y-%m-%d')" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}  # Gebruik PAT token voor push
