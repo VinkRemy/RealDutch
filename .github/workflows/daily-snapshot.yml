@@ -3,7 +3,7 @@ name: Daily Snapshot
 on:
   schedule:
     # Runs at 16:00 UTC every day
-    - cron: '11 15 * * *'
+    - cron: '14 14 * * *'
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
