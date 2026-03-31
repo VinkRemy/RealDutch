@@ -384,7 +384,7 @@
     </div>
     
     <div class="note">
-        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | <div id="lastUpdated"></div>
+        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | Klik op een speler in progressie-overzicht voor grafiek
     </div>
     
     <div id="lastUpdated" class="last-updated"></div>
@@ -549,23 +549,44 @@
     }
     
     async function loadAvailableSnapshots() {
-        try {
-            const response = await fetch(`/clubs`);
-            const data = await response.json();
-            
-            if (data.snapshots && data.snapshots.length > 0) {
-                AVAILABLE_VERSIONS = data.snapshots.map(s => ({
-                    label: s.date.replace(/-/g, ' '),
-                    filename: s.filename,
-                    date: s.date
-                }));
-            } else {
-                useDefaultSnapshots();
+        // Lijst van snapshot bestanden die in de clubs map zouden moeten staan
+        const snapshotDates = [
+            "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", 
+            "2026-03-29", "2026-03-30", "2026-03-31"
+        ];
+        
+        const versions = [];
+        
+        for (const date of snapshotDates) {
+            const filename = `snapshot_${date}.json`;
+            // Test of het bestand bestaat door een HEAD request
+            try {
+                const response = await fetch(`${GITHUB_RAW_BASE}${filename}`, { method: 'HEAD' });
+                if (response.ok) {
+                    const [year, month, day] = date.split('-');
+                    const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
+                    versions.push({
+                        label: label,
+                        filename: filename,
+                        date: date
+                    });
+                }
+            } catch (err) {
+                console.log(`Snapshot ${filename} not found`);
             }
-        } catch (err) {
-            console.warn('Could not load snapshots from API, using default list', err);
+        }
+        
+        if (versions.length > 0) {
+            AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } else {
             useDefaultSnapshots();
         }
+    }
+    
+    function getMonthName(month) {
+        const months = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 
+                        'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+        return months[month - 1];
     }
     
     function useDefaultSnapshots() {
@@ -575,7 +596,8 @@
             { label: "27 maart 2026", filename: "snapshot_2026-03-27.json", date: "2026-03-27" },
             { label: "28 maart 2026", filename: "snapshot_2026-03-28.json", date: "2026-03-28" },
             { label: "29 maart 2026", filename: "snapshot_2026-03-29.json", date: "2026-03-29" },
-            { label: "30 maart 2026", filename: "snapshot_2026-03-30.json", date: "2026-03-30" }
+            { label: "30 maart 2026", filename: "snapshot_2026-03-30.json", date: "2026-03-30" },
+            { label: "31 maart 2026", filename: "snapshot_2026-03-31.json", date: "2026-03-31" }
         ];
     }
     
