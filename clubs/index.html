@@ -366,27 +366,6 @@
             margin-left: 8px;
             font-size: 1rem;
         }
-        .toggle-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-        .toggle-btn, .range-btn {
-            background: #af401f;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: bold;
-            color: #ffecb3;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .toggle-btn.active, .range-btn.active {
-            background: #ffd966;
-            color: #611f0c;
-        }
         @media (max-width: 700px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             th, td { font-size: 0.65rem; padding: 6px 4px; }
@@ -570,28 +549,43 @@
     }
     
     async function loadAvailableSnapshots() {
+        // Lijst van snapshot bestanden die in de clubs map zouden moeten staan
         const snapshotDates = [
             "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", 
             "2026-03-29", "2026-03-30", "2026-03-31"
         ];
+        
         const versions = [];
+        
         for (const date of snapshotDates) {
             const filename = `snapshot_${date}.json`;
+            // Test of het bestand bestaat door een HEAD request
             try {
                 const response = await fetch(`${GITHUB_RAW_BASE}${filename}`, { method: 'HEAD' });
                 if (response.ok) {
                     const [year, month, day] = date.split('-');
                     const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
-                    versions.push({ label: label, filename: filename, date: date });
+                    versions.push({
+                        label: label,
+                        filename: filename,
+                        date: date
+                    });
                 }
-            } catch (err) { console.log(`Snapshot ${filename} not found`); }
+            } catch (err) {
+                console.log(`Snapshot ${filename} not found`);
+            }
         }
-        if (versions.length > 0) AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
-        else useDefaultSnapshots();
+        
+        if (versions.length > 0) {
+            AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } else {
+            useDefaultSnapshots();
+        }
     }
     
     function getMonthName(month) {
-        const months = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+        const months = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 
+                        'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
         return months[month - 1];
     }
     
@@ -609,81 +603,176 @@
     
     async function performAuth() {
         const password = authCodeInput.value.trim();
-        if (!password) { showAuthMessage('❌ Voer een beheercode in', true); return; }
-        if (!currentClubTag) { showAuthMessage('❌ Selecteer eerst een club', true); return; }
+        if (!password) {
+            showAuthMessage('❌ Voer een beheercode in', true);
+            return;
+        }
+        if (!currentClubTag) {
+            showAuthMessage('❌ Selecteer eerst een club', true);
+            return;
+        }
+        
         showAuthMessage('🔍 Controleren...', false);
+        
         try {
             const response = await fetch(`${API_BASE}/api/auth-club`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ clubTag: currentClubTag, password: password, secretToken: SECRET_TOKEN })
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    clubTag: currentClubTag,
+                    password: password,
+                    secretToken: SECRET_TOKEN
+                })
             });
             const result = await response.json();
+            
             if (result.success) {
-                isAuthorized = true; authorizedClubTag = currentClubTag; updateAuthUI();
+                isAuthorized = true;
+                authorizedClubTag = currentClubTag;
+                updateAuthUI();
                 showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklijst aanpassen.', false);
                 authCodeInput.value = '';
                 if (currentClub) displayMembers();
-            } else { showAuthMessage('❌ Onjuiste beheercode voor deze club', true); isAuthorized = false; authorizedClubTag = null; updateAuthUI(); }
-        } catch (err) { showAuthMessage('❌ Fout bij authenticatie: ' + err.message, true); isAuthorized = false; updateAuthUI(); }
+            } else {
+                showAuthMessage('❌ Onjuiste beheercode voor deze club', true);
+                isAuthorized = false;
+                authorizedClubTag = null;
+                updateAuthUI();
+            }
+        } catch (err) {
+            showAuthMessage('❌ Fout bij authenticatie: ' + err.message, true);
+            isAuthorized = false;
+            updateAuthUI();
+        }
     }
     
     function downloadCurrentSnapshot() {
-        if (!isAuthorized || authorizedClubTag !== currentClubTag || !combinedData) { showToast('❌ Geen toegang', true); return; }
-        const allClubsSnapshot = { date: new Date().toISOString(), clubs: combinedData.clubs.map(club => ({ name: club.name, tag: club.tag, totalTrophies: club.totalTrophies, requiredTrophies: club.requiredTrophies, members: club.members.map(m => ({ rank: club.members.findIndex(x => x.tag === m.tag) + 1, name: m.name, tag: m.tag, trophies: m.trophies, prestige: m.prestige, role: m.role, teamWins: m.teamWins, showdownWins: m.showdownWins, ratio: m.ratio })) })) };
+        if (!isAuthorized || authorizedClubTag !== currentClubTag || !combinedData) {
+            showToast('❌ Geen toegang', true);
+            return;
+        }
+        
+        const allClubsSnapshot = {
+            date: new Date().toISOString(),
+            clubs: combinedData.clubs.map(club => ({
+                name: club.name,
+                tag: club.tag,
+                totalTrophies: club.totalTrophies,
+                requiredTrophies: club.requiredTrophies,
+                members: club.members.map(m => ({
+                    rank: club.members.findIndex(x => x.tag === m.tag) + 1,
+                    name: m.name,
+                    tag: m.tag,
+                    trophies: m.trophies,
+                    prestige: m.prestige,
+                    role: m.role,
+                    teamWins: m.teamWins,
+                    showdownWins: m.showdownWins,
+                    ratio: m.ratio
+                }))
+            }))
+        };
+        
         const dataStr = JSON.stringify(allClubsSnapshot, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `snapshot_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `snapshot_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
         showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
     }
     
     async function loadHistoricalSnapshot(filename) {
         if (cachedHistoricalData[filename]) return cachedHistoricalData[filename];
+        
         try {
-            const response = await fetch(`${GITHUB_RAW_BASE}${filename}`);
+            const githubUrl = `${GITHUB_RAW_BASE}${filename}`;
+            const response = await fetch(githubUrl);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
             cachedHistoricalData[filename] = data;
             return data;
-        } catch (err) { console.error(`Failed to load ${filename}:`, err); return null; }
+        } catch (err) {
+            console.error(`Failed to load ${filename}:`, err);
+            return null;
+        }
     }
     
-    function formatYAxisTicks(value) { return value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value.toString(); }
-    function getRoleDisplay(role) { const roleMap = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' }; return roleMap[role] || 'Member'; }
+    function formatYAxisTicks(value) {
+        if (value >= 1000) {
+            return (value / 1000).toFixed(0) + 'k';
+        }
+        return value.toString();
+    }
     
-    // NIEUWE GRAFIEK FUNCTIE MET TOGGLE EN RANGE
-    let currentChartInstance = null;
-    let currentChartDataPoints = [];
-    
-    function getDateRangeFilter(range) {
-        const now = new Date();
-        if (range === '7d') { const d = new Date(); d.setDate(now.getDate() - 7); return d; }
-        if (range === '28d') { const d = new Date(); d.setDate(now.getDate() - 28); return d; }
-        if (range === '365d') { const d = new Date(); d.setDate(now.getDate() - 365); return d; }
-        return null;
+    function getRoleDisplay(role) {
+        const roleMap = {
+            president: 'President',
+            vicePresident: 'Vice Pres',
+            senior: 'Senior',
+            member: 'Member'
+        };
+        return roleMap[role] || 'Member';
     }
     
     async function showPlayerProgressChart(member) {
-        const modalOverlay = document.createElement('div'); modalOverlay.className = 'modal-overlay';
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        
         modalOverlay.innerHTML = `
-            <div class="modal-content" style="max-width: 950px;">
-                <div class="modal-header"><h3 style="color:#ffd966;">📈 Progressie Grafiek: ${escapeHtml(member.name)}</h3></div>
-                <div class="modal-body">
-                    <div class="player-stats-summary"><div><div><strong>🏆 Trofeeën</strong><span>${member.trophies.toLocaleString()}</span></div><div><strong>⭐ Prestige</strong><span>${member.prestige}</span></div><div><strong>📊 Rang</strong><span>#${currentClub.members.findIndex(m => m.tag === member.tag)+1}</span></div></div></div>
-                    <div class="toggle-group" id="metricToggleGroup"><button class="toggle-btn active" data-metric="trophies">🏆 Trofeeën</button><button class="toggle-btn" data-metric="prestige">⭐ Prestige</button><button class="toggle-btn" data-metric="rank">📈 Rang</button></div>
-                    <div class="toggle-group" id="rangeToggleGroup"><button class="range-btn active" data-range="all">📅 Alles</button><button class="range-btn" data-range="7d">🗓️ 7 dagen</button><button class="range-btn" data-range="28d">📆 28 dagen</button><button class="range-btn" data-range="365d">📅 365 dagen</button></div>
-                    <div class="chart-container"><canvas id="playerChart"></canvas></div>
+            <div class="modal-content" style="max-width: 850px;">
+                <div class="modal-header">
+                    <h3 style="color:#ffd966;">📈 Progressie Grafiek: ${escapeHtml(member.name)}</h3>
+                    <p style="color:#ffdeae; margin-top: 8px;">Evolutie van trofeeën en prestige over tijd</p>
                 </div>
-                <div class="modal-footer"><button id="closeChartModal" style="background:#ffd966;">Sluiten</button></div>
+                <div class="modal-body">
+                    <div class="player-stats-summary">
+                        <div>
+                            <div>
+                                <strong style="color: #ffd966;">🎮 Trofeeën</strong>
+                                <span>${member.trophies.toLocaleString()}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4caf50;">⭐ Prestige</strong>
+                                <span>${member.prestige}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #ff9800;">📊 Role</strong>
+                                <span>${getRoleDisplay(member.role)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="playerChart"></canvas>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #ffdeae; text-align: center; margin-top: 10px;">
+                        📊 De Y-as toont trofeeën (in duizenden) en prestige (normale waarden) op dezelfde schaal
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="closeChartModal" style="background:#ffd966;">Sluiten</button>
+                </div>
             </div>
         `;
+        
         document.body.appendChild(modalOverlay);
-        const closeBtn = modalOverlay.querySelector('#closeChartModal'); closeBtn.onclick = () => modalOverlay.remove();
-        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.remove(); });
+        
+        const closeBtn = modalOverlay.querySelector('#closeChartModal');
+        closeBtn.onclick = () => modalOverlay.remove();
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.remove();
+        });
         
         const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
-        let historicalDataPoints = [];
+        
+        const historicalDataPoints = [];
+        
         for (const version of sortedVersions) {
             const snapshot = await loadHistoricalSnapshot(version.filename);
             if (snapshot && snapshot.clubs) {
@@ -691,200 +780,721 @@
                 if (historicalClub && historicalClub.members) {
                     const historicalMember = historicalClub.members.find(m => m.tag === member.tag);
                     if (historicalMember) {
-                        historicalDataPoints.push({ date: version.label, rawDate: new Date(version.date), trophies: historicalMember.trophies, prestige: historicalMember.prestige, rank: historicalMember.rank });
+                        historicalDataPoints.push({
+                            date: version.label,
+                            trophies: historicalMember.trophies,
+                            prestige: historicalMember.prestige
+                        });
                     }
                 }
             }
         }
-        const currentRank = currentClub.members.findIndex(m => m.tag === member.tag) + 1;
-        const currentPoint = { date: "Huidig", rawDate: new Date(), trophies: member.trophies, prestige: member.prestige, rank: currentRank };
-        if (historicalDataPoints.length > 0) historicalDataPoints.push(currentPoint);
-        else historicalDataPoints.push(currentPoint);
-        currentChartDataPoints = historicalDataPoints;
         
-        let currentMetric = 'trophies';
-        let currentRange = 'all';
+        const currentPoint = {
+            date: "Huidig",
+            trophies: member.trophies,
+            prestige: member.prestige
+        };
         
-        function renderChart() {
-            let filteredPoints = [...currentChartDataPoints];
-            const rangeDate = getDateRangeFilter(currentRange);
-            if (rangeDate) filteredPoints = filteredPoints.filter(p => p.rawDate >= rangeDate);
-            if (filteredPoints.length === 0) return;
-            const labels = filteredPoints.map(p => p.date);
-            let dataValues = filteredPoints.map(p => p[currentMetric]);
-            if (currentMetric === 'rank') dataValues = filteredPoints.map(p => p.rank);
-            const minValue = Math.min(...dataValues);
-            const maxValue = Math.max(...dataValues);
-            const range = maxValue - minValue;
-            let yMin = Math.max(0, minValue - (range * 0.05));
-            let yMax = maxValue + (range * 0.05);
-            if (yMax <= 0) yMax = 1000;
-            const ctx = document.getElementById('playerChart').getContext('2d');
-            if (currentChartInstance) currentChartInstance.destroy();
-            currentChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: { labels: labels, datasets: [{ label: currentMetric === 'trophies' ? '🏆 Trofeeën' : (currentMetric === 'prestige' ? '⭐ Prestige' : '📈 Rang'), data: dataValues, borderColor: '#ffd966', backgroundColor: 'rgba(255, 217, 102, 0.1)', borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#ffd966', pointBorderColor: '#5a2412', pointRadius: 4, pointHoverRadius: 7 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ffdeae' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}` } } }, scales: { y: { min: yMin, max: yMax, title: { display: true, text: currentMetric === 'trophies' ? 'Trofeeën' : (currentMetric === 'prestige' ? 'Prestige' : 'Rang (lager = beter)'), color: '#ffdeae' }, ticks: { color: '#ffdeae', callback: (val) => currentMetric === 'rank' ? `#${val}` : formatYAxisTicks(val) } }, x: { ticks: { color: '#ffdeae', maxRotation: 45, minRotation: 45 }, title: { text: 'Datum', color: '#ffdeae' } } } }
-            });
+        if (historicalDataPoints.length > 0) {
+            const lastHistorical = historicalDataPoints[historicalDataPoints.length - 1];
+            if (lastHistorical.date !== currentPoint.date && 
+                (lastHistorical.trophies !== currentPoint.trophies || lastHistorical.prestige !== currentPoint.prestige)) {
+                historicalDataPoints.push(currentPoint);
+            }
+        } else {
+            historicalDataPoints.push(currentPoint);
         }
         
-        document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentMetric = btn.dataset.metric;
-                renderChart();
-            });
+        const canvas = modalOverlay.querySelector('#playerChart');
+        const ctx = canvas.getContext('2d');
+        
+        const labels = historicalDataPoints.map(p => p.date);
+        
+        const trophyData = historicalDataPoints.map(p => p.trophies);
+        const prestigeScaledData = historicalDataPoints.map(p => p.prestige * 1000);
+        
+        const allValues = [...trophyData, ...prestigeScaledData];
+        const minValue = Math.min(...allValues);
+        const maxValue = Math.max(...allValues);
+        const range = maxValue - minValue;
+        const padding = range * 0.05;
+        
+        let yMin = Math.max(0, minValue - padding);
+        let yMax = maxValue + padding;
+        
+        if (yMax <= 0) yMax = 1000;
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '🏆 Trofeeën',
+                        data: trophyData,
+                        borderColor: '#ffd966',
+                        backgroundColor: 'rgba(255, 217, 102, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#ffd966',
+                        pointBorderColor: '#5a2412',
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: '⭐ Prestige (×1000)',
+                        data: prestigeScaledData,
+                        borderColor: '#4caf50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#4caf50',
+                        pointBorderColor: '#2c0f05',
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        yAxisID: 'y'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#ffdeae',
+                            font: { size: 12, weight: 'bold' }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw;
+                                if (context.dataset.label.includes('Trofeeën')) {
+                                    return `${label}: ${value.toLocaleString()}`;
+                                }
+                                if (context.dataset.label.includes('Prestige')) {
+                                    const actualPrestige = value / 1000;
+                                    return `⭐ Prestige: ${actualPrestige}`;
+                                }
+                                return `${label}: ${value.toLocaleString()}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        position: 'left',
+                        min: yMin,
+                        max: yMax,
+                        grid: { 
+                            color: '#e67e2240',
+                            drawBorder: true,
+                            drawOnChartArea: true
+                        },
+                        title: {
+                            display: true,
+                            text: 'Trofeeën / Prestige (×1000)',
+                            color: '#ffdeae',
+                            font: { weight: 'bold', size: 11 }
+                        },
+                        ticks: { 
+                            color: '#ffdeae',
+                            callback: function(value) {
+                                return formatYAxisTicks(value);
+                            },
+                            stepSize: function() {
+                                const range = yMax - yMin;
+                                if (range > 50000) return 10000;
+                                if (range > 20000) return 5000;
+                                if (range > 10000) return 2000;
+                                if (range > 5000) return 1000;
+                                return 500;
+                            }()
+                        }
+                    },
+                    x: {
+                        grid: { color: '#e67e2240' },
+                        title: {
+                            display: true,
+                            text: 'Datum',
+                            color: '#ffdeae'
+                        },
+                        ticks: { 
+                            color: '#ffdeae',
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 10,
+                        left: 10,
+                        right: 10
+                    }
+                }
+            }
         });
-        document.querySelectorAll('.range-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentRange = btn.dataset.range;
-                renderChart();
-            });
-        });
-        renderChart();
     }
     
-    // VERBETERDE PROGRESSIE OVERZICHT MET COMPARATIE TUSSEN GESELECTEERDE SNAPSHOT EN HUIDIG + VORIGE SNAPSHOT
     function showProgressHistory() {
-        if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) { showToast('❌ Geen toegang', true); return; }
-        const modalOverlay = document.createElement('div'); modalOverlay.className = 'modal-overlay';
+        if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
+            showToast('❌ Geen toegang', true);
+            return;
+        }
+        
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        
         let dropdownHtml = '<option value="">-- Kies een versie --</option>';
-        AVAILABLE_VERSIONS.forEach(version => { dropdownHtml += `<option value="${version.filename}" data-label="${version.label}">${version.label}</option>`; });
+        AVAILABLE_VERSIONS.forEach(version => {
+            dropdownHtml += `<option value="${version.filename}" data-label="${version.label}">${version.label}</option>`;
+        });
+        
         modalOverlay.innerHTML = `
-            <div class="modal-content" style="max-width: 1200px;">
-                <div class="modal-header"><h3 style="color:#ffd966;">📊 Progressie History - ${currentClub.name}</h3><p style="color:#ffdeae;">Kies een eerdere snapshot. De tabel toont vergelijking met HUIDIG (rechts) én met de vorige snapshot (links).</p></div>
-                <div class="modal-body"><select id="versionSelect">${dropdownHtml}</select><div id="progressReportContainer" style="margin-top: 20px;"></div></div>
-                <div class="modal-footer"><button id="closeModalBtn" style="background:#ffd966;">Sluiten</button></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="color:#ffd966;">📊 Progressie History - ${currentClub.name}</h3>
+                    <p style="color:#ffdeae; margin-top: 8px;">Kies een eerdere snapshot om de progressie te bekijken. <strong>Klik op een speler voor grafiek!</strong></p>
+                </div>
+                <div class="modal-body">
+                    <select id="versionSelect">
+                        ${dropdownHtml}
+                    </select>
+                    <div id="progressReportContainer" style="margin-top: 20px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="closeModalBtn" style="background:#ffd966;">Sluiten</button>
+                </div>
             </div>
         `;
+        
         document.body.appendChild(modalOverlay);
+        
         const versionSelect = modalOverlay.querySelector('#versionSelect');
         const progressContainer = modalOverlay.querySelector('#progressReportContainer');
         const closeBtn = modalOverlay.querySelector('#closeModalBtn');
-        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.remove(); });
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.remove();
+        });
+        
         closeBtn.onclick = () => modalOverlay.remove();
         
         versionSelect.onchange = async () => {
-            const filename = versionSelect.value;
-            if (!filename) { progressContainer.innerHTML = ''; return; }
-            progressContainer.innerHTML = '<p style="color:#ffdeae;">📥 Snapshot wordt opgehaald...</p>';
+            const selectedOption = versionSelect.options[versionSelect.selectedIndex];
+            const filename = selectedOption.value;
+            const label = selectedOption.text;
+            
+            if (!filename) {
+                progressContainer.innerHTML = '';
+                return;
+            }
+            
+            progressContainer.innerHTML = '<p style="color:#ffdeae; text-align:center;">📥 Snapshot wordt opgehaald...</p>';
+            
             try {
                 const snapshot = await loadHistoricalSnapshot(filename);
                 const historicalClub = snapshot?.clubs?.find(c => c.name === currentClub.name);
-                if (!historicalClub) { progressContainer.innerHTML = `<p style="color:#ffab91;">⚠️ Geen data gevonden voor ${currentClub.name}</p>`; return; }
                 
-                // bepaal vorige snapshot voor extra kolom
-                const currentIdx = AVAILABLE_VERSIONS.findIndex(v => v.filename === filename);
-                let previousHistoricalClub = null;
-                if (currentIdx > 0) {
-                    const prevSnapshot = await loadHistoricalSnapshot(AVAILABLE_VERSIONS[currentIdx-1].filename);
-                    if (prevSnapshot) previousHistoricalClub = prevSnapshot.clubs?.find(c => c.name === currentClub.name);
+                if (!historicalClub) {
+                    progressContainer.innerHTML = `<p style="color:#ffab91; text-align:center;">⚠️ Geen data gevonden voor ${currentClub.name} in deze snapshot</p>`;
+                    return;
                 }
                 
-                const currentMembers = currentClub.members;
-                const report = currentMembers.map(current => {
-                    const historical = historicalClub.members?.find(h => h.tag === current.tag);
-                    const previous = previousHistoricalClub?.members?.find(p => p.tag === current.tag);
-                    const currentRank = currentClub.members.findIndex(m => m.tag === current.tag) + 1;
-                    const historicalRank = historical ? historical.rank : null;
-                    const previousRank = previous ? previous.rank : null;
-                    return {
-                        name: current.name, tag: current.tag, role: current.role,
-                        currentTrophies: current.trophies, currentPrestige: current.prestige, currentRank: currentRank,
-                        historicalTrophies: historical?.trophies || null, historicalPrestige: historical?.prestige || null, historicalRank: historicalRank,
-                        previousTrophies: previous?.trophies || null, previousPrestige: previous?.prestige || null, previousRank: previousRank,
-                        trophyChangeVsHistorical: historical ? current.trophies - historical.trophies : null,
-                        prestigeChangeVsHistorical: historical ? current.prestige - historical.prestige : null,
-                        rankChangeVsHistorical: (historicalRank && currentRank) ? historicalRank - currentRank : null,
-                        trophyChangeVsPrevious: previous ? current.trophies - previous.trophies : null,
-                        prestigeChangeVsPrevious: previous ? current.prestige - previous.prestige : null,
-                        rankChangeVsPrevious: (previousRank && currentRank) ? previousRank - currentRank : null,
-                        isNew: !historical, left: historical && !currentClub.members.find(m => m.tag === historical.tag)
-                    };
-                });
-                report.sort((a, b) => (b.trophyChangeVsHistorical || 0) - (a.trophyChangeVsHistorical || 0));
-                const selectedLabel = versionSelect.options[versionSelect.selectedIndex].text;
-                const prevLabel = currentIdx > 0 ? AVAILABLE_VERSIONS[currentIdx-1].label : 'Geen vorige';
-                let html = `<div style="background:#2c0f05; border-radius:16px; padding:12px; margin-bottom:20px;"><p style="color:#ffdeae;">Vergelijking met: <strong>${selectedLabel}</strong> | Vorige snapshot: <strong>${prevLabel}</strong></p></div>`;
-                html += `<div style="overflow-x: auto; max-height: 500px;"><table style="width:100%; font-size:0.7rem;"><thead><tr style="background:#63200e; position: sticky; top: 0;"><th>Naam</th><th>Huidig 🏆</th><th>Δ t.o.v. ${selectedLabel}</th><th>Δ t.o.v. vorige</th><th>Huidig ⭐</th><th>⭐ Δ vs ${selectedLabel}</th><th>⭐ Δ vs vorige</th><th>Huidig #</th><th># Δ vs ${selectedLabel}</th><th># Δ vs vorige</th><th>Status</th></tr></thead><tbody>`;
-                report.forEach(m => {
-                    const trophyDiffHist = m.trophyChangeVsHistorical !== null ? (m.trophyChangeVsHistorical > 0 ? `+${m.trophyChangeVsHistorical}` : m.trophyChangeVsHistorical) : '?';
-                    const trophyDiffPrev = m.trophyChangeVsPrevious !== null ? (m.trophyChangeVsPrevious > 0 ? `+${m.trophyChangeVsPrevious}` : m.trophyChangeVsPrevious) : '?';
-                    const prestigeDiffHist = m.prestigeChangeVsHistorical !== null ? (m.prestigeChangeVsHistorical > 0 ? `+${m.prestigeChangeVsHistorical}` : m.prestigeChangeVsHistorical) : '?';
-                    const prestigeDiffPrev = m.prestigeChangeVsPrevious !== null ? (m.prestigeChangeVsPrevious > 0 ? `+${m.prestigeChangeVsPrevious}` : m.prestigeChangeVsPrevious) : '?';
-                    const rankDiffHist = m.rankChangeVsHistorical !== null ? (m.rankChangeVsHistorical > 0 ? `↑${m.rankChangeVsHistorical}` : (m.rankChangeVsHistorical < 0 ? `↓${-m.rankChangeVsHistorical}` : '=')) : '?';
-                    const rankDiffPrev = m.rankChangeVsPrevious !== null ? (m.rankChangeVsPrevious > 0 ? `↑${m.rankChangeVsPrevious}` : (m.rankChangeVsPrevious < 0 ? `↓${-m.rankChangeVsPrevious}` : '=')) : '?';
-                    let status = ''; let statusColor = '#ffdeae';
-                    if (m.isNew) { status = '🆕 Nieuw'; statusColor = '#4caf50'; } else if (m.left) { status = '❌ Weg'; statusColor = '#c62828'; }
-                    html += `<tr class="clickable-row" data-player-tag="${escapeHtml(m.tag)}" style="cursor:pointer;"><td><strong>${escapeHtml(m.name)}</strong></td><td>${m.currentTrophies.toLocaleString()}</td><td style="color:${m.trophyChangeVsHistorical > 0 ? '#b9f6ca' : (m.trophyChangeVsHistorical < 0 ? '#ffab91' : '#ffd966')};">${trophyDiffHist}</td><td style="color:${m.trophyChangeVsPrevious > 0 ? '#b9f6ca' : (m.trophyChangeVsPrevious < 0 ? '#ffab91' : '#ffd966')};">${trophyDiffPrev}</td><td>${m.currentPrestige}</td><td style="color:${m.prestigeChangeVsHistorical > 0 ? '#b9f6ca' : (m.prestigeChangeVsHistorical < 0 ? '#ffab91' : '#ffd966')};">${prestigeDiffHist}</td><td style="color:${m.prestigeChangeVsPrevious > 0 ? '#b9f6ca' : (m.prestigeChangeVsPrevious < 0 ? '#ffab91' : '#ffd966')};">${prestigeDiffPrev}</td><td>#${m.currentRank}</td><td style="color:${m.rankChangeVsHistorical > 0 ? '#b9f6ca' : (m.rankChangeVsHistorical < 0 ? '#ffab91' : '#ffd966')};">${rankDiffHist}</td><td style="color:${m.rankChangeVsPrevious > 0 ? '#b9f6ca' : (m.rankChangeVsPrevious < 0 ? '#ffab91' : '#ffd966')};">${rankDiffPrev}</td><td style="color:${statusColor};">${status}</td></tr>`;
-                });
-                html += `</tbody></table></div><div style="margin-top:12px; color:#ffdeae; font-size:0.7rem;">💡 Klik op een speler voor volledige grafiek (toggle tussen trofeeën/prestige/rang en datumbereik).</div>`;
-                progressContainer.innerHTML = html;
+                const reportHtml = generateComparisonReportHTML(historicalClub, label);
+                progressContainer.innerHTML = reportHtml;
+                
                 const rows = progressContainer.querySelectorAll('.clickable-row');
-                rows.forEach(row => { row.addEventListener('click', () => { const playerTag = row.getAttribute('data-player-tag'); const player = currentClub.members.find(m => m.tag === playerTag); if (player) showPlayerProgressChart(player); }); });
-            } catch (err) { progressContainer.innerHTML = `<p style="color:#ffab91;">❌ Kan snapshot niet laden: ${err.message}</p>`; }
+                rows.forEach(row => {
+                    row.addEventListener('click', () => {
+                        const playerTag = row.getAttribute('data-player-tag');
+                        const player = currentClub.members.find(m => m.tag === playerTag);
+                        if (player) {
+                            showPlayerProgressChart(player);
+                        }
+                    });
+                });
+            } catch (err) {
+                progressContainer.innerHTML = `<p style="color:#ffab91; text-align:center;">❌ Kan snapshot niet laden: ${err.message}</p>`;
+            }
         };
     }
     
-    async function fetchCombinedData() { const response = await fetch(COMBINED_URL); if (!response.ok) throw new Error(`HTTP ${response.status}`); return await response.json(); }
-    async function fetchLiveClub(tag) { const response = await fetch(`${API_BASE}/api/club?tag=${tag}`); if (!response.ok) throw new Error(`HTTP ${response.status}`); return await response.json(); }
+    function generateComparisonReportHTML(historicalClub, comparisonLabel) {
+        const currentMembers = currentClub.members;
+        
+        const report = currentMembers.map(current => {
+            const historical = historicalClub.members?.find(h => h.tag === current.tag);
+            return {
+                name: current.name,
+                tag: current.tag,
+                role: current.role,
+                currentRank: currentClub.members.findIndex(m => m.tag === current.tag) + 1,
+                currentTrophies: current.trophies,
+                currentPrestige: current.prestige,
+                historicalTrophies: historical?.trophies || null,
+                historicalPrestige: historical?.prestige || null,
+                historicalRank: historical?.rank || null,
+                trophyChange: historical ? current.trophies - historical.trophies : null,
+                prestigeChange: historical ? current.prestige - historical.prestige : null,
+                rankChange: historical ? historical.rank - (currentClub.members.findIndex(m => m.tag === current.tag) + 1) : null,
+                isNew: !historical,
+                left: historical && !currentClub.members.find(m => m.tag === historical.tag)
+            };
+        });
+        
+        report.sort((a, b) => (b.trophyChange || 0) - (a.trophyChange || 0));
+        
+        const topStijgers = report.filter(m => (m.trophyChange || 0) > 0).slice(0, 5);
+        const topDalers = report.filter(m => (m.trophyChange || 0) < 0).slice(0, 5);
+        
+        let html = `
+            <div style="background:#2c0f05; border-radius: 16px; padding: 12px; margin-bottom: 20px;">
+                <p style="color:#ffdeae; margin-bottom: 10px;">Vergelijking met: <strong>${comparisonLabel}</strong></p>
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                    <div style="flex:1;">
+                        <strong style="color:#ffd966;">📈 Top stijgers (trofeeën):</strong>
+                        ${topStijgers.length ? topStijgers.map(m => `<div style="color:#b9f6ca; margin-top:5px;">+${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`).join('') : '<div style="color:#ffdeae;">-</div>'}
+                    </div>
+                    <div style="flex:1;">
+                        <strong style="color:#ffd966;">📉 Top dalers (trofeeën):</strong>
+                        ${topDalers.length ? topDalers.map(m => `<div style="color:#ffab91; margin-top:5px;">${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`).join('') : '<div style="color:#ffdeae;">-</div>'}
+                    </div>
+                </div>
+                <div style="margin-top: 12px; text-align: center; color: #ffdeae; font-size: 0.7rem;">
+                    💡 <strong>Klik op een speler</strong> om de volledige progressie grafiek te zien!
+                </div>
+            </div>
+            
+            <div style="overflow-x: auto; max-height: 400px;">
+                <table style="width:100%; font-size:0.7rem;">
+                    <thead>
+                        <tr style="background:#63200e; position: sticky; top: 0;">
+                            <th>#</th><th>Naam</th><th>🏆 Nu</th><th>🏆 Toen</th><th>📈 Δ</th><th>⭐ Nu</th><th>⭐ Toen</th><th>⭐ Δ</th><th>📊 Pos Δ</th><th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        report.forEach(m => {
+            const trophyDiff = m.trophyChange !== null ? (m.trophyChange > 0 ? `+${m.trophyChange}` : m.trophyChange) : '?';
+            const prestigeDiff = m.prestigeChange !== null ? (m.prestigeChange > 0 ? `+${m.prestigeChange}` : m.prestigeChange) : '?';
+            const rankDiff = m.rankChange !== null ? (m.rankChange > 0 ? `↑${m.rankChange}` : (m.rankChange < 0 ? `↓${-m.rankChange}` : '=')) : '?';
+            const trophyColor = m.trophyChange > 0 ? '#b9f6ca' : (m.trophyChange < 0 ? '#ffab91' : '#ffd966');
+            const prestigeColor = m.prestigeChange > 0 ? '#b9f6ca' : (m.prestigeChange < 0 ? '#ffab91' : '#ffd966');
+            const rankColor = m.rankChange > 0 ? '#b9f6ca' : (m.rankChange < 0 ? '#ffab91' : '#ffd966');
+            
+            let status = '';
+            let statusColor = '#ffdeae';
+            if (m.isNew) {
+                status = '🆕 Nieuw';
+                statusColor = '#4caf50';
+            } else if (m.left) {
+                status = '❌ Weg';
+                statusColor = '#c62828';
+            }
+            
+            html += `
+                <tr class="clickable-row" data-player-tag="${escapeHtml(m.tag)}" style="border-bottom:1px solid #e67e2240; cursor: pointer;">
+                    <td style="font-weight: bold;">${m.currentRank}</td>
+                    <td style="font-weight: bold;">${escapeHtml(m.name)}</td>
+                    <td>${m.currentTrophies.toLocaleString()}</td>
+                    <td>${m.historicalTrophies?.toLocaleString() || '?'}</td>
+                    <td style="color:${trophyColor}; font-weight:bold;">${trophyDiff}</td>
+                    <td>${m.currentPrestige}</td>
+                    <td>${m.historicalPrestige || '?'}</td>
+                    <td style="color:${prestigeColor}; font-weight:bold;">${prestigeDiff}</td>
+                    <td style="color:${rankColor}; font-weight:bold;">${rankDiff}</td>
+                    <td style="color:${statusColor};">${status}</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        return html;
+    }
+    
+    async function fetchCombinedData() {
+        const response = await fetch(COMBINED_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    }
+    
+    async function fetchLiveClub(tag) {
+        const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    }
     
     async function loadData() {
-        document.getElementById('loading').classList.remove('hidden'); document.getElementById('error').classList.add('hidden');
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
         try {
             await loadAvailableSnapshots();
+            
             combinedData = await fetchCombinedData();
             document.getElementById('lastUpdated').innerHTML = `📅 Laatste update: ${new Date(combinedData.lastUpdated).toLocaleString()}`;
-            const dropdown = document.getElementById('clubDropdown'); const currentValue = dropdown.value;
+            
+            const dropdown = document.getElementById('clubDropdown');
+            const currentValue = dropdown.value;
             dropdown.innerHTML = '<option value="">-- Selecteer een club --</option>';
-            combinedData.clubs.forEach(club => { const option = document.createElement('option'); option.value = club.tag; option.textContent = `${club.name}`; dropdown.appendChild(option); });
-            if (currentValue && combinedData.clubs.find(c => c.tag === currentValue)) dropdown.value = currentValue; selectClub(dropdown.value);
+            combinedData.clubs.forEach(club => {
+                const option = document.createElement('option');
+                option.value = club.tag;
+                option.textContent = `${club.name}`;
+                dropdown.appendChild(option);
+            });
+            
+            if (currentValue && combinedData.clubs.find(c => c.tag === currentValue)) {
+                dropdown.value = currentValue;
+                selectClub(currentValue);
+            }
+            
             document.getElementById('loading').classList.add('hidden');
-        } catch (err) { document.getElementById('loading').classList.add('hidden'); document.getElementById('error').classList.remove('hidden'); document.getElementById('error').innerHTML = `❌ Fout bij laden: ${err.message}`; }
+        } catch (err) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = `❌ Fout bij laden: ${err.message}`;
+        }
     }
     
     async function selectClub(tag) {
-        currentClubTag = tag; if (authorizedClubTag !== tag) { isAuthorized = false; authorizedClubTag = null; } else { isAuthorized = true; }
-        updateAuthUI(); adminCollapsePanel.classList.add('hidden');
-        document.getElementById('loading').classList.remove('hidden'); document.getElementById('error').classList.add('hidden');
+        currentClubTag = tag;
+        
+        if (authorizedClubTag !== tag) {
+            isAuthorized = false;
+            authorizedClubTag = null;
+        } else {
+            isAuthorized = true;
+        }
+        updateAuthUI();
+        adminCollapsePanel.classList.add('hidden');
+        
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
         try {
-            const liveClub = await fetchLiveClub(tag); const statsClub = combinedData?.clubs?.find(c => c.tag === tag);
-            const members = liveClub.members.map(member => { const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag); return { name: member.name, tag: member.tag, role: member.role, trophies: member.trophies, prestige: statsMember?.prestige || 0, teamWins: statsMember?.teamWins || 0, showdownWins: statsMember?.showdownWins || 0, ratio: statsMember?.ratio || '0', inDiscord: statsMember?.inDiscord || false, discordName: statsMember?.discordName || null, onKickList: statsMember?.onKickList || false }; });
-            currentClub = { name: liveClub.name, tag: liveClub.tag, totalTrophies: liveClub.trophies, requiredTrophies: liveClub.requiredTrophies || 0, members: members };
-            document.getElementById('clubName').textContent = currentClub.name; document.getElementById('clubTag').textContent = currentClub.tag.startsWith('#') ? currentClub.tag : `#${currentClub.tag}`;
-            document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString(); document.getElementById('requiredTrophies').textContent = currentClub.requiredTrophies.toLocaleString();
-            document.getElementById('memberCount').textContent = currentClub.members.length; document.getElementById('memberCountDisplay').textContent = `${currentClub.members.length} leden`;
-            document.getElementById('avgTrophies').textContent = Math.round(currentClub.totalTrophies / currentClub.members.length).toLocaleString();
-            displayMembers(); document.getElementById('detailPanel').classList.remove('hidden');
-        } catch (err) { document.getElementById('error').classList.remove('hidden'); document.getElementById('error').innerHTML = `❌ Fout bij laden club: ${err.message}`; }
+            const liveClub = await fetchLiveClub(tag);
+            const statsClub = combinedData?.clubs?.find(c => c.tag === tag);
+            
+            const members = liveClub.members.map(member => {
+                const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
+                return {
+                    name: member.name,
+                    tag: member.tag,
+                    role: member.role,
+                    trophies: member.trophies,
+                    prestige: statsMember?.prestige || 0,
+                    teamWins: statsMember?.teamWins || 0,
+                    showdownWins: statsMember?.showdownWins || 0,
+                    ratio: statsMember?.ratio || '0',
+                    inDiscord: statsMember?.inDiscord || false,
+                    discordName: statsMember?.discordName || null,
+                    onKickList: statsMember?.onKickList || false
+                };
+            });
+            
+            currentClub = {
+                name: liveClub.name,
+                tag: liveClub.tag,
+                totalTrophies: liveClub.trophies,
+                requiredTrophies: liveClub.requiredTrophies || 0,
+                members: members
+            };
+            
+            document.getElementById('clubName').textContent = currentClub.name;
+            document.getElementById('clubTag').textContent = currentClub.tag.startsWith('#') ? currentClub.tag : `#${currentClub.tag}`;
+            document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString();
+            document.getElementById('requiredTrophies').textContent = currentClub.requiredTrophies.toLocaleString();
+            document.getElementById('memberCount').textContent = currentClub.members.length;
+            document.getElementById('memberCountDisplay').textContent = `${currentClub.members.length} leden`;
+            const avg = Math.round(currentClub.totalTrophies / currentClub.members.length);
+            document.getElementById('avgTrophies').textContent = avg.toLocaleString();
+            
+            displayMembers();
+            document.getElementById('detailPanel').classList.remove('hidden');
+            document.getElementById('error').classList.add('hidden');
+        } catch (err) {
+            console.error(err);
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').innerHTML = `❌ Fout bij laden club: ${err.message}`;
+        }
         document.getElementById('loading').classList.add('hidden');
     }
     
-    async function updateDiscordStatus(tag, inDiscord, discordName) { if (!isAuthorized || authorizedClubTag !== currentClubTag) return false; if (currentClub) { const member = currentClub.members.find(m => m.tag === tag); if (member) { member.inDiscord = inDiscord; member.discordName = discordName || null; displayMembers(); } } try { const response = await fetch(UPDATE_SETTINGS_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tag: tag, inDiscord: inDiscord, discordName: discordName || null, secretToken: SECRET_TOKEN }) }); const result = await response.json(); if (result.success) { showToast(inDiscord ? `✅ ${discordName || 'Lid'} gemarkeerd als in Discord` : `❌ Lid gemarkeerd als niet in Discord`, false); return true; } else { showToast('⚠️ Server sync mislukt', true); return false; } } catch (err) { showToast('❌ Netwerkfout', true); return false; } }
-    async function updateKicklistStatus(tag, onKickList) { if (!isAuthorized || authorizedClubTag !== currentClubTag) return false; if (currentClub) { const member = currentClub.members.find(m => m.tag === tag); if (member) { member.onKickList = onKickList; displayMembers(); } } try { const response = await fetch(UPDATE_SETTINGS_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tag: tag, onKickList: onKickList, secretToken: SECRET_TOKEN }) }); const result = await response.json(); if (result.success) { showToast(onKickList ? `⚠️ Lid toegevoegd aan kicklijst` : `✅ Lid verwijderd van kicklijst`, false); return true; } else { showToast('⚠️ Server sync mislukt', true); return false; } } catch (err) { showToast('❌ Netwerkfout', true); return false; } }
-    function openDiscordModal(member) { if (!isAuthorized) return; const modalOverlay = document.createElement('div'); modalOverlay.className = 'modal-overlay'; modalOverlay.innerHTML = `<div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3></div><div class="modal-body"><p style="color:#ffdeae;">Huidig: ${member.inDiscord ? '✅ In Discord' : '❌ Niet in Discord'}</p><label style="color:#ffdeae;">Discord naam:</label><input type="text" id="discordNameInput" placeholder="gebruikersnaam" value="${escapeHtml(member.discordName || '')}"></div><div class="modal-footer"><button id="discordYesBtn" style="background:#2e7d32;">✅ In Discord</button><button id="discordNoBtn" style="background:#c62828;">❌ Niet in Discord</button><button id="closeModalBtn" style="background:#ffd966;">Annuleren</button></div></div>`; document.body.appendChild(modalOverlay); modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.remove(); }); const discordNameInput = modalOverlay.querySelector('#discordNameInput'); const yesBtn = modalOverlay.querySelector('#discordYesBtn'); const noBtn = modalOverlay.querySelector('#discordNoBtn'); const closeBtn = modalOverlay.querySelector('#closeModalBtn'); const apply = async (status) => { const discordName = discordNameInput.value; await updateDiscordStatus(member.tag, status, discordName); modalOverlay.remove(); }; yesBtn.onclick = () => apply(true); noBtn.onclick = () => apply(false); closeBtn.onclick = () => modalOverlay.remove(); }
-    function openKicklistModal(member) { if (!isAuthorized) return; const modalOverlay = document.createElement('div'); modalOverlay.className = 'modal-overlay'; modalOverlay.innerHTML = `<div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3></div><div class="modal-body"><p style="color:#ffdeae;">Huidig: ${member.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}</p></div><div class="modal-footer"><button id="kickYesBtn" style="background:#f39c12;">⚠️ Toevoegen aan kicklijst</button><button id="kickNoBtn" style="background:#2c3e50;">✅ Verwijderen</button><button id="closeKickModal" style="background:#ffd966;">Annuleren</button></div></div>`; document.body.appendChild(modalOverlay); modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.remove(); }); const yesBtn = modalOverlay.querySelector('#kickYesBtn'); const noBtn = modalOverlay.querySelector('#kickNoBtn'); const closeBtn = modalOverlay.querySelector('#closeKickModal'); const apply = async (status) => { await updateKicklistStatus(member.tag, status); modalOverlay.remove(); }; yesBtn.onclick = () => apply(true); noBtn.onclick = () => apply(false); closeBtn.onclick = () => modalOverlay.remove(); }
+    async function updateDiscordStatus(tag, inDiscord, discordName) {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
+        
+        if (currentClub) {
+            const member = currentClub.members.find(m => m.tag === tag);
+            if (member) {
+                member.inDiscord = inDiscord;
+                member.discordName = discordName || null;
+                displayMembers();
+            }
+        }
+        
+        try {
+            const response = await fetch(UPDATE_SETTINGS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tag: tag,
+                    inDiscord: inDiscord,
+                    discordName: discordName || null,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                showToast(inDiscord ? `✅ ${discordName || 'Lid'} gemarkeerd als in Discord` : `❌ Lid gemarkeerd als niet in Discord`, false);
+                return true;
+            } else {
+                showToast('⚠️ Server sync mislukt', true);
+                return false;
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('❌ Netwerkfout', true);
+            return false;
+        }
+    }
+    
+    async function updateKicklistStatus(tag, onKickList) {
+        if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
+        
+        if (currentClub) {
+            const member = currentClub.members.find(m => m.tag === tag);
+            if (member) {
+                member.onKickList = onKickList;
+                displayMembers();
+            }
+        }
+        
+        try {
+            const response = await fetch(UPDATE_SETTINGS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tag: tag,
+                    onKickList: onKickList,
+                    secretToken: SECRET_TOKEN
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                showToast(onKickList ? `⚠️ Lid toegevoegd aan kicklijst` : `✅ Lid verwijderd van kicklijst`, false);
+                return true;
+            } else {
+                showToast('⚠️ Server sync mislukt', true);
+                return false;
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('❌ Netwerkfout', true);
+            return false;
+        }
+    }
+    
+    function openDiscordModal(member) {
+        if (!isAuthorized) return;
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        modalOverlay.innerHTML = `
+            <div class="modal-content" style="max-width: 400px;">
+                <div class="modal-header">
+                    <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
+                </div>
+                <div class="modal-body">
+                    <p style="color:#ffdeae; margin-bottom:10px;">Huidig: ${member.inDiscord ? '✅ In Discord' : '❌ Niet in Discord'}</p>
+                    <label style="color:#ffdeae; display:block; text-align:left;">Discord gebruikersnaam:</label>
+                    <input type="text" id="discordNameInput" placeholder="gebruikersnaam" value="${escapeHtml(member.discordName || '')}">
+                </div>
+                <div class="modal-footer">
+                    <button id="discordYesBtn" style="background:#2e7d32; color:white;">✅ In Discord</button>
+                    <button id="discordNoBtn" style="background:#c62828; color:white;">❌ Niet in Discord</button>
+                    <button id="closeModalBtn" style="background:#ffd966;">Annuleren</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalOverlay);
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.remove();
+        });
+        
+        const discordNameInput = modalOverlay.querySelector('#discordNameInput');
+        const yesBtn = modalOverlay.querySelector('#discordYesBtn');
+        const noBtn = modalOverlay.querySelector('#discordNoBtn');
+        const closeBtn = modalOverlay.querySelector('#closeModalBtn');
+        
+        const apply = async (status) => {
+            const discordName = discordNameInput.value;
+            await updateDiscordStatus(member.tag, status, discordName);
+            modalOverlay.remove();
+        };
+        yesBtn.onclick = () => apply(true);
+        noBtn.onclick = () => apply(false);
+        closeBtn.onclick = () => modalOverlay.remove();
+    }
+    
+    function openKicklistModal(member) {
+        if (!isAuthorized) return;
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        modalOverlay.innerHTML = `
+            <div class="modal-content" style="max-width: 400px;">
+                <div class="modal-header">
+                    <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
+                </div>
+                <div class="modal-body">
+                    <p style="color:#ffdeae; margin-bottom:15px;">Huidig: ${member.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="kickYesBtn" style="background:#f39c12; color:white;">⚠️ Toevoegen aan kicklijst</button>
+                    <button id="kickNoBtn" style="background:#2c3e50; color:white;">✅ Verwijderen</button>
+                    <button id="closeKickModal" style="background:#ffd966;">Annuleren</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalOverlay);
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.remove();
+        });
+        
+        const yesBtn = modalOverlay.querySelector('#kickYesBtn');
+        const noBtn = modalOverlay.querySelector('#kickNoBtn');
+        const closeBtn = modalOverlay.querySelector('#closeKickModal');
+        const apply = async (status) => {
+            await updateKicklistStatus(member.tag, status);
+            modalOverlay.remove();
+        };
+        yesBtn.onclick = () => apply(true);
+        noBtn.onclick = () => apply(false);
+        closeBtn.onclick = () => modalOverlay.remove();
+    }
     
     function displayMembers() {
         if (!currentClub) return;
-        const sorted = [...currentClub.members].sort((a, b) => { let aVal, bVal; if (currentSort.field === 'trophies') { aVal = a.trophies; bVal = b.trophies; } else if (currentSort.field === 'prestige') { aVal = a.prestige; bVal = b.prestige; } else if (currentSort.field === 'ratio') { aVal = a.ratio === '∞' ? 999999 : parseFloat(a.ratio) || 0; bVal = b.ratio === '∞' ? 999999 : parseFloat(b.ratio) || 0; } else { aVal = a.name; bVal = b.name; } if (currentSort.field === 'name') return currentSort.dir === 'asc' ? aVal.localeCompare(bVal, 'nl') : bVal.localeCompare(aVal, 'nl'); return currentSort.dir === 'asc' ? aVal - bVal : bVal - aVal; });
-        const tbody = document.getElementById('membersList'); const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
-        if (isAuthorized && authorizedClubTag === currentClubTag) { tbody.innerHTML = sorted.map(m => `<tr><td>${escapeHtml(m.name)}</td><td><span class="role-badge role-${m.role}">${roleNames[m.role] || 'Member'}</span></td><td>${m.trophies.toLocaleString()}</td><td><span class="prestige-badge">${m.prestige}</span></td><td>${m.teamWins.toLocaleString()}</td><td>${m.showdownWins.toLocaleString()}</td><td>${m.ratio}</td><td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})"><span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">${m.inDiscord ? (m.discordName ? `✓ ${escapeHtml(m.discordName)}` : '✓ In Discord') : '✗ Niet in Discord'}<span class="discord-edit">✎</span></span></td><td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})"><span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}<span class="kicklist-edit">✎</span></span></td></tr>`).join(''); }
-        else { tbody.innerHTML = sorted.map(m => `<tr><td>${escapeHtml(m.name)}</td><td><span class="role-badge role-${m.role}">${roleNames[m.role] || 'Member'}</span></td><td>${m.trophies.toLocaleString()}</td><td><span class="prestige-badge">${m.prestige}</span></td><td>${m.teamWins.toLocaleString()}</td><td>${m.showdownWins.toLocaleString()}</td><td>${m.ratio}</td></tr>`).join(''); }
-        document.querySelectorAll('.sort-btn').forEach(btn => { btn.classList.remove('active'); if (btn.dataset.sort === currentSort.field) btn.classList.add('active'); });
+        const sorted = [...currentClub.members].sort((a, b) => {
+            let aVal, bVal;
+            if (currentSort.field === 'trophies') { aVal = a.trophies; bVal = b.trophies; }
+            else if (currentSort.field === 'prestige') { aVal = a.prestige; bVal = b.prestige; }
+            else if (currentSort.field === 'ratio') { 
+                aVal = a.ratio === '∞' ? 999999 : parseFloat(a.ratio) || 0;
+                bVal = b.ratio === '∞' ? 999999 : parseFloat(b.ratio) || 0;
+            }
+            else { aVal = a.name; bVal = b.name; }
+            if (currentSort.field === 'name') {
+                return currentSort.dir === 'asc' ? aVal.localeCompare(bVal, 'nl') : bVal.localeCompare(aVal, 'nl');
+            }
+            return currentSort.dir === 'asc' ? aVal - bVal : bVal - aVal;
+        });
+        const tbody = document.getElementById('membersList');
+        const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
+        
+        if (isAuthorized && authorizedClubTag === currentClubTag) {
+            tbody.innerHTML = sorted.map(m => {
+                const roleClass = `role-${m.role}`;
+                return `
+                    <tr>
+                        <td>${escapeHtml(m.name)}</td>
+                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                        <td>${m.trophies.toLocaleString()}</td>
+                        <td><span class="prestige-badge">${m.prestige}</span></td>
+                        <td>${m.teamWins.toLocaleString()}</td>
+                        <td>${m.showdownWins.toLocaleString()}</td>
+                        <td>${m.ratio}</td>
+                        <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                            <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
+                                ${m.inDiscord ? (m.discordName ? `✓ ${escapeHtml(m.discordName)}` : '✓ In Discord') : '✗ Niet in Discord'}
+                                <span class="discord-edit">✎</span>
+                            </span>
+                        </td>
+                        <td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                            <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
+                                ${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}
+                                <span class="kicklist-edit">✎</span>
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        } else {
+            tbody.innerHTML = sorted.map(m => {
+                const roleClass = `role-${m.role}`;
+                return `
+                    <tr>
+                        <td>${escapeHtml(m.name)}</td>
+                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
+                        <td>${m.trophies.toLocaleString()}</td>
+                        <td><span class="prestige-badge">${m.prestige}</span></td>
+                        <td>${m.teamWins.toLocaleString()}</td>
+                        <td>${m.showdownWins.toLocaleString()}</td>
+                        <td>${m.ratio}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.sort === currentSort.field) btn.classList.add('active');
+        });
     }
-    function sortMembers(field) { if (currentSort.field === field) currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc'; else { currentSort.field = field; currentSort.dir = 'desc'; } displayMembers(); }
-    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-    document.getElementById('clubDropdown').addEventListener('change', (e) => { if (e.target.value) selectClub(e.target.value); });
-    document.querySelectorAll('.sort-btn').forEach(btn => { btn.addEventListener('click', () => sortMembers(btn.dataset.sort)); });
-    adminToggleBtn.addEventListener('click', () => { adminCollapsePanel.classList.toggle('hidden'); });
+    
+    function sortMembers(field) {
+        if (currentSort.field === field) {
+            currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.field = field;
+            currentSort.dir = 'desc';
+        }
+        displayMembers();
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    document.getElementById('clubDropdown').addEventListener('change', (e) => {
+        if (e.target.value) selectClub(e.target.value);
+    });
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+        btn.addEventListener('click', () => sortMembers(btn.dataset.sort));
+    });
+    adminToggleBtn.addEventListener('click', () => {
+        adminCollapsePanel.classList.toggle('hidden');
+    });
     submitAuthBtn.addEventListener('click', performAuth);
     downloadSnapshotBtn.addEventListener('click', downloadCurrentSnapshot);
     progressHistoryBtn.addEventListener('click', showProgressHistory);
-    window.openDiscordModal = openDiscordModal; window.openKicklistModal = openKicklistModal; window.showPlayerProgressChart = showPlayerProgressChart; window.loadData = loadData;
+    
+    window.openDiscordModal = openDiscordModal;
+    window.openKicklistModal = openKicklistModal;
+    window.showPlayerProgressChart = showPlayerProgressChart;
+    window.loadData = loadData;
+    
     loadData();
 </script>
 </body>
