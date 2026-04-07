@@ -551,18 +551,14 @@
     async function loadAvailableSnapshots() {
     try {
         // Gebruik de GitHub API om de map inhoud op te vragen
-        // Converteer GITHUB_RAW_BASE naar API URL
-        // Bijvoorbeeld: https://raw.githubusercontent.com/gebruiker/repo/branch/pad/ 
-        // Wordt: https://api.github.com/repos/gebruiker/repo/contents/pad/
-        
         let apiUrl;
         if (GITHUB_RAW_BASE.includes('raw.githubusercontent.com')) {
-            // Converteer raw URL naar API URL
-            // https://raw.githubusercontent.com/gebruiker/repo/branch/pad/ -> https://api.github.com/repos/gebruiker/repo/contents/pad?ref=branch
             const match = GITHUB_RAW_BASE.match(/https:\/\/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+)/);
             if (match) {
                 const [, owner, repo, branch, path] = match;
-                apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+                // Verwijder trailing slash van path als die er is
+                const cleanPath = path.replace(/\/$/, '');
+                apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${cleanPath}?ref=${branch}`;
             }
         }
         
@@ -570,36 +566,54 @@
             throw new Error('Kan GitHub API URL niet bepalen');
         }
         
-        const response = await fetch(apiUrl);
+        console.log('Fetching from GitHub API:', apiUrl);
+        
+        // Voeg een User-Agent header toe (vereist door GitHub API)
+        const response = await fetch(apiUrl, {
+            headers: {
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'RealDutch-App'
+            }
+        });
+        
+        if (response.status === 403) {
+            console.log('Rate limit bereikt of geen toegang, val terug op default snapshots');
+            useDefaultSnapshots();
+            return;
+        }
+        
         if (!response.ok) {
-            throw new Error('Kan map inhoud niet ophalen');
+            throw new Error(`HTTP ${response.status}`);
         }
         
         const files = await response.json();
         const versions = [];
         
-        // Filter alleen snapshot JSON bestanden
-        for (const file of files) {
-            if (file.name.startsWith('snapshot_') && file.name.endsWith('.json')) {
-                const match = file.name.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
-                if (match) {
-                    const date = match[1];
-                    const [year, month, day] = date.split('-');
-                    const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
-                    versions.push({
-                        label: label,
-                        filename: file.name,
-                        date: date
-                    });
+        // Controleer of files een array is (niet een enkel bestand)
+        if (Array.isArray(files)) {
+            for (const file of files) {
+                if (file.name && file.name.startsWith('snapshot_') && file.name.endsWith('.json')) {
+                    const match = file.name.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
+                    if (match) {
+                        const date = match[1];
+                        const [year, month, day] = date.split('-');
+                        const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
+                        versions.push({
+                            label: label,
+                            filename: file.name,
+                            date: date
+                        });
+                    }
                 }
             }
         }
         
         if (versions.length > 0) {
             AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
-            console.log(`📸 Geladen snapshots: ${versions.length} bestanden gevonden`);
+            console.log(`📸 Geladen snapshots via API: ${versions.length} bestanden gevonden`);
+            console.log('Snapshots:', AVAILABLE_VERSIONS.map(v => v.filename));
         } else {
-            console.log('Geen snapshots gevonden, gebruik default snapshots');
+            console.log('Geen snapshots gevonden via API, gebruik default snapshots');
             useDefaultSnapshots();
         }
         
