@@ -551,56 +551,46 @@
     async function loadAvailableSnapshots() {
     try {
         const manifestUrl = `${GITHUB_RAW_BASE}snapshots.json`;
+        console.log('📋 Laden van snapshots.json...');
+        
         const response = await fetch(manifestUrl);
         
-        if (response.ok) {
-            const manifest = await response.json();
-            const versions = [];
-            
-            // Eerst alle snapshots toevoegen uit manifest (zonder checks)
-            for (const filename of manifest.snapshots) {
-                const match = filename.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
-                if (match) {
-                    const date = match[1];
-                    const [year, month, day] = date.split('-');
-                    const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
-                    versions.push({
-                        label: label,
-                        filename: filename,
-                        date: date
-                    });
-                }
-            }
-            
-            AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
-            console.log(`✅ ${AVAILABLE_VERSIONS.length} snapshots geladen`);
-            
-            // OPTIONEEL: Check op de achtergrond of ze bestaan (zonder de UI te blokkeren)
-            setTimeout(() => {
-                validateSnapshotsInBackground();
-            }, 5000);
-            
-        } else {
-            console.error('snapshots.json niet gevonden');
+        if (!response.ok) {
+            console.error(`❌ snapshots.json niet gevonden (HTTP ${response.status})`);
+            AVAILABLE_VERSIONS = [];
+            return;
         }
         
+        const manifest = await response.json();
+        const versions = [];
+        
+        for (const filename of manifest.snapshots) {
+            const match = filename.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
+            if (match) {
+                const date = match[1];
+                const [year, month, day] = date.split('-');
+                const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
+                versions.push({
+                    label: label,
+                    filename: filename,
+                    date: date
+                });
+            }
+        }
+        
+        AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
+        console.log(`✅ ${AVAILABLE_VERSIONS.length} snapshots geladen uit manifest`);
+        
     } catch (err) {
-        console.error('Fout bij laden snapshots:', err);
+        console.error('❌ Fout bij laden snapshots:', err);
+        AVAILABLE_VERSIONS = [];
     }
 }
 
-// Optionele achtergrond check (verwijdert geen snapshots, logt alleen)
-async function validateSnapshotsInBackground() {
-    for (const version of AVAILABLE_VERSIONS) {
-        try {
-            const check = await fetch(`${GITHUB_RAW_BASE}${version.filename}`, { method: 'HEAD' });
-            if (!check.ok) {
-                console.warn(`⚠️ ${version.filename} bestaat niet!`);
-            }
-        } catch (err) {
-            console.warn(`⚠️ ${version.filename} kan niet gecheckt worden`);
-        }
-    }
+// Verwijder useDefaultSnapshots() helemaal of laat hem leeg
+function useDefaultSnapshots() {
+    // Niet gebruiken - geen fallback
+    AVAILABLE_VERSIONS = [];
 }
     
     function getMonthName(month) {
