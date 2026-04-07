@@ -24,6 +24,16 @@
         .brand h1 { font-size: 3rem; color: #ffd966; font-family: Georgia, serif; }
         .brand h2 { font-size: 1rem; color: #ffd966; margin-top: -8px; }
         .last-updated { text-align: center; color: #ffdca8; font-size: 0.7rem; margin-bottom: 20px; }
+        .tracking-notice {
+            background: #2c0f05;
+            color: #ffd966;
+            text-align: center;
+            padding: 8px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            margin-bottom: 16px;
+            font-weight: bold;
+        }
         .club-selector { margin-bottom: 24px; }
         .club-dropdown {
             width: 100%;
@@ -417,7 +427,7 @@
             background: #2c0f05;
             border-radius: 20px;
             padding: 12px;
-            margin-bottom: 15px;
+            margin-top: 15px;
             text-align: center;
         }
         .club-history h4 {
@@ -477,6 +487,10 @@
     <div class="brand">
         <h1>RealDutch</h1>
         <h2>Brawl Stars • Club Statistieken</h2>
+    </div>
+    
+    <div class="tracking-notice">
+        📅 Tracken gestart op 25 april 2025
     </div>
     
     <div class="note">
@@ -775,15 +789,16 @@
         return roleMap[role] || 'Member';
     }
     
-    // Club history: wanneer speler in/uit club gaat + beste rank ooit
+    // Club history: alleen huidige club voor hoogste rank, en speciale tekst voor 25 april 2025
     async function getClubHistoryForPlayer(memberTag) {
         const history = [];
         let bestRank = { rank: Infinity, date: null, label: null };
+        const currentClubName = currentClub.name;
         
         const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
         let previousClub = null;
-        let previousRank = null;
         let previousDateLabel = null;
+        let firstSeen = false;
         
         for (let i = 0; i < sortedVersions.length; i++) {
             const version = sortedVersions[i];
@@ -800,36 +815,45 @@
                     found = true;
                     currentRank = member.rank;
                     clubName = club.name;
-                    if (currentRank && currentRank < bestRank.rank) {
+                    // Alleen rank bijhouden binnen huidige club voor beste rank
+                    if (clubName === currentClubName && currentRank && currentRank < bestRank.rank) {
                         bestRank = { rank: currentRank, date: version.date, label: version.label, club: clubName };
                     }
                     break;
                 }
             }
             
+            const isFirstSnapshot = version.date === '2025-04-25';
+            
             if (found && !previousClub) {
-                history.push({ type: 'joined', date: version.label, club: clubName, rank: currentRank });
-            } else if (found && previousClub && !previousClub.includes(clubName)) {
+                if (isFirstSnapshot) {
+                    history.push({ type: 'indefinite', date: version.label, club: clubName });
+                } else {
+                    history.push({ type: 'joined', date: version.label, club: clubName, rank: currentRank });
+                }
+                firstSeen = true;
+            } else if (found && previousClub && previousClub !== clubName) {
                 history.push({ type: 'left', date: previousDateLabel, club: previousClub });
-                history.push({ type: 'joined', date: version.label, club: clubName, rank: currentRank });
+                if (isFirstSnapshot) {
+                    history.push({ type: 'indefinite', date: version.label, club: clubName });
+                } else {
+                    history.push({ type: 'joined', date: version.label, club: clubName, rank: currentRank });
+                }
             } else if (!found && previousClub) {
                 history.push({ type: 'left', date: previousDateLabel, club: previousClub });
+                previousClub = null;
             }
             
             if (found) {
                 previousClub = clubName;
-                previousRank = currentRank;
                 previousDateLabel = version.label;
-            } else if (!found && previousClub) {
-                previousClub = null;
-                previousRank = null;
             }
         }
         
         // Check huidige club
         if (currentClub && currentClub.members.find(m => m.tag === memberTag)) {
             const currentRank = currentClub.members.findIndex(m => m.tag === memberTag) + 1;
-            if (bestRank.rank === Infinity || currentRank < bestRank.rank) {
+            if (currentRank < bestRank.rank) {
                 bestRank = { rank: currentRank, date: 'Huidig', label: 'Huidig', club: currentClub.name };
             }
             if (!previousClub) {
@@ -840,6 +864,34 @@
         }
         
         return { history, bestRank: bestRank.rank !== Infinity ? bestRank : null };
+    }
+    
+    // Haal ALLE stats van een speler uit ALLE clubs (alle RD clubs)
+    async function getAllPlayerStats(memberTag) {
+        const allPoints = []; // elk element: { date, dateRaw, label, trophies, prestige, teamWins, showdownWins, club }
+        const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        for (const version of sortedVersions) {
+            const snapshot = await loadHistoricalSnapshot(version.filename);
+            if (!snapshot || !snapshot.clubs) continue;
+            
+            for (const club of snapshot.clubs) {
+                const member = club.members?.find(m => m.tag === memberTag);
+                if (member) {
+                    allPoints.push({
+                        date: version.label,
+                        dateRaw: version.date,
+                        trophies: member.trophies,
+                        prestige: member.prestige,
+                        teamWins: member.teamWins || 0,
+                        showdownWins: member.showdownWins || 0,
+                        club: club.name
+                    });
+                    break;
+                }
+            }
+        }
+        return allPoints;
     }
     
     async function showPlayerProgressChart(member) {
@@ -866,13 +918,13 @@
                         <button class="range-btn active" data-range="all">Alle data</button>
                     </div>
                     <div id="deltaStats" class="delta-stats"></div>
-                    <div id="clubHistoryContainer" class="club-history"></div>
                     <div class="chart-container" style="position: relative;">
                         <canvas id="playerChart"></canvas>
                         <div id="chartLoading" class="chart-loading">
                             <div class="spinner"></div>
                         </div>
                     </div>
+                    <div id="clubHistoryContainer" class="club-history"></div>
                 </div>
                 <div class="modal-footer">
                     <button id="closeChartModal" style="background:#ffd966;">Sluiten</button>
@@ -902,39 +954,20 @@
                     historyHtml += `<div class="history-item">✅ ${item.date} - Toegetreden bij ${item.club} (Rank #${item.rank})</div>`;
                 } else if (item.type === 'left') {
                     historyHtml += `<div class="history-item">❌ ${item.date} - Vertrokken bij ${item.club}</div>`;
+                } else if (item.type === 'indefinite') {
+                    historyHtml += `<div class="history-item">📅 ${item.date} - Lid sinds onbepaalde tijd bij ${item.club}</div>`;
                 }
             });
         }
         if (bestRank) {
-            historyHtml += `<div class="best-rank">🏆 Hoogste rank ooit: #${bestRank.rank} (${bestRank.label} bij ${bestRank.club})</div>`;
+            historyHtml += `<div class="best-rank">🏆 Hoogste rank ooit in ${currentClub.name}: #${bestRank.rank} (${bestRank.label})</div>`;
         } else {
-            historyHtml += `<div class="best-rank">🏆 Hoogste rank ooit: -</div>`;
+            historyHtml += `<div class="best-rank">🏆 Hoogste rank ooit in ${currentClub.name}: -</div>`;
         }
         clubHistoryDiv.innerHTML = historyHtml;
         
-        // Data laden voor grafiek
-        const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
-        const historicalDataPoints = [];
-        
-        for (const version of sortedVersions) {
-            const snapshot = await loadHistoricalSnapshot(version.filename);
-            if (snapshot && snapshot.clubs) {
-                const historicalClub = snapshot.clubs.find(c => c.name === currentClub.name);
-                if (historicalClub && historicalClub.members) {
-                    const historicalMember = historicalClub.members.find(m => m.tag === member.tag);
-                    if (historicalMember) {
-                        historicalDataPoints.push({
-                            date: version.label,
-                            dateRaw: version.date,
-                            trophies: historicalMember.trophies,
-                            prestige: historicalMember.prestige,
-                            teamWins: historicalMember.teamWins || 0,
-                            showdownWins: historicalMember.showdownWins || 0
-                        });
-                    }
-                }
-            }
-        }
+        // Data laden voor grafiek - ALLE clubs, alle tijden
+        const allHistoricalPoints = await getAllPlayerStats(member.tag);
         
         const currentPoint = {
             date: "Huidig",
@@ -942,18 +975,32 @@
             trophies: member.trophies,
             prestige: member.prestige,
             teamWins: member.teamWins,
-            showdownWins: member.showdownWins
+            showdownWins: member.showdownWins,
+            club: currentClub.name
         };
         
-        if (historicalDataPoints.length > 0) {
-            const lastHistorical = historicalDataPoints[historicalDataPoints.length - 1];
-            if (lastHistorical.date !== currentPoint.date && 
-                (lastHistorical.trophies !== currentPoint.trophies || lastHistorical.prestige !== currentPoint.prestige)) {
+        let historicalDataPoints = [...allHistoricalPoints];
+        
+        // Voeg huidig punt toe als die niet al bestaat of verschilt
+        const existingCurrent = historicalDataPoints.find(p => p.date === "Huidig");
+        if (!existingCurrent) {
+            if (historicalDataPoints.length > 0) {
+                const lastHistorical = historicalDataPoints[historicalDataPoints.length - 1];
+                if (lastHistorical.date !== currentPoint.date && 
+                    (lastHistorical.trophies !== currentPoint.trophies || lastHistorical.prestige !== currentPoint.prestige)) {
+                    historicalDataPoints.push(currentPoint);
+                }
+            } else {
                 historicalDataPoints.push(currentPoint);
             }
-        } else {
-            historicalDataPoints.push(currentPoint);
         }
+        
+        // Sorteer op datum
+        historicalDataPoints.sort((a,b) => {
+            if (a.date === "Huidig") return 1;
+            if (b.date === "Huidig") return -1;
+            return new Date(a.dateRaw) - new Date(b.dateRaw);
+        });
         
         function filterByRange(points, days) {
             if (days === Infinity) return points;
@@ -1015,7 +1062,8 @@
                             pointBackgroundColor: '#ffd966',
                             pointBorderColor: '#5a2412',
                             pointRadius: 5,
-                            pointHoverRadius: 8
+                            pointHoverRadius: 8,
+                            spanGaps: true
                         },
                         {
                             label: '⭐ Prestige (×1000)',
@@ -1028,7 +1076,8 @@
                             pointBackgroundColor: '#4caf50',
                             pointBorderColor: '#2c0f05',
                             pointRadius: 5,
-                            pointHoverRadius: 8
+                            pointHoverRadius: 8,
+                            spanGaps: true
                         }
                     ]
                 },
