@@ -558,56 +558,56 @@
             const manifest = await response.json();
             const versions = [];
             
+            console.log('📋 Manifest gevonden, controleren welke snapshots echt bestaan...');
+            
             for (const filename of manifest.snapshots) {
                 const match = filename.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
                 if (match) {
                     const date = match[1];
-                    const [year, month, day] = date.split('-');
-                    const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
-                    versions.push({
-                        label: label,
-                        filename: filename,
-                        date: date
-                    });
+                    
+                    // Check of het bestand bestaat en niet leeg is
+                    try {
+                        const fileCheck = await fetch(`${GITHUB_RAW_BASE}${filename}`, { method: 'HEAD' });
+                        
+                        if (fileCheck.ok) {
+                            // Check ook of het bestand niet leeg is (Content-Length > 0)
+                            const contentLength = fileCheck.headers.get('Content-Length');
+                            
+                            if (contentLength && parseInt(contentLength) > 0) {
+                                const [year, month, day] = date.split('-');
+                                const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
+                                versions.push({
+                                    label: label,
+                                    filename: filename,
+                                    date: date
+                                });
+                                console.log(`✅ ${filename} bestaat en is niet leeg (${contentLength} bytes)`);
+                            } else {
+                                console.log(`⚠️ ${filename} bestaat maar is leeg (0 bytes), overslaan...`);
+                            }
+                        } else {
+                            console.log(`❌ ${filename} bestaat niet (HTTP ${fileCheck.status}), overslaan...`);
+                        }
+                        
+                    } catch (err) {
+                        console.log(`❌ ${filename} kan niet worden gecheckt: ${err.message}, overslaan...`);
+                    }
+                    
+                    // Kleine vertraging om rate limiting te voorkomen
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 }
             }
             
             if (versions.length > 0) {
                 AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
-                console.log(`✅ ${versions.length} snapshots geladen via manifest`);
-                return;
+                console.log(`📸 ${versions.length} geldige snapshots geladen via manifest`);
+            } else {
+                console.log('⚠️ Geen geldige snapshots gevonden in manifest, val terug op default');
+                useDefaultSnapshots();
             }
-        }
-        
-        // Fallback: genereer automatisch datums voor de afgelopen/komende periode
-        const versions = [];
-        const startDate = new Date(2026, 2, 1); // 1 maart 2026
-        const endDate = new Date(2026, 5, 30); // 30 juni 2026
-        
-        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            const date = `${year}-${month}-${day}`;
-            const filename = `snapshot_${date}.json`;
             
-            // Check of het bestand bestaat
-            const testResponse = await fetch(`${GITHUB_RAW_BASE}${filename}`, { method: 'HEAD' });
-            if (testResponse.ok) {
-                const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
-                versions.push({
-                    label: label,
-                    filename: filename,
-                    date: date
-                });
-                console.log(`✅ Gevonden: ${filename}`);
-            }
-        }
-        
-        if (versions.length > 0) {
-            AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
-            console.log(`✅ ${versions.length} snapshots gevonden via automatische check`);
         } else {
+            console.log('📋 Geen manifest gevonden, gebruik default snapshots');
             useDefaultSnapshots();
         }
         
