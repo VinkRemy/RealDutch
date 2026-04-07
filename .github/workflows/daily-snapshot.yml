@@ -2,7 +2,7 @@ name: Daily Snapshot
 
 on:
   schedule:
-    - cron: '59 20 * * *'
+    - cron: '0 21 * * *'
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT_TOKEN }}  # Gebruik PAT token
+          token: ${{ secrets.PAT_TOKEN }}
           
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -40,11 +40,39 @@ jobs:
             return await response.json();
           }
           
+          async function updateManifest(filename) {
+            const manifestPath = path.join('clubs', 'snapshots.json');
+            let snapshots = [];
+            
+            // Bestaand manifest laden of nieuw aanmaken
+            if (fs.existsSync(manifestPath)) {
+              const manifestContent = fs.readFileSync(manifestPath, 'utf8');
+              try {
+                const manifest = JSON.parse(manifestContent);
+                snapshots = manifest.snapshots || [];
+              } catch (err) {
+                console.log('⚠️ Bestaand manifest kon niet worden gelezen, nieuw manifest wordt aangemaakt');
+              }
+            }
+            
+            // Voeg nieuwe snapshot toe als die nog niet bestaat
+            if (!snapshots.includes(filename)) {
+              snapshots.push(filename);
+              // Sorteer op datum
+              snapshots.sort();
+              
+              const newManifest = { snapshots: snapshots };
+              fs.writeFileSync(manifestPath, JSON.stringify(newManifest, null, 2));
+              console.log(`✅ Manifest bijgewerkt met: ${filename}`);
+            } else {
+              console.log(`ℹ️ ${filename} staat al in manifest`);
+            }
+          }
+          
           async function createSnapshot() {
             console.log('📸 Creating daily snapshot...');
             
             const combinedData = await fetchCombinedData();
-            
             const clubsData = [];
             
             for (const club of combinedData.clubs) {
@@ -91,6 +119,10 @@ jobs:
             fs.writeFileSync(filePath, JSON.stringify(snapshot, null, 2));
             
             console.log(`✅ Snapshot saved to ${filePath}`);
+            
+            // Update manifest met de nieuwe snapshot
+            await updateManifest(filename);
+            
             return { filename, filePath };
           }
           
@@ -112,4 +144,4 @@ jobs:
           git add clubs/
           git diff --quiet && git diff --staged --quiet || (git commit -m "📸 Daily snapshot $(date +'%Y-%m-%d')" && git push)
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}  # Gebruik PAT token voor push
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
