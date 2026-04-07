@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" type="image/png" href="/RealDutch.png">
-    <title>RealDutch • Club Statistieken</title>
+    <title>RealDutch • Club Statistieken • Progressie & Grafieken</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -119,6 +119,15 @@
         }
         th, td { padding: 10px 8px; text-align: left; color: #fff0cf; }
         th { background: #63200e; color: #ffdeae; cursor: pointer; }
+        .clickable-name {
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
+            transition: 0.1s;
+        }
+        .clickable-name:hover { color: #ffd966; transform: scale(1.02); display: inline-block; }
         .role-badge {
             display: inline-block;
             padding: 3px 10px;
@@ -139,61 +148,13 @@
             font-size: 0.7rem;
             display: inline-block;
         }
-        .discord-cell, .kicklist-cell {
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .discord-cell:hover, .kicklist-cell:hover {
-            opacity: 0.7;
-            transform: scale(1.02);
-        }
-        .discord-yes { 
-            background: #2e7d32; 
-            color: #fff; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            display: inline-block;
-            font-weight: bold;
-        }
-        .discord-no { 
-            background: #c62828; 
-            color: #fff; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            display: inline-block;
-            font-weight: bold;
-        }
-        .kicklist-yes { 
-            background: #f39c12; 
-            color: #fff; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            display: inline-block;
-            font-weight: bold;
-        }
-        .kicklist-no { 
-            background: #2c3e50; 
-            color: #fff; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            display: inline-block;
-            font-weight: bold;
-        }
-        .discord-edit, .kicklist-edit {
-            background: #ffd966;
-            color: #5a2412;
-            padding: 2px 8px;
-            border-radius: 16px;
-            font-size: 0.6rem;
-            margin-left: 8px;
-        }
-        .clickable-row {
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .clickable-row:hover {
-            background: #9e351d80;
-        }
+        .discord-cell, .kicklist-cell { cursor: pointer; transition: 0.2s; }
+        .discord-cell:hover, .kicklist-cell:hover { opacity: 0.7; transform: scale(1.02); }
+        .discord-yes { background: #2e7d32; color: #fff; padding: 4px 10px; border-radius: 20px; display: inline-block; font-weight: bold; }
+        .discord-no { background: #c62828; color: #fff; padding: 4px 10px; border-radius: 20px; display: inline-block; font-weight: bold; }
+        .kicklist-yes { background: #f39c12; color: #fff; padding: 4px 10px; border-radius: 20px; display: inline-block; font-weight: bold; }
+        .kicklist-no { background: #2c3e50; color: #fff; padding: 4px 10px; border-radius: 20px; display: inline-block; font-weight: bold; }
+        .discord-edit, .kicklist-edit { background: #ffd966; color: #5a2412; padding: 2px 8px; border-radius: 16px; font-size: 0.6rem; margin-left: 8px; }
         .loading, .error { text-align: center; padding: 40px; background: #c24a2a; border-radius: 24px; color: #ffdca8; }
         .hidden { display: none; }
         .modal-overlay {
@@ -211,88 +172,24 @@
         .modal-content {
             background: #cc4125;
             border-radius: 28px;
-            max-width: 900px;
+            max-width: 950px;
             width: 90%;
             max-height: 85vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
-        .modal-header {
-            padding: 20px 24px 12px 24px;
-            border-bottom: 2px solid #ffd966;
-            flex-shrink: 0;
-        }
-        .modal-body {
-            padding: 20px 24px;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .modal-footer {
-            padding: 16px 24px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            flex-shrink: 0;
-            text-align: center;
-        }
-        .modal-content select, .modal-content input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 40px;
-            border: none;
-            font-size: 1rem;
-        }
-        .modal-content button {
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 40px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .note {
-            background: #662211;
-            padding: 10px;
-            border-radius: 16px;
-            text-align: center;
-            margin-bottom: 16px;
-            font-size: 0.7rem;
-            color: #ffdeae;
-        }
-        .admin-collapse-panel {
-            background: #9e351d;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            transition: all 0.25s ease;
-        }
-        .admin-collapse-inner {
-            padding: 20px;
-            border-top: 1px solid #ffd966;
-        }
-        .admin-status-badge {
-            font-size: 0.7rem;
-            background: #662211;
-            padding: 4px 12px;
-            border-radius: 60px;
-            color: #ffdeae;
-        }
-        .auth-message-error {
-            background: #c62828;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 12px;
-            margin-top: 10px;
-            font-size: 0.75rem;
-        }
-        .auth-message-success {
-            background: #2e7d32;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 12px;
-            margin-top: 10px;
-            font-size: 0.75rem;
-        }
+        .modal-header { padding: 20px 24px 12px 24px; border-bottom: 2px solid #ffd966; flex-shrink: 0; }
+        .modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; text-align: center; }
+        .modal-content select, .modal-content input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 40px; border: none; font-size: 1rem; }
+        .modal-content button { padding: 10px 20px; margin: 5px; border-radius: 40px; border: none; cursor: pointer; font-weight: bold; }
+        .note { background: #662211; padding: 10px; border-radius: 16px; text-align: center; margin-bottom: 16px; font-size: 0.7rem; color: #ffdeae; }
+        .admin-collapse-panel { background: #9e351d; border-radius: 20px; margin-bottom: 20px; overflow: hidden; transition: all 0.25s ease; }
+        .admin-collapse-inner { padding: 20px; border-top: 1px solid #ffd966; }
+        .admin-status-badge { font-size: 0.7rem; background: #662211; padding: 4px 12px; border-radius: 60px; color: #ffdeae; }
+        .auth-message-error { background: #c62828; color: white; padding: 8px 12px; border-radius: 12px; margin-top: 10px; font-size: 0.75rem; }
+        .auth-message-success { background: #2e7d32; color: white; padding: 8px 12px; border-radius: 12px; margin-top: 10px; font-size: 0.75rem; }
         .toast-notification {
             position: fixed;
             bottom: 20px;
@@ -305,32 +202,8 @@
             z-index: 2000;
             animation: slideIn 0.3s ease;
         }
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .modal-body table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.7rem;
-        }
-        .modal-body th, .modal-body td {
-            padding: 8px 6px;
-            text-align: left;
-            color: #fff0cf;
-            border-bottom: 1px solid #e67e2240;
-        }
-        .modal-body th {
-            background: #63200e;
-            color: #ffdeae;
-            position: sticky;
-            top: 0;
-        }
-        .chart-container {
-            position: relative;
-            height: 350px;
-            margin: 20px 0;
-        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .chart-container { position: relative; height: 350px; margin: 20px 0; }
         .player-stats-summary {
             background: linear-gradient(135deg, #2c0f05 0%, #5a2412 100%);
             border-radius: 20px;
@@ -338,1161 +211,320 @@
             margin-bottom: 20px;
             text-align: center;
             border: 1px solid #ffd966;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .player-stats-summary > div {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            flex-wrap: wrap;
-        }
-        .player-stats-summary > div > div {
-            background: rgba(0,0,0,0.4);
-            padding: 12px 24px;
-            border-radius: 60px;
-            transition: transform 0.2s;
-        }
-        .player-stats-summary > div > div:hover {
-            transform: translateY(-2px);
-            background: rgba(0,0,0,0.6);
-        }
-        .player-stats-summary strong {
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-        .player-stats-summary span {
-            color: #ffffff;
+        .player-stats-summary > div { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+        .player-stats-summary > div > div { background: rgba(0,0,0,0.4); padding: 12px 24px; border-radius: 60px; transition: transform 0.2s; }
+        .player-stats-summary > div > div:hover { transform: translateY(-2px); background: rgba(0,0,0,0.6); }
+        .player-stats-summary strong { font-size: 0.9rem; letter-spacing: 0.5px; }
+        .player-stats-summary span { color: #ffffff; font-weight: bold; margin-left: 8px; font-size: 1rem; }
+        .range-buttons { display: flex; gap: 12px; justify-content: center; margin: 15px 0; flex-wrap: wrap; }
+        .range-btn {
+            background: #63200e;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: #ffdeae;
             font-weight: bold;
-            margin-left: 8px;
-            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
         }
+        .range-btn.active { background: #ffd966; color: #5a2412; }
+        .delta-badge { font-size: 0.85rem; font-weight: bold; margin-left: 10px; }
+        .delta-up { color: #b9f6ca; }
+        .delta-down { color: #ffab91; }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #ffd966;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-inline { display: flex; align-items: center; justify-content: center; gap: 8px; color: #ffdeae; padding: 20px; }
         @media (max-width: 700px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             th, td { font-size: 0.65rem; padding: 6px 4px; }
             .detail-club-name { font-size: 1.2rem; }
             .chart-container { height: 280px; }
-            .player-stats-summary > div > div { padding: 8px 16px; }
-            .player-stats-summary span { font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="brand">
-        <h1>RealDutch</h1>
-        <h2>Brawl Stars • Club Statistieken</h2>
-    </div>
-    
-    <div class="note">
-        📊 Ledenlijst is live | Prestige/wins update elke 15 minuten | Klik op een speler in progressie-overzicht voor grafiek
-    </div>
-    
+    <div class="brand"><h1>RealDutch</h1><h2>Brawl Stars • Club Statistieken</h2></div>
+    <div class="note">📊 Klik op een <strong>speler naam</strong> voor progressiegrafiek + delta per periode (7/30/365d/Alles)</div>
     <div id="lastUpdated" class="last-updated"></div>
-    
-    <div class="club-selector">
-        <select id="clubDropdown" class="club-dropdown">
-            <option value="">-- Selecteer een club --</option>
-        </select>
-    </div>
-    
+    <div class="club-selector"><select id="clubDropdown" class="club-dropdown"><option value="">-- Selecteer een club --</option></select></div>
     <div id="loading" class="loading hidden">⏳ Laden...</div>
     <div id="error" class="error hidden"></div>
-    
     <div id="detailPanel" class="detail-panel hidden">
-        <div class="detail-header">
-            <div class="detail-club-name">
-                <span id="clubName">-</span>
-                <button id="adminToggleBtn" class="admin-toggle-btn">🔧 Beheer</button>
-                <span id="adminSessionStatus" class="admin-status-badge hidden">⛔ Niet geautoriseerd</span>
-            </div>
-            <span class="detail-tag" id="clubTag"></span>
-        </div>
-        
-        <div id="adminCollapsePanel" class="admin-collapse-panel hidden">
-            <div class="admin-collapse-inner">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-                    <strong style="color:#ffd966;">🔐 Beheer toegang</strong>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button>
-                        <button id="progressHistoryBtn" class="download-report-btn" style="background:#ff9800;">📊 Progressie History</button>
-                    </div>
-                </div>
-                <div id="authFormArea">
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                        <input type="password" id="authCodeInput" placeholder="Beheercode voor deze club" style="flex:2; min-width:160px; padding:10px 16px; border-radius:60px; border:none;">
-                        <button id="submitAuthBtn" style="background:#ffd966; border:none; padding:10px 20px; border-radius:60px; font-weight:bold; cursor:pointer;">✅ Toegang verlenen</button>
-                    </div>
-                    <div id="authMessageContainer" style="margin-top:12px;"></div>
-                </div>
-                <div id="authorizedHintArea" class="hidden" style="margin-top: 16px; background:#2e7d32; padding:8px 12px; border-radius: 40px; text-align:center; color:white;">
-                    ✨ Beheermodus actief — klik op Discord / Kicklijst om direct te bewerken
-                </div>
-            </div>
-        </div>
-        
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-value" id="totalTrophies">0</div><div class="stat-label">Total Trophies</div></div>
-            <div class="stat-card"><div class="stat-value" id="requiredTrophies">0</div><div class="stat-label">Required</div></div>
-            <div class="stat-card"><div class="stat-value" id="memberCount">0</div><div class="stat-label">Members</div></div>
-            <div class="stat-card"><div class="stat-value" id="avgTrophies">0</div><div class="stat-label">Avg Trophies</div></div>
-        </div>
-        
-        <div class="members-header">
-            <h3>👥 Leden Statistieken <span id="editHint" class="hidden" style="font-size:0.7rem;">(beheer actief → klik op Discord/Kicklijst)</span></h3>
-            <span id="memberCountDisplay" class="member-count"></span>
-            <div class="sort-buttons">
-                <button class="sort-btn" data-sort="trophies">🏆 Trofeeën</button>
-                <button class="sort-btn" data-sort="prestige">⭐ Prestige</button>
-                <button class="sort-btn" data-sort="ratio">📊 Ratio</button>
-                <button class="sort-btn" data-sort="name">Naam</button>
-            </div>
-        </div>
-        
-        <div class="table-wrapper">
-            <table id="membersTable">
-                <thead id="tableHeader">
-                    <tr id="headerRow">
-                        <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
-                    </tr>
-                </thead>
-                <tbody id="membersList"></tbody>
-            </table>
-        </div>
+        <div class="detail-header"><div class="detail-club-name"><span id="clubName">-</span><button id="adminToggleBtn" class="admin-toggle-btn">🔧 Beheer</button><span id="adminSessionStatus" class="admin-status-badge hidden"></span></div><span class="detail-tag" id="clubTag"></span></div>
+        <div id="adminCollapsePanel" class="admin-collapse-panel hidden"><div class="admin-collapse-inner"><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;"><strong style="color:#ffd966;">🔐 Beheer toegang</strong><div><button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button><button id="progressHistoryBtn" class="download-report-btn" style="background:#ff9800;">📊 Progressie History</button></div></div><div id="authFormArea"><div style="display: flex; gap: 10px;"><input type="password" id="authCodeInput" placeholder="Beheercode" style="flex:2;"><button id="submitAuthBtn" style="background:#ffd966;">✅ Toegang</button></div><div id="authMessageContainer"></div></div><div id="authorizedHintArea" class="hidden" style="margin-top: 16px; background:#2e7d32; padding:8px 12px; border-radius:40px; text-align:center;">✨ Beheermodus actief — klik op Discord/Kicklijst</div></div></div>
+        <div class="stats-grid"><div class="stat-card"><div class="stat-value" id="totalTrophies">0</div><div class="stat-label">Total Trophies</div></div><div class="stat-card"><div class="stat-value" id="requiredTrophies">0</div><div class="stat-label">Required</div></div><div class="stat-card"><div class="stat-value" id="memberCount">0</div><div class="stat-label">Members</div></div><div class="stat-card"><div class="stat-value" id="avgTrophies">0</div><div class="stat-label">Avg Trophies</div></div></div>
+        <div class="members-header"><h3>👥 Leden Statistieken</h3><span id="memberCountDisplay" class="member-count"></span><div class="sort-buttons"><button class="sort-btn" data-sort="trophies">🏆 Trofeeën</button><button class="sort-btn" data-sort="prestige">⭐ Prestige</button><button class="sort-btn" data-sort="ratio">📊 Ratio</button><button class="sort-btn" data-sort="name">Naam</button></div></div>
+        <div class="table-wrapper"><table id="membersTable"><thead id="tableHeader"><tr id="headerRow"><th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th></tr></thead><tbody id="membersList"></tbody></table></div>
     </div>
 </div>
-
 <script>
     const API_BASE = 'https://api.realdutch.club';
     const COMBINED_URL = `${API_BASE}/api/combined-data`;
     const UPDATE_SETTINGS_URL = `${API_BASE}/api/update-settings`;
     const SECRET_TOKEN = 'realdutch-secret-2024';
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/VinkRemy/RealDutch/refs/heads/main/clubs/';
-    
     let AVAILABLE_VERSIONS = [];
-    let combinedData = null;
-    let currentClub = null;
-    let currentSort = { field: 'trophies', dir: 'desc' };
-    let isAuthorized = false;
-    let currentClubTag = null;
-    let authorizedClubTag = null;
-    let cachedHistoricalData = {};
+    let combinedData = null, currentClub = null, currentSort = { field: 'trophies', dir: 'desc' };
+    let isAuthorized = false, currentClubTag = null, authorizedClubTag = null;
+    let cachedHistoricalData = new Map();
     
-    const adminToggleBtn = document.getElementById('adminToggleBtn');
-    const adminCollapsePanel = document.getElementById('adminCollapsePanel');
-    const adminSessionStatus = document.getElementById('adminSessionStatus');
-    const authorizedHintArea = document.getElementById('authorizedHintArea');
-    const editHintSpan = document.getElementById('editHint');
-    const authCodeInput = document.getElementById('authCodeInput');
-    const submitAuthBtn = document.getElementById('submitAuthBtn');
-    const authMessageContainer = document.getElementById('authMessageContainer');
-    const downloadSnapshotBtn = document.getElementById('downloadSnapshotBtn');
-    const progressHistoryBtn = document.getElementById('progressHistoryBtn');
+    const adminToggleBtn = document.getElementById('adminToggleBtn'), adminCollapsePanel = document.getElementById('adminCollapsePanel');
+    const adminSessionStatus = document.getElementById('adminSessionStatus'), authorizedHintArea = document.getElementById('authorizedHintArea');
+    const authCodeInput = document.getElementById('authCodeInput'), submitAuthBtn = document.getElementById('submitAuthBtn'), authMessageContainer = document.getElementById('authMessageContainer');
+    const downloadSnapshotBtn = document.getElementById('downloadSnapshotBtn'), progressHistoryBtn = document.getElementById('progressHistoryBtn');
     
-    authCodeInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            performAuth();
-        }
-    });
-    
-    function showToast(message, isError = false) {
-        const toast = document.createElement('div');
-        toast.className = 'toast-notification';
-        toast.style.background = isError ? '#c62828' : '#2e7d32';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
-    
-    function showAuthMessage(message, isError) {
-        authMessageContainer.innerHTML = `<div class="${isError ? 'auth-message-error' : 'auth-message-success'}">${message}</div>`;
-        setTimeout(() => {
-            if (authMessageContainer) authMessageContainer.innerHTML = '';
-        }, 3000);
-    }
-    
+    function showToast(msg, isErr = false) { const toast = document.createElement('div'); toast.className = 'toast-notification'; toast.style.background = isErr ? '#c62828' : '#2e7d32'; toast.textContent = msg; document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
+    function showAuthMessage(msg, isErr) { authMessageContainer.innerHTML = `<div class="${isErr ? 'auth-message-error' : 'auth-message-success'}">${msg}</div>`; setTimeout(() => authMessageContainer.innerHTML = '', 3000); }
     function updateAuthUI() {
-        if (isAuthorized && authorizedClubTag === currentClubTag) {
-            adminSessionStatus.innerHTML = '✅ Beheer actief';
-            adminSessionStatus.style.background = '#2e7d32';
-            adminSessionStatus.classList.remove('hidden');
-            authorizedHintArea.classList.remove('hidden');
-            editHintSpan.classList.remove('hidden');
-            downloadSnapshotBtn.classList.remove('hidden');
-            progressHistoryBtn.classList.remove('hidden');
-            updateTableHeader(true);
-        } else {
-            adminSessionStatus.innerHTML = '🔒 Niet geautoriseerd';
-            adminSessionStatus.style.background = '#662211';
-            adminSessionStatus.classList.remove('hidden');
-            authorizedHintArea.classList.add('hidden');
-            editHintSpan.classList.add('hidden');
-            downloadSnapshotBtn.classList.add('hidden');
-            progressHistoryBtn.classList.add('hidden');
-            updateTableHeader(false);
-        }
-        if (currentClub) displayMembers();
+        const active = isAuthorized && authorizedClubTag === currentClubTag;
+        adminSessionStatus.innerHTML = active ? '✅ Beheer actief' : '🔒 Niet geautoriseerd';
+        adminSessionStatus.style.background = active ? '#2e7d32' : '#662211';
+        adminSessionStatus.classList.remove('hidden');
+        if(active) { authorizedHintArea.classList.remove('hidden'); downloadSnapshotBtn.classList.remove('hidden'); progressHistoryBtn.classList.remove('hidden'); }
+        else { authorizedHintArea.classList.add('hidden'); downloadSnapshotBtn.classList.add('hidden'); progressHistoryBtn.classList.add('hidden'); }
+        updateTableHeader(active);
+        if(currentClub) displayMembers();
     }
-    
-    function updateTableHeader(showEditColumns) {
+    function updateTableHeader(showEdit) {
         const headerRow = document.getElementById('headerRow');
-        if (!headerRow) return;
-        if (showEditColumns) {
-            headerRow.innerHTML = `
-                <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th><th>⚠️ Kicklijst</th>
-            `;
-        } else {
-            headerRow.innerHTML = `
-                <th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>
-            `;
-        }
+        if(showEdit) headerRow.innerHTML = `<th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th><th>Discord</th><th>⚠️ Kicklijst</th>`;
+        else headerRow.innerHTML = `<th>Naam</th><th>Rol</th><th>🏆 Trofeeën</th><th>⭐ Prestige</th><th>3v3 Wins</th><th>SD Wins</th><th>Ratio</th>`;
     }
-    
     async function loadAvailableSnapshots() {
-    try {
-        const manifestUrl = `${GITHUB_RAW_BASE}snapshots.json`;
-        console.log('📋 Laden van snapshots.json...');
-        
-        const response = await fetch(manifestUrl);
-        
-        if (!response.ok) {
-            console.error(`❌ snapshots.json niet gevonden (HTTP ${response.status})`);
-            AVAILABLE_VERSIONS = [];
-            return;
-        }
-        
-        const manifest = await response.json();
-        const versions = [];
-        
-        for (const filename of manifest.snapshots) {
-            const match = filename.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
-            if (match) {
-                const date = match[1];
-                const [year, month, day] = date.split('-');
-                const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
-                versions.push({
-                    label: label,
-                    filename: filename,
-                    date: date
-                });
-            }
-        }
-        
-        AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
-        console.log(`✅ ${AVAILABLE_VERSIONS.length} snapshots geladen uit manifest`);
-        
-    } catch (err) {
-        console.error('❌ Fout bij laden snapshots:', err);
-        AVAILABLE_VERSIONS = [];
-    }
-}
-
-// Verwijder useDefaultSnapshots() helemaal of laat hem leeg
-function useDefaultSnapshots() {
-    // Niet gebruiken - geen fallback
-    AVAILABLE_VERSIONS = [];
-}
-    
-    function getMonthName(month) {
-        const months = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 
-                        'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
-        return months[month - 1];
-    }
-    
-    async function performAuth() {
-        const password = authCodeInput.value.trim();
-        if (!password) {
-            showAuthMessage('❌ Voer een beheercode in', true);
-            return;
-        }
-        if (!currentClubTag) {
-            showAuthMessage('❌ Selecteer eerst een club', true);
-            return;
-        }
-        
-        showAuthMessage('🔍 Controleren...', false);
-        
         try {
-            const response = await fetch(`${API_BASE}/api/auth-club`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    clubTag: currentClubTag,
-                    password: password,
-                    secretToken: SECRET_TOKEN
-                })
-            });
-            const result = await response.json();
-            
-            if (result.success) {
-                isAuthorized = true;
-                authorizedClubTag = currentClubTag;
-                updateAuthUI();
-                showAuthMessage('✅ Toegang verleend! Je kunt nu Discord/Kicklijst aanpassen.', false);
-                authCodeInput.value = '';
-                if (currentClub) displayMembers();
-            } else {
-                showAuthMessage('❌ Onjuiste beheercode voor deze club', true);
-                isAuthorized = false;
-                authorizedClubTag = null;
-                updateAuthUI();
+            const manifestUrl = `${GITHUB_RAW_BASE}snapshots.json`;
+            const response = await fetch(manifestUrl);
+            if(!response.ok) throw new Error();
+            const manifest = await response.json();
+            const versions = [];
+            for(const filename of manifest.snapshots){
+                const match = filename.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
+                if(match){
+                    const [year,month,day] = match[1].split('-');
+                    versions.push({ label: `${parseInt(day)} ${['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'][parseInt(month)-1]} ${year}`, filename, date: match[1] });
+                }
             }
-        } catch (err) {
-            showAuthMessage('❌ Fout bij authenticatie: ' + err.message, true);
-            isAuthorized = false;
-            updateAuthUI();
-        }
+            AVAILABLE_VERSIONS = versions.sort((a,b)=>new Date(a.date)-new Date(b.date));
+        } catch(e){ AVAILABLE_VERSIONS = []; }
     }
-    
-    function downloadCurrentSnapshot() {
-        if (!isAuthorized || authorizedClubTag !== currentClubTag || !combinedData) {
-            showToast('❌ Geen toegang', true);
-            return;
-        }
-        
-        const allClubsSnapshot = {
-            date: new Date().toISOString(),
-            clubs: combinedData.clubs.map(club => ({
-                name: club.name,
-                tag: club.tag,
-                totalTrophies: club.totalTrophies,
-                requiredTrophies: club.requiredTrophies,
-                members: club.members.map(m => ({
-                    rank: club.members.findIndex(x => x.tag === m.tag) + 1,
-                    name: m.name,
-                    tag: m.tag,
-                    trophies: m.trophies,
-                    prestige: m.prestige,
-                    role: m.role,
-                    teamWins: m.teamWins,
-                    showdownWins: m.showdownWins,
-                    ratio: m.ratio
-                }))
-            }))
-        };
-        
-        const dataStr = JSON.stringify(allClubsSnapshot, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `snapshot_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
-    }
-    
-    async function loadHistoricalSnapshot(filename) {
-        if (cachedHistoricalData[filename]) return cachedHistoricalData[filename];
-        
-        try {
-            const githubUrl = `${GITHUB_RAW_BASE}${filename}`;
-            const response = await fetch(githubUrl);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            cachedHistoricalData[filename] = data;
+    async function loadHistoricalSnapshot(filename){
+        if(cachedHistoricalData.has(filename)) return cachedHistoricalData.get(filename);
+        try{
+            const resp = await fetch(`${GITHUB_RAW_BASE}${filename}`);
+            if(!resp.ok) return null;
+            const data = await resp.json();
+            cachedHistoricalData.set(filename, data);
             return data;
-        } catch (err) {
-            console.error(`Failed to load ${filename}:`, err);
-            return null;
-        }
+        } catch(e){ return null; }
     }
-    
-    function formatYAxisTicks(value) {
-        if (value >= 1000) {
-            return (value / 1000).toFixed(0) + 'k';
-        }
-        return value.toString();
+    async function performAuth(){
+        const pwd = authCodeInput.value.trim();
+        if(!pwd || !currentClubTag) { showAuthMessage('❌ Voer code in en selecteer club', true); return; }
+        try{
+            const res = await fetch(`${API_BASE}/api/auth-club`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ clubTag:currentClubTag, password:pwd, secretToken:SECRET_TOKEN }) });
+            const result = await res.json();
+            if(result.success){ isAuthorized=true; authorizedClubTag=currentClubTag; updateAuthUI(); showAuthMessage('✅ Toegang verleend', false); authCodeInput.value=''; if(currentClub) displayMembers(); }
+            else { showAuthMessage('❌ Onjuiste code', true); isAuthorized=false; authorizedClubTag=null; updateAuthUI(); }
+        } catch(e){ showAuthMessage('Fout: '+e.message, true); }
     }
-    
-    function getRoleDisplay(role) {
-        const roleMap = {
-            president: 'President',
-            vicePresident: 'Vice Pres',
-            senior: 'Senior',
-            member: 'Member'
-        };
-        return roleMap[role] || 'Member';
+    function downloadCurrentSnapshot(){
+        if(!isAuthorized || authorizedClubTag!==currentClubTag) { showToast('Geen toegang', true); return; }
+        const snapshot = { date: new Date().toISOString(), clubs: combinedData.clubs.map(c=>({ name:c.name, tag:c.tag, totalTrophies:c.totalTrophies, requiredTrophies:c.requiredTrophies, members:c.members.map(m=>({ name:m.name, tag:m.tag, trophies:m.trophies, prestige:m.prestige, role:m.role, teamWins:m.teamWins, showdownWins:m.showdownWins, ratio:m.ratio })) })) };
+        const blob = new Blob([JSON.stringify(snapshot,null,2)], {type:'application/json'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `snapshot_${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(a.href);
+        showToast('✅ JSON gedownload', false);
     }
-    
-    async function showPlayerProgressChart(member) {
-        const modalOverlay = document.createElement('div');
-        modalOverlay.className = 'modal-overlay';
-        
-        modalOverlay.innerHTML = `
-            <div class="modal-content" style="max-width: 850px;">
-                <div class="modal-header">
-                    <h3 style="color:#ffd966;">📈 Progressie Grafiek: ${escapeHtml(member.name)}</h3>
-                    <p style="color:#ffdeae; margin-top: 8px;">Evolutie van trofeeën en prestige over tijd</p>
-                </div>
-                <div class="modal-body">
-                    <div class="player-stats-summary">
-                        <div>
-                            <div>
-                                <strong style="color: #ffd966;">🎮 Trofeeën</strong>
-                                <span>${member.trophies.toLocaleString()}</span>
-                            </div>
-                            <div>
-                                <strong style="color: #4caf50;">⭐ Prestige</strong>
-                                <span>${member.prestige}</span>
-                            </div>
-                            <div>
-                                <strong style="color: #ff9800;">📊 Role</strong>
-                                <span>${getRoleDisplay(member.role)}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="playerChart"></canvas>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #ffdeae; text-align: center; margin-top: 10px;">
-                        📊 De Y-as toont trofeeën (in duizenden) en prestige (normale waarden) op dezelfde schaal
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="closeChartModal" style="background:#ffd966;">Sluiten</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modalOverlay);
-        
-        const closeBtn = modalOverlay.querySelector('#closeChartModal');
-        closeBtn.onclick = () => modalOverlay.remove();
-        
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) modalOverlay.remove();
-        });
-        
-        const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
-        
-        const historicalDataPoints = [];
-        
-        for (const version of sortedVersions) {
-            const snapshot = await loadHistoricalSnapshot(version.filename);
-            if (snapshot && snapshot.clubs) {
-                const historicalClub = snapshot.clubs.find(c => c.name === currentClub.name);
-                if (historicalClub && historicalClub.members) {
-                    const historicalMember = historicalClub.members.find(m => m.tag === member.tag);
-                    if (historicalMember) {
-                        historicalDataPoints.push({
-                            date: version.label,
-                            trophies: historicalMember.trophies,
-                            prestige: historicalMember.prestige
-                        });
-                    }
-                }
-            }
-        }
-        
-        const currentPoint = {
-            date: "Huidig",
-            trophies: member.trophies,
-            prestige: member.prestige
-        };
-        
-        if (historicalDataPoints.length > 0) {
-            const lastHistorical = historicalDataPoints[historicalDataPoints.length - 1];
-            if (lastHistorical.date !== currentPoint.date && 
-                (lastHistorical.trophies !== currentPoint.trophies || lastHistorical.prestige !== currentPoint.prestige)) {
-                historicalDataPoints.push(currentPoint);
-            }
-        } else {
-            historicalDataPoints.push(currentPoint);
-        }
-        
-        const canvas = modalOverlay.querySelector('#playerChart');
-        const ctx = canvas.getContext('2d');
-        
-        const labels = historicalDataPoints.map(p => p.date);
-        
-        const trophyData = historicalDataPoints.map(p => p.trophies);
-        const prestigeScaledData = historicalDataPoints.map(p => p.prestige * 1000);
-        
-        const allValues = [...trophyData, ...prestigeScaledData];
-        const minValue = Math.min(...allValues);
-        const maxValue = Math.max(...allValues);
-        const range = maxValue - minValue;
-        const padding = range * 0.05;
-        
-        let yMin = Math.max(0, minValue - padding);
-        let yMax = maxValue + padding;
-        
-        if (yMax <= 0) yMax = 1000;
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: '🏆 Trofeeën',
-                        data: trophyData,
-                        borderColor: '#ffd966',
-                        backgroundColor: 'rgba(255, 217, 102, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#ffd966',
-                        pointBorderColor: '#5a2412',
-                        pointRadius: 5,
-                        pointHoverRadius: 8,
-                        yAxisID: 'y'
-                    },
-                    {
-                        label: '⭐ Prestige (×1000)',
-                        data: prestigeScaledData,
-                        borderColor: '#4caf50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#4caf50',
-                        pointBorderColor: '#2c0f05',
-                        pointRadius: 5,
-                        pointHoverRadius: 8,
-                        yAxisID: 'y'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: '#ffdeae',
-                            font: { size: 12, weight: 'bold' }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                let value = context.raw;
-                                if (context.dataset.label.includes('Trofeeën')) {
-                                    return `${label}: ${value.toLocaleString()}`;
-                                }
-                                if (context.dataset.label.includes('Prestige')) {
-                                    const actualPrestige = value / 1000;
-                                    return `⭐ Prestige: ${actualPrestige}`;
-                                }
-                                return `${label}: ${value.toLocaleString()}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        position: 'left',
-                        min: yMin,
-                        max: yMax,
-                        grid: { 
-                            color: '#e67e2240',
-                            drawBorder: true,
-                            drawOnChartArea: true
-                        },
-                        title: {
-                            display: true,
-                            text: 'Trofeeën / Prestige (×1000)',
-                            color: '#ffdeae',
-                            font: { weight: 'bold', size: 11 }
-                        },
-                        ticks: { 
-                            color: '#ffdeae',
-                            callback: function(value) {
-                                return formatYAxisTicks(value);
-                            },
-                            stepSize: function() {
-                                const range = yMax - yMin;
-                                if (range > 50000) return 10000;
-                                if (range > 20000) return 5000;
-                                if (range > 10000) return 2000;
-                                if (range > 5000) return 1000;
-                                return 500;
-                            }()
-                        }
-                    },
-                    x: {
-                        grid: { color: '#e67e2240' },
-                        title: {
-                            display: true,
-                            text: 'Datum',
-                            color: '#ffdeae'
-                        },
-                        ticks: { 
-                            color: '#ffdeae',
-                            maxRotation: 45,
-                            minRotation: 45
-                        }
-                    }
-                },
-                layout: {
-                    padding: {
-                        top: 10,
-                        bottom: 10,
-                        left: 10,
-                        right: 10
-                    }
-                }
-            }
-        });
-    }
-    
-    function showProgressHistory() {
-        if (!isAuthorized || authorizedClubTag !== currentClubTag || !currentClub) {
-            showToast('❌ Geen toegang', true);
-            return;
-        }
-        
-        const modalOverlay = document.createElement('div');
-        modalOverlay.className = 'modal-overlay';
-        
-        let dropdownHtml = '<option value="">-- Kies een versie --</option>';
-        AVAILABLE_VERSIONS.forEach(version => {
-            dropdownHtml += `<option value="${version.filename}" data-label="${version.label}">${version.label}</option>`;
-        });
-        
-        modalOverlay.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 style="color:#ffd966;">📊 Progressie History - ${currentClub.name}</h3>
-                    <p style="color:#ffdeae; margin-top: 8px;">Kies een eerdere snapshot om de progressie te bekijken. <strong>Klik op een speler voor grafiek!</strong></p>
-                </div>
-                <div class="modal-body">
-                    <select id="versionSelect">
-                        ${dropdownHtml}
-                    </select>
-                    <div id="progressReportContainer" style="margin-top: 20px;"></div>
-                </div>
-                <div class="modal-footer">
-                    <button id="closeModalBtn" style="background:#ffd966;">Sluiten</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modalOverlay);
-        
-        const versionSelect = modalOverlay.querySelector('#versionSelect');
-        const progressContainer = modalOverlay.querySelector('#progressReportContainer');
-        const closeBtn = modalOverlay.querySelector('#closeModalBtn');
-        
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) modalOverlay.remove();
-        });
-        
-        closeBtn.onclick = () => modalOverlay.remove();
-        
-        versionSelect.onchange = async () => {
-            const selectedOption = versionSelect.options[versionSelect.selectedIndex];
-            const filename = selectedOption.value;
-            const label = selectedOption.text;
-            
-            if (!filename) {
-                progressContainer.innerHTML = '';
-                return;
-            }
-            
-            progressContainer.innerHTML = '<p style="color:#ffdeae; text-align:center;">📥 Snapshot wordt opgehaald...</p>';
-            
-            try {
-                const snapshot = await loadHistoricalSnapshot(filename);
-                const historicalClub = snapshot?.clubs?.find(c => c.name === currentClub.name);
-                
-                if (!historicalClub) {
-                    progressContainer.innerHTML = `<p style="color:#ffab91; text-align:center;">⚠️ Geen data gevonden voor ${currentClub.name} in deze snapshot</p>`;
-                    return;
-                }
-                
-                const reportHtml = generateComparisonReportHTML(historicalClub, label);
-                progressContainer.innerHTML = reportHtml;
-                
-                const rows = progressContainer.querySelectorAll('.clickable-row');
-                rows.forEach(row => {
-                    row.addEventListener('click', () => {
-                        const playerTag = row.getAttribute('data-player-tag');
-                        const player = currentClub.members.find(m => m.tag === playerTag);
-                        if (player) {
-                            showPlayerProgressChart(player);
-                        }
-                    });
-                });
-            } catch (err) {
-                progressContainer.innerHTML = `<p style="color:#ffab91; text-align:center;">❌ Kan snapshot niet laden: ${err.message}</p>`;
-            }
-        };
-    }
-    
-    function generateComparisonReportHTML(historicalClub, comparisonLabel) {
-        const currentMembers = currentClub.members;
-        
-        const report = currentMembers.map(current => {
-            const historical = historicalClub.members?.find(h => h.tag === current.tag);
-            return {
-                name: current.name,
-                tag: current.tag,
-                role: current.role,
-                currentRank: currentClub.members.findIndex(m => m.tag === current.tag) + 1,
-                currentTrophies: current.trophies,
-                currentPrestige: current.prestige,
-                historicalTrophies: historical?.trophies || null,
-                historicalPrestige: historical?.prestige || null,
-                historicalRank: historical?.rank || null,
-                trophyChange: historical ? current.trophies - historical.trophies : null,
-                prestigeChange: historical ? current.prestige - historical.prestige : null,
-                rankChange: historical ? historical.rank - (currentClub.members.findIndex(m => m.tag === current.tag) + 1) : null,
-                isNew: !historical,
-                left: historical && !currentClub.members.find(m => m.tag === historical.tag)
-            };
-        });
-        
-        report.sort((a, b) => (b.trophyChange || 0) - (a.trophyChange || 0));
-        
-        const topStijgers = report.filter(m => (m.trophyChange || 0) > 0).slice(0, 5);
-        const topDalers = report.filter(m => (m.trophyChange || 0) < 0).slice(0, 5);
-        
-        let html = `
-            <div style="background:#2c0f05; border-radius: 16px; padding: 12px; margin-bottom: 20px;">
-                <p style="color:#ffdeae; margin-bottom: 10px;">Vergelijking met: <strong>${comparisonLabel}</strong></p>
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
-                    <div style="flex:1;">
-                        <strong style="color:#ffd966;">📈 Top stijgers (trofeeën):</strong>
-                        ${topStijgers.length ? topStijgers.map(m => `<div style="color:#b9f6ca; margin-top:5px;">+${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`).join('') : '<div style="color:#ffdeae;">-</div>'}
-                    </div>
-                    <div style="flex:1;">
-                        <strong style="color:#ffd966;">📉 Top dalers (trofeeën):</strong>
-                        ${topDalers.length ? topDalers.map(m => `<div style="color:#ffab91; margin-top:5px;">${m.trophyChange} 🏆 ${escapeHtml(m.name)}</div>`).join('') : '<div style="color:#ffdeae;">-</div>'}
-                    </div>
-                </div>
-                <div style="margin-top: 12px; text-align: center; color: #ffdeae; font-size: 0.7rem;">
-                    💡 <strong>Klik op een speler</strong> om de volledige progressie grafiek te zien!
-                </div>
-            </div>
-            
-            <div style="overflow-x: auto; max-height: 400px;">
-                <table style="width:100%; font-size:0.7rem;">
-                    <thead>
-                        <tr style="background:#63200e; position: sticky; top: 0;">
-                            <th>#</th><th>Naam</th><th>🏆 Nu</th><th>🏆 Toen</th><th>📈 Δ</th><th>⭐ Nu</th><th>⭐ Toen</th><th>⭐ Δ</th><th>📊 Pos Δ</th><th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
-        
-        report.forEach(m => {
-            const trophyDiff = m.trophyChange !== null ? (m.trophyChange > 0 ? `+${m.trophyChange}` : m.trophyChange) : '?';
-            const prestigeDiff = m.prestigeChange !== null ? (m.prestigeChange > 0 ? `+${m.prestigeChange}` : m.prestigeChange) : '?';
-            const rankDiff = m.rankChange !== null ? (m.rankChange > 0 ? `↑${m.rankChange}` : (m.rankChange < 0 ? `↓${-m.rankChange}` : '=')) : '?';
-            const trophyColor = m.trophyChange > 0 ? '#b9f6ca' : (m.trophyChange < 0 ? '#ffab91' : '#ffd966');
-            const prestigeColor = m.prestigeChange > 0 ? '#b9f6ca' : (m.prestigeChange < 0 ? '#ffab91' : '#ffd966');
-            const rankColor = m.rankChange > 0 ? '#b9f6ca' : (m.rankChange < 0 ? '#ffab91' : '#ffd966');
-            
-            let status = '';
-            let statusColor = '#ffdeae';
-            if (m.isNew) {
-                status = '🆕 Nieuw';
-                statusColor = '#4caf50';
-            } else if (m.left) {
-                status = '❌ Weg';
-                statusColor = '#c62828';
-            }
-            
-            html += `
-                <tr class="clickable-row" data-player-tag="${escapeHtml(m.tag)}" style="border-bottom:1px solid #e67e2240; cursor: pointer;">
-                    <td style="font-weight: bold;">${m.currentRank}</td>
-                    <td style="font-weight: bold;">${escapeHtml(m.name)}</td>
-                    <td>${m.currentTrophies.toLocaleString()}</td>
-                    <td>${m.historicalTrophies?.toLocaleString() || '?'}</td>
-                    <td style="color:${trophyColor}; font-weight:bold;">${trophyDiff}</td>
-                    <td>${m.currentPrestige}</td>
-                    <td>${m.historicalPrestige || '?'}</td>
-                    <td style="color:${prestigeColor}; font-weight:bold;">${prestigeDiff}</td>
-                    <td style="color:${rankColor}; font-weight:bold;">${rankDiff}</td>
-                    <td style="color:${statusColor};">${status}</td>
-                </tr>
-            `;
-        });
-        
-        html += `
-                    </tbody>
-                </table>
-            </div>
-        `;
-        
-        return html;
-    }
-    
-    async function fetchCombinedData() {
-        const response = await fetch(COMBINED_URL);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
-    }
-    
-    async function fetchLiveClub(tag) {
-        const response = await fetch(`${API_BASE}/api/club?tag=${tag}`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
-    }
-    
-    async function loadData() {
+    async function fetchCombinedData(){ const res=await fetch(COMBINED_URL); if(!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); }
+    async function fetchLiveClub(tag){ const res=await fetch(`${API_BASE}/api/club?tag=${tag}`); if(!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); }
+    async function loadData(){
         document.getElementById('loading').classList.remove('hidden');
-        document.getElementById('error').classList.add('hidden');
-        try {
+        try{
             await loadAvailableSnapshots();
-            
             combinedData = await fetchCombinedData();
             document.getElementById('lastUpdated').innerHTML = `📅 Laatste update: ${new Date(combinedData.lastUpdated).toLocaleString()}`;
-            
             const dropdown = document.getElementById('clubDropdown');
-            const currentValue = dropdown.value;
             dropdown.innerHTML = '<option value="">-- Selecteer een club --</option>';
-            combinedData.clubs.forEach(club => {
-                const option = document.createElement('option');
-                option.value = club.tag;
-                option.textContent = `${club.name}`;
-                dropdown.appendChild(option);
-            });
-            
-            if (currentValue && combinedData.clubs.find(c => c.tag === currentValue)) {
-                dropdown.value = currentValue;
-                selectClub(currentValue);
-            }
-            
+            combinedData.clubs.forEach(c=>{ const opt=document.createElement('option'); opt.value=c.tag; opt.textContent=c.name; dropdown.appendChild(opt); });
+            if(dropdown.value) selectClub(dropdown.value);
             document.getElementById('loading').classList.add('hidden');
-        } catch (err) {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('error').classList.remove('hidden');
-            document.getElementById('error').innerHTML = `❌ Fout bij laden: ${err.message}`;
-        }
+        } catch(err){ document.getElementById('loading').classList.add('hidden'); document.getElementById('error').classList.remove('hidden'); document.getElementById('error').innerHTML=`❌ ${err.message}`; }
     }
-    
-    async function selectClub(tag) {
+    async function selectClub(tag){
         currentClubTag = tag;
-        
-        if (authorizedClubTag !== tag) {
-            isAuthorized = false;
-            authorizedClubTag = null;
-        } else {
-            isAuthorized = true;
-        }
+        if(authorizedClubTag !== tag){ isAuthorized=false; authorizedClubTag=null; }
         updateAuthUI();
         adminCollapsePanel.classList.add('hidden');
-        
         document.getElementById('loading').classList.remove('hidden');
-        document.getElementById('error').classList.add('hidden');
-        try {
+        try{
             const liveClub = await fetchLiveClub(tag);
-            const statsClub = combinedData?.clubs?.find(c => c.tag === tag);
-            
-            const members = liveClub.members.map(member => {
-                const statsMember = statsClub?.members?.find(sm => sm.tag === member.tag);
-                return {
-                    name: member.name,
-                    tag: member.tag,
-                    role: member.role,
-                    trophies: member.trophies,
-                    prestige: statsMember?.prestige || 0,
-                    teamWins: statsMember?.teamWins || 0,
-                    showdownWins: statsMember?.showdownWins || 0,
-                    ratio: statsMember?.ratio || '0',
-                    inDiscord: statsMember?.inDiscord || false,
-                    discordName: statsMember?.discordName || null,
-                    onKickList: statsMember?.onKickList || false
-                };
+            const statsClub = combinedData?.clubs?.find(c=>c.tag===tag);
+            const members = liveClub.members.map(member=>{
+                const sm = statsClub?.members?.find(s=>s.tag===member.tag);
+                return { name:member.name, tag:member.tag, role:member.role, trophies:member.trophies, prestige:sm?.prestige||0, teamWins:sm?.teamWins||0, showdownWins:sm?.showdownWins||0, ratio:sm?.ratio||'0', inDiscord:sm?.inDiscord||false, discordName:sm?.discordName||null, onKickList:sm?.onKickList||false };
             });
-            
-            currentClub = {
-                name: liveClub.name,
-                tag: liveClub.tag,
-                totalTrophies: liveClub.trophies,
-                requiredTrophies: liveClub.requiredTrophies || 0,
-                members: members
-            };
-            
+            currentClub = { name:liveClub.name, tag:liveClub.tag, totalTrophies:liveClub.trophies, requiredTrophies:liveClub.requiredTrophies||0, members };
             document.getElementById('clubName').textContent = currentClub.name;
-            document.getElementById('clubTag').textContent = currentClub.tag.startsWith('#') ? currentClub.tag : `#${currentClub.tag}`;
+            document.getElementById('clubTag').textContent = currentClub.tag.startsWith('#')?currentClub.tag:`#${currentClub.tag}`;
             document.getElementById('totalTrophies').textContent = currentClub.totalTrophies.toLocaleString();
             document.getElementById('requiredTrophies').textContent = currentClub.requiredTrophies.toLocaleString();
             document.getElementById('memberCount').textContent = currentClub.members.length;
             document.getElementById('memberCountDisplay').textContent = `${currentClub.members.length} leden`;
-            const avg = Math.round(currentClub.totalTrophies / currentClub.members.length);
-            document.getElementById('avgTrophies').textContent = avg.toLocaleString();
-            
+            document.getElementById('avgTrophies').textContent = Math.round(currentClub.totalTrophies/currentClub.members.length).toLocaleString();
             displayMembers();
             document.getElementById('detailPanel').classList.remove('hidden');
-            document.getElementById('error').classList.add('hidden');
-        } catch (err) {
-            console.error(err);
-            document.getElementById('error').classList.remove('hidden');
-            document.getElementById('error').innerHTML = `❌ Fout bij laden club: ${err.message}`;
-        }
+        } catch(err){ document.getElementById('error').classList.remove('hidden'); document.getElementById('error').innerHTML=`❌ Club fout: ${err.message}`; }
         document.getElementById('loading').classList.add('hidden');
     }
-    
-    async function updateDiscordStatus(tag, inDiscord, discordName) {
-        if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
-        
-        if (currentClub) {
-            const member = currentClub.members.find(m => m.tag === tag);
-            if (member) {
-                member.inDiscord = inDiscord;
-                member.discordName = discordName || null;
-                displayMembers();
-            }
-        }
-        
-        try {
-            const response = await fetch(UPDATE_SETTINGS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    tag: tag,
-                    inDiscord: inDiscord,
-                    discordName: discordName || null,
-                    secretToken: SECRET_TOKEN
-                })
-            });
-            const result = await response.json();
-            if (result.success) {
-                showToast(inDiscord ? `✅ ${discordName || 'Lid'} gemarkeerd als in Discord` : `❌ Lid gemarkeerd als niet in Discord`, false);
-                return true;
-            } else {
-                showToast('⚠️ Server sync mislukt', true);
-                return false;
-            }
-        } catch (err) {
-            console.error(err);
-            showToast('❌ Netwerkfout', true);
-            return false;
-        }
-    }
-    
-    async function updateKicklistStatus(tag, onKickList) {
-        if (!isAuthorized || authorizedClubTag !== currentClubTag) return false;
-        
-        if (currentClub) {
-            const member = currentClub.members.find(m => m.tag === tag);
-            if (member) {
-                member.onKickList = onKickList;
-                displayMembers();
-            }
-        }
-        
-        try {
-            const response = await fetch(UPDATE_SETTINGS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    tag: tag,
-                    onKickList: onKickList,
-                    secretToken: SECRET_TOKEN
-                })
-            });
-            const result = await response.json();
-            if (result.success) {
-                showToast(onKickList ? `⚠️ Lid toegevoegd aan kicklijst` : `✅ Lid verwijderd van kicklijst`, false);
-                return true;
-            } else {
-                showToast('⚠️ Server sync mislukt', true);
-                return false;
-            }
-        } catch (err) {
-            console.error(err);
-            showToast('❌ Netwerkfout', true);
-            return false;
-        }
-    }
-    
-    function openDiscordModal(member) {
-        if (!isAuthorized) return;
-        const modalOverlay = document.createElement('div');
-        modalOverlay.className = 'modal-overlay';
-        modalOverlay.innerHTML = `
-            <div class="modal-content" style="max-width: 400px;">
-                <div class="modal-header">
-                    <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
-                </div>
-                <div class="modal-body">
-                    <p style="color:#ffdeae; margin-bottom:10px;">Huidig: ${member.inDiscord ? '✅ In Discord' : '❌ Niet in Discord'}</p>
-                    <label style="color:#ffdeae; display:block; text-align:left;">Discord gebruikersnaam:</label>
-                    <input type="text" id="discordNameInput" placeholder="gebruikersnaam" value="${escapeHtml(member.discordName || '')}">
-                </div>
-                <div class="modal-footer">
-                    <button id="discordYesBtn" style="background:#2e7d32; color:white;">✅ In Discord</button>
-                    <button id="discordNoBtn" style="background:#c62828; color:white;">❌ Niet in Discord</button>
-                    <button id="closeModalBtn" style="background:#ffd966;">Annuleren</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modalOverlay);
-        
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) modalOverlay.remove();
-        });
-        
-        const discordNameInput = modalOverlay.querySelector('#discordNameInput');
-        const yesBtn = modalOverlay.querySelector('#discordYesBtn');
-        const noBtn = modalOverlay.querySelector('#discordNoBtn');
-        const closeBtn = modalOverlay.querySelector('#closeModalBtn');
-        
-        const apply = async (status) => {
-            const discordName = discordNameInput.value;
-            await updateDiscordStatus(member.tag, status, discordName);
-            modalOverlay.remove();
-        };
-        yesBtn.onclick = () => apply(true);
-        noBtn.onclick = () => apply(false);
-        closeBtn.onclick = () => modalOverlay.remove();
-    }
-    
-    function openKicklistModal(member) {
-        if (!isAuthorized) return;
-        const modalOverlay = document.createElement('div');
-        modalOverlay.className = 'modal-overlay';
-        modalOverlay.innerHTML = `
-            <div class="modal-content" style="max-width: 400px;">
-                <div class="modal-header">
-                    <h3 style="color:#ffd966;">${escapeHtml(member.name)}</h3>
-                </div>
-                <div class="modal-body">
-                    <p style="color:#ffdeae; margin-bottom:15px;">Huidig: ${member.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}</p>
-                </div>
-                <div class="modal-footer">
-                    <button id="kickYesBtn" style="background:#f39c12; color:white;">⚠️ Toevoegen aan kicklijst</button>
-                    <button id="kickNoBtn" style="background:#2c3e50; color:white;">✅ Verwijderen</button>
-                    <button id="closeKickModal" style="background:#ffd966;">Annuleren</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modalOverlay);
-        
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) modalOverlay.remove();
-        });
-        
-        const yesBtn = modalOverlay.querySelector('#kickYesBtn');
-        const noBtn = modalOverlay.querySelector('#kickNoBtn');
-        const closeBtn = modalOverlay.querySelector('#closeKickModal');
-        const apply = async (status) => {
-            await updateKicklistStatus(member.tag, status);
-            modalOverlay.remove();
-        };
-        yesBtn.onclick = () => apply(true);
-        noBtn.onclick = () => apply(false);
-        closeBtn.onclick = () => modalOverlay.remove();
-    }
-    
-    function displayMembers() {
-        if (!currentClub) return;
-        const sorted = [...currentClub.members].sort((a, b) => {
-            let aVal, bVal;
-            if (currentSort.field === 'trophies') { aVal = a.trophies; bVal = b.trophies; }
-            else if (currentSort.field === 'prestige') { aVal = a.prestige; bVal = b.prestige; }
-            else if (currentSort.field === 'ratio') { 
-                aVal = a.ratio === '∞' ? 999999 : parseFloat(a.ratio) || 0;
-                bVal = b.ratio === '∞' ? 999999 : parseFloat(b.ratio) || 0;
-            }
-            else { aVal = a.name; bVal = b.name; }
-            if (currentSort.field === 'name') {
-                return currentSort.dir === 'asc' ? aVal.localeCompare(bVal, 'nl') : bVal.localeCompare(aVal, 'nl');
-            }
-            return currentSort.dir === 'asc' ? aVal - bVal : bVal - aVal;
+    function sortMembers(field){ if(currentSort.field===field) currentSort.dir = currentSort.dir==='asc'?'desc':'asc'; else { currentSort.field=field; currentSort.dir='desc'; } displayMembers(); }
+    function displayMembers(){
+        if(!currentClub) return;
+        const sorted = [...currentClub.members].sort((a,b)=>{
+            if(currentSort.field==='trophies') return currentSort.dir==='asc'?a.trophies-b.trophies:b.trophies-a.trophies;
+            if(currentSort.field==='prestige') return currentSort.dir==='asc'?a.prestige-b.prestige:b.prestige-a.prestige;
+            if(currentSort.field==='ratio'){ let av = a.ratio==='∞'?999999:parseFloat(a.ratio)||0; let bv = b.ratio==='∞'?999999:parseFloat(b.ratio)||0; return currentSort.dir==='asc'?av-bv:bv-av; }
+            return currentSort.dir==='asc'?a.name.localeCompare(b.name,'nl'):b.name.localeCompare(a.name,'nl');
         });
         const tbody = document.getElementById('membersList');
-        const roleNames = { president: 'President', vicePresident: 'Vice Pres', senior: 'Senior', member: 'Member' };
-        
-        if (isAuthorized && authorizedClubTag === currentClubTag) {
-            tbody.innerHTML = sorted.map(m => {
-                const roleClass = `role-${m.role}`;
-                return `
-                    <tr>
-                        <td>${escapeHtml(m.name)}</td>
-                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
-                        <td>${m.trophies.toLocaleString()}</td>
-                        <td><span class="prestige-badge">${m.prestige}</span></td>
-                        <td>${m.teamWins.toLocaleString()}</td>
-                        <td>${m.showdownWins.toLocaleString()}</td>
-                        <td>${m.ratio}</td>
-                        <td class="discord-cell" onclick="openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
-                            <span class="${m.inDiscord ? 'discord-yes' : 'discord-no'}">
-                                ${m.inDiscord ? (m.discordName ? `✓ ${escapeHtml(m.discordName)}` : '✓ In Discord') : '✗ Niet in Discord'}
-                                <span class="discord-edit">✎</span>
-                            </span>
-                        </td>
-                        <td class="kicklist-cell" onclick="openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
-                            <span class="${m.onKickList ? 'kicklist-yes' : 'kicklist-no'}">
-                                ${m.onKickList ? '⚠️ Op kicklijst' : '✅ Veilig'}
-                                <span class="kicklist-edit">✎</span>
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        } else {
-            tbody.innerHTML = sorted.map(m => {
-                const roleClass = `role-${m.role}`;
-                return `
-                    <tr>
-                        <td>${escapeHtml(m.name)}</td>
-                        <td><span class="role-badge ${roleClass}">${roleNames[m.role] || 'Member'}</span></td>
-                        <td>${m.trophies.toLocaleString()}</td>
-                        <td><span class="prestige-badge">${m.prestige}</span></td>
-                        <td>${m.teamWins.toLocaleString()}</td>
-                        <td>${m.showdownWins.toLocaleString()}</td>
-                        <td>${m.ratio}</td>
-                    </tr>
-                `;
-            }).join('');
+        const roleNames = { president:'President', vicePresident:'Vice Pres', senior:'Senior', member:'Member' };
+        const isEditMode = isAuthorized && authorizedClubTag===currentClubTag;
+        tbody.innerHTML = sorted.map(m=>{
+            const roleClass = `role-${m.role}`;
+            const nameCell = `<span class="clickable-name" data-player='${JSON.stringify(m).replace(/"/g, '&quot;')}'>${escapeHtml(m.name)}</span>`;
+            if(isEditMode){
+                return `<tr><td>${nameCell}</td><td><span class="role-badge ${roleClass}">${roleNames[m.role]||'Member'}</span></td><td>${m.trophies.toLocaleString()}</td><td><span class="prestige-badge">${m.prestige}</span></td><td>${m.teamWins.toLocaleString()}</td><td>${m.showdownWins.toLocaleString()}</td><td>${m.ratio}</td>
+                <td class="discord-cell" onclick='openDiscordModal(${JSON.stringify(m).replace(/"/g, '&quot;')})'><span class="${m.inDiscord?'discord-yes':'discord-no'}">${m.inDiscord?(m.discordName?`✓ ${escapeHtml(m.discordName)}`:'✓ In Discord'):'✗ Niet in Discord'}<span class="discord-edit">✎</span></span></td>
+                <td class="kicklist-cell" onclick='openKicklistModal(${JSON.stringify(m).replace(/"/g, '&quot;')})'><span class="${m.onKickList?'kicklist-yes':'kicklist-no'}">${m.onKickList?'⚠️ Op kicklijst':'✅ Veilig'}<span class="kicklist-edit">✎</span></span></td></tr>`;
+            } else {
+                return `<tr><td>${nameCell}</td><td><span class="role-badge ${roleClass}">${roleNames[m.role]||'Member'}</span></td><td>${m.trophies.toLocaleString()}</td><td><span class="prestige-badge">${m.prestige}</span></td><td>${m.teamWins.toLocaleString()}</td><td>${m.showdownWins.toLocaleString()}</td><td>${m.ratio}</td></tr>`;
+            }
+        }).join('');
+        document.querySelectorAll('.clickable-name').forEach(el=>{ el.addEventListener('click',(e)=>{ e.stopPropagation(); const playerData = JSON.parse(el.getAttribute('data-player')); showPlayerProgressChart(playerData); }); });
+        document.querySelectorAll('.sort-btn').forEach(btn=>{ btn.classList.remove('active'); if(btn.dataset.sort===currentSort.field) btn.classList.add('active'); });
+    }
+    function getDateRangeDays(range){ if(range===7) return 7; if(range===30) return 30; if(range===365) return 365; return Infinity; }
+    async function showPlayerProgressChart(member){
+        const modalOverlay = document.createElement('div'); modalOverlay.className = 'modal-overlay';
+        modalOverlay.innerHTML = `<div class="modal-content" style="max-width:950px;"><div class="modal-header"><h3 style="color:#ffd966;">📈 ${escapeHtml(member.name)}</h3></div><div class="modal-body"><div class="player-stats-summary"><div><div><strong>🏆 Huidig</strong><span>${member.trophies.toLocaleString()}</span></div><div><strong>⭐ Prestige</strong><span>${member.prestige}</span></div><div><strong>🎮 3v3 Wins</strong><span>${member.teamWins.toLocaleString()}</span></div><div><strong>🔫 SD Wins</strong><span>${member.showdownWins.toLocaleString()}</span></div></div></div><div class="range-buttons" id="rangeButtons"><button class="range-btn" data-range="7">7 dagen</button><button class="range-btn" data-range="30">30 dagen</button><button class="range-btn" data-range="365">365 dagen</button><button class="range-btn active" data-range="all">Alle data</button></div><div id="deltaStats" style="background:#2c0f05; border-radius: 20px; padding: 12px; margin-bottom: 15px; text-align:center;"></div><div class="chart-container"><canvas id="playerChart"></canvas></div><div id="loadingSpinner" class="loading-inline hidden"><div class="spinner"></div> Grafiek laden...</div></div><div class="modal-footer"><button id="closeChartModal" style="background:#ffd966;">Sluiten</button></div></div>`;
+        document.body.appendChild(modalOverlay);
+        const closeBtn = modalOverlay.querySelector('#closeChartModal'); closeBtn.onclick = ()=>modalOverlay.remove();
+        modalOverlay.addEventListener('click',e=>{ if(e.target===modalOverlay) modalOverlay.remove(); });
+        const spinner = modalOverlay.querySelector('#loadingSpinner'); const canvasContainer = modalOverlay.querySelector('.chart-container'); const deltaDiv = modalOverlay.querySelector('#deltaStats');
+        canvasContainer.style.opacity='0.4';
+        spinner.classList.remove('hidden');
+        const sortedVersions = [...AVAILABLE_VERSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
+        let allPoints = [];
+        for(const v of sortedVersions){
+            const snap = await loadHistoricalSnapshot(v.filename);
+            if(snap && snap.clubs){
+                const histClub = snap.clubs.find(c=>c.name === currentClub.name);
+                if(histClub && histClub.members){
+                    const hm = histClub.members.find(m=>m.tag === member.tag);
+                    if(hm) allPoints.push({ date: v.date, label: v.label, trophies: hm.trophies, prestige: hm.prestige, teamWins: hm.teamWins||0, showdownWins: hm.showdownWins||0 });
+                }
+            }
         }
-        
-        document.querySelectorAll('.sort-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.dataset.sort === currentSort.field) btn.classList.add('active');
-        });
-    }
-    
-    function sortMembers(field) {
-        if (currentSort.field === field) {
-            currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
-        } else {
-            currentSort.field = field;
-            currentSort.dir = 'desc';
+        const currentPoint = { date: new Date().toISOString().slice(0,10), label: "Huidig", trophies: member.trophies, prestige: member.prestige, teamWins: member.teamWins, showdownWins: member.showdownWins };
+        allPoints.push(currentPoint);
+        let currentRange = 'all';
+        let chartInstance = null;
+        function updateDelta(rangeKey){
+            const days = getDateRangeDays(rangeKey);
+            let filtered = [...allPoints];
+            if(days!==Infinity){
+                const now = new Date();
+                filtered = allPoints.filter(p=>{ if(p.label==='Huidig') return true; const d = new Date(p.date); const diffDays = (now - d)/(1000*3600*24); return diffDays <= days; });
+            }
+            if(filtered.length<2){ deltaDiv.innerHTML = '<span style="color:#ffab91;">⚠️ Onvoldoende historische data voor deze periode</span>'; return; }
+            const oldest = filtered[0];
+            const newest = filtered[filtered.length-1];
+            const trophyDelta = newest.trophies - oldest.trophies;
+            const prestigeDelta = newest.prestige - oldest.prestige;
+            const teamDelta = (newest.teamWins||0) - (oldest.teamWins||0);
+            const sdDelta = (newest.showdownWins||0) - (oldest.showdownWins||0);
+            deltaDiv.innerHTML = `<div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+                <div><strong>🏆 Trofeeën Δ</strong> <span class="${trophyDelta>=0?'delta-up':'delta-down'}">${trophyDelta>=0?'+':''}${trophyDelta.toLocaleString()}</span></div>
+                <div><strong>⭐ Prestige Δ</strong> <span class="${prestigeDelta>=0?'delta-up':'delta-down'}">${prestigeDelta>=0?'+':''}${prestigeDelta}</span></div>
+                <div><strong>🎮 3v3 Wins Δ</strong> <span class="${teamDelta>=0?'delta-up':'delta-down'}">${teamDelta>=0?'+':''}${teamDelta.toLocaleString()}</span></div>
+                <div><strong>🔫 SD Wins Δ</strong> <span class="${sdDelta>=0?'delta-up':'delta-down'}">${sdDelta>=0?'+':''}${sdDelta.toLocaleString()}</span></div>
+                <div><strong>📅 Periode</strong> ${oldest.label} → ${newest.label}</div>
+            </div>`;
         }
-        displayMembers();
+        function renderChart(rangeKey){
+            const days = getDateRangeDays(rangeKey);
+            let filtered = [...allPoints];
+            if(days!==Infinity){
+                const now = new Date();
+                filtered = allPoints.filter(p=>{ if(p.label==='Huidig') return true; const d = new Date(p.date); const diffDays = (now - d)/(1000*3600*24); return diffDays <= days; });
+            }
+            const labels = filtered.map(p=>p.label);
+            const trophyData = filtered.map(p=>p.trophies);
+            const prestigeScaled = filtered.map(p=>p.prestige*1000);
+            const ctx = document.getElementById('playerChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type:'line', data:{ labels, datasets:[{ label:'🏆 Trofeeën', data:trophyData, borderColor:'#ffd966', backgroundColor:'rgba(255,217,102,0.1)', borderWidth:3, fill:true, tension:0.3, pointBackgroundColor:'#ffd966' },
+                { label:'⭐ Prestige (×1000)', data:prestigeScaled, borderColor:'#4caf50', backgroundColor:'rgba(76,175,80,0.1)', borderWidth:3, fill:true, tension:0.3, pointBackgroundColor:'#4caf50' }] },
+                options:{ responsive:true, maintainAspectRatio:false, plugins:{ tooltip:{ callbacks:{ label:function(ctx){ if(ctx.dataset.label.includes('Trofeeën')) return `🏆 ${ctx.raw.toLocaleString()}`; return `⭐ Prestige: ${(ctx.raw/1000)}`; } } } }, scales:{ y:{ ticks:{ callback:val=>val>=1000?`${val/1000}k`:val } } } }
+            });
+            updateDelta(rangeKey);
+        }
+        function setActiveRange(range){
+            currentRange = range;
+            modalOverlay.querySelectorAll('.range-btn').forEach(btn=>{ if(btn.dataset.range===range) btn.classList.add('active'); else btn.classList.remove('active'); });
+            renderChart(range);
+        }
+        modalOverlay.querySelectorAll('.range-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ setActiveRange(btn.dataset.range); }); });
+        renderChart('all');
+        canvasContainer.style.opacity='1';
+        spinner.classList.add('hidden');
     }
-    
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+    async function showProgressHistory(){
+        if(!isAuthorized || authorizedClubTag!==currentClubTag){ showToast('Geen toegang',true); return; }
+        const modal = document.createElement('div'); modal.className='modal-overlay';
+        modal.innerHTML = `<div class="modal-content"><div class="modal-header"><h3>📊 Progressie History - ${currentClub.name}</h3></div><div class="modal-body"><select id="versionSelect"><option value="">-- Kies een snapshot --</option>${AVAILABLE_VERSIONS.map(v=>`<option value="${v.filename}">${v.label}</option>`).join('')}</select><div id="progressReportContainer"></div></div><div class="modal-footer"><button id="closeModalBtn">Sluiten</button></div></div>`;
+        document.body.appendChild(modal);
+        const close = ()=>modal.remove();
+        modal.querySelector('#closeModalBtn').onclick=close;
+        modal.addEventListener('click',e=>{ if(e.target===modal) close(); });
+        const select = modal.querySelector('#versionSelect');
+        const container = modal.querySelector('#progressReportContainer');
+        select.onchange = async()=>{
+            const filename = select.value;
+            if(!filename){ container.innerHTML=''; return; }
+            container.innerHTML='<div class="loading-inline"><div class="spinner"></div> Laden...</div>';
+            const snap = await loadHistoricalSnapshot(filename);
+            const histClub = snap?.clubs?.find(c=>c.name===currentClub.name);
+            if(!histClub){ container.innerHTML='<p>Geen data</p>'; return; }
+            const report = currentClub.members.map(cur=>{
+                const hist = histClub.members?.find(h=>h.tag===cur.tag);
+                return { name:cur.name, tag:cur.tag, curTrophies:cur.trophies, histTrophies:hist?.trophies||null, delta: hist?cur.trophies-hist.trophies:null };
+            }).filter(m=>m.delta!==null).sort((a,b)=>b.delta-a.delta);
+            container.innerHTML = `<div style="overflow-x:auto"><table style="width:100%"><thead><tr><th>Naam</th><th>🏆 Nu</th><th>🏆 Toen</th><th>Δ</th></tr></thead><tbody>${report.map(r=>`<tr><td>${escapeHtml(r.name)}</td><td>${r.curTrophies.toLocaleString()}</td><td>${r.histTrophies?.toLocaleString()||'?'}</td><td style="color:${r.delta>=0?'#b9f6ca':'#ffab91'}">${r.delta>=0?'+':''}${r.delta.toLocaleString()}</td></tr>`).join('')}</tbody></table></div>`;
+        };
     }
-    
-    document.getElementById('clubDropdown').addEventListener('change', (e) => {
-        if (e.target.value) selectClub(e.target.value);
-    });
-    document.querySelectorAll('.sort-btn').forEach(btn => {
-        btn.addEventListener('click', () => sortMembers(btn.dataset.sort));
-    });
-    adminToggleBtn.addEventListener('click', () => {
-        adminCollapsePanel.classList.toggle('hidden');
-    });
-    submitAuthBtn.addEventListener('click', performAuth);
-    downloadSnapshotBtn.addEventListener('click', downloadCurrentSnapshot);
-    progressHistoryBtn.addEventListener('click', showProgressHistory);
-    
-    window.openDiscordModal = openDiscordModal;
-    window.openKicklistModal = openKicklistModal;
-    window.showPlayerProgressChart = showPlayerProgressChart;
-    window.loadData = loadData;
-    
+    async function updateDiscordStatus(tag, inDiscord, discordName){ if(!isAuthorized) return false; if(currentClub){ let m=currentClub.members.find(m=>m.tag===tag); if(m){ m.inDiscord=inDiscord; m.discordName=discordName||null; displayMembers(); } } try{ await fetch(UPDATE_SETTINGS_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ tag, inDiscord, discordName:discordName||null, secretToken:SECRET_TOKEN }) }); showToast(inDiscord?`✅ ${discordName||'Lid'} in Discord`:`❌ Niet in Discord`); return true; } catch(e){ showToast('Netwerkfout',true); return false; } }
+    async function updateKicklistStatus(tag, onKickList){ if(!isAuthorized) return false; if(currentClub){ let m=currentClub.members.find(m=>m.tag===tag); if(m){ m.onKickList=onKickList; displayMembers(); } } try{ await fetch(UPDATE_SETTINGS_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ tag, onKickList, secretToken:SECRET_TOKEN }) }); showToast(onKickList?'⚠️ Op kicklijst':'✅ Verwijderd'); return true; } catch(e){ showToast('Fout',true); return false; } }
+    function openDiscordModal(member){ if(!isAuthorized) return; const modal=document.createElement('div'); modal.className='modal-overlay'; modal.innerHTML=`<div class="modal-content"><div class="modal-header"><h3>${escapeHtml(member.name)}</h3></div><div class="modal-body"><p>Huidig: ${member.inDiscord?'✅ In Discord':'❌ Niet'}</p><input id="discordNameInput" placeholder="Discord naam" value="${escapeHtml(member.discordName||'')}"></div><div class="modal-footer"><button id="discordYesBtn">✅ In Discord</button><button id="discordNoBtn">❌ Niet</button><button id="closeModalBtn">Annuleren</button></div></div>`; document.body.appendChild(modal); const close=()=>modal.remove(); modal.querySelector('#closeModalBtn').onclick=close; modal.querySelector('#discordYesBtn').onclick=async()=>{ await updateDiscordStatus(member.tag, true, modal.querySelector('#discordNameInput').value); close(); }; modal.querySelector('#discordNoBtn').onclick=async()=>{ await updateDiscordStatus(member.tag, false, null); close(); }; modal.addEventListener('click',e=>{ if(e.target===modal) close(); }); }
+    function openKicklistModal(member){ if(!isAuthorized) return; const modal=document.createElement('div'); modal.className='modal-overlay'; modal.innerHTML=`<div class="modal-content"><div class="modal-header"><h3>${escapeHtml(member.name)}</h3></div><div class="modal-body"><p>${member.onKickList?'⚠️ Op kicklijst':'✅ Veilig'}</p></div><div class="modal-footer"><button id="kickYesBtn">⚠️ Toevoegen</button><button id="kickNoBtn">✅ Verwijderen</button><button id="closeModalBtn">Annuleren</button></div></div>`; document.body.appendChild(modal); const close=()=>modal.remove(); modal.querySelector('#closeModalBtn').onclick=close; modal.querySelector('#kickYesBtn').onclick=async()=>{ await updateKicklistStatus(member.tag, true); close(); }; modal.querySelector('#kickNoBtn').onclick=async()=>{ await updateKicklistStatus(member.tag, false); close(); }; modal.addEventListener('click',e=>{ if(e.target===modal) close(); }); }
+    function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
+    document.getElementById('clubDropdown').addEventListener('change',e=>{ if(e.target.value) selectClub(e.target.value); });
+    document.querySelectorAll('.sort-btn').forEach(btn=>btn.addEventListener('click',()=>sortMembers(btn.dataset.sort)));
+    adminToggleBtn.addEventListener('click',()=>adminCollapsePanel.classList.toggle('hidden'));
+    submitAuthBtn.addEventListener('click',performAuth);
+    downloadSnapshotBtn.addEventListener('click',downloadCurrentSnapshot);
+    progressHistoryBtn.addEventListener('click',showProgressHistory);
+    window.openDiscordModal = openDiscordModal; window.openKicklistModal = openKicklistModal;
     loadData();
 </script>
 </body>
