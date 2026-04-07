@@ -550,76 +550,69 @@
     
     async function loadAvailableSnapshots() {
     try {
-        // Gebruik de GitHub API om de map inhoud op te vragen
-        let apiUrl;
-        if (GITHUB_RAW_BASE.includes('raw.githubusercontent.com')) {
-            const match = GITHUB_RAW_BASE.match(/https:\/\/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+)/);
-            if (match) {
-                const [, owner, repo, branch, path] = match;
-                // Verwijder trailing slash van path als die er is
-                const cleanPath = path.replace(/\/$/, '');
-                apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${cleanPath}?ref=${branch}`;
-            }
-        }
+        // Probeer eerst het manifest bestand
+        const manifestUrl = `${GITHUB_RAW_BASE}snapshots.json`;
+        const response = await fetch(manifestUrl);
         
-        if (!apiUrl) {
-            throw new Error('Kan GitHub API URL niet bepalen');
-        }
-        
-        console.log('Fetching from GitHub API:', apiUrl);
-        
-        // Voeg een User-Agent header toe (vereist door GitHub API)
-        const response = await fetch(apiUrl, {
-            headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'RealDutch-App'
-            }
-        });
-        
-        if (response.status === 403) {
-            console.log('Rate limit bereikt of geen toegang, val terug op default snapshots');
-            useDefaultSnapshots();
-            return;
-        }
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        
-        const files = await response.json();
-        const versions = [];
-        
-        // Controleer of files een array is (niet een enkel bestand)
-        if (Array.isArray(files)) {
-            for (const file of files) {
-                if (file.name && file.name.startsWith('snapshot_') && file.name.endsWith('.json')) {
-                    const match = file.name.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
-                    if (match) {
-                        const date = match[1];
-                        const [year, month, day] = date.split('-');
-                        const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
-                        versions.push({
-                            label: label,
-                            filename: file.name,
-                            date: date
-                        });
-                    }
+        if (response.ok) {
+            const manifest = await response.json();
+            const versions = [];
+            
+            for (const filename of manifest.snapshots) {
+                const match = filename.match(/snapshot_(\d{4}-\d{2}-\d{2})\.json/);
+                if (match) {
+                    const date = match[1];
+                    const [year, month, day] = date.split('-');
+                    const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
+                    versions.push({
+                        label: label,
+                        filename: filename,
+                        date: date
+                    });
                 }
+            }
+            
+            if (versions.length > 0) {
+                AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
+                console.log(`✅ ${versions.length} snapshots geladen via manifest`);
+                return;
+            }
+        }
+        
+        // Fallback: genereer automatisch datums voor de afgelopen/komende periode
+        const versions = [];
+        const startDate = new Date(2026, 2, 1); // 1 maart 2026
+        const endDate = new Date(2026, 5, 30); // 30 juni 2026
+        
+        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const date = `${year}-${month}-${day}`;
+            const filename = `snapshot_${date}.json`;
+            
+            // Check of het bestand bestaat
+            const testResponse = await fetch(`${GITHUB_RAW_BASE}${filename}`, { method: 'HEAD' });
+            if (testResponse.ok) {
+                const label = `${parseInt(day)} ${getMonthName(parseInt(month))} ${year}`;
+                versions.push({
+                    label: label,
+                    filename: filename,
+                    date: date
+                });
+                console.log(`✅ Gevonden: ${filename}`);
             }
         }
         
         if (versions.length > 0) {
             AVAILABLE_VERSIONS = versions.sort((a, b) => new Date(a.date) - new Date(b.date));
-            console.log(`📸 Geladen snapshots via API: ${versions.length} bestanden gevonden`);
-            console.log('Snapshots:', AVAILABLE_VERSIONS.map(v => v.filename));
+            console.log(`✅ ${versions.length} snapshots gevonden via automatische check`);
         } else {
-            console.log('Geen snapshots gevonden via API, gebruik default snapshots');
             useDefaultSnapshots();
         }
         
     } catch (err) {
         console.error('Fout bij laden snapshots:', err);
-        console.log('Valt terug op default snapshots');
         useDefaultSnapshots();
     }
 }
