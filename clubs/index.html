@@ -46,6 +46,19 @@
             cursor: pointer;
             font-weight: 600;
         }
+        .build-players-btn {
+            background: #9c27b0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .build-players-btn:hover { background: #7b1fa2; }
+        .build-players-btn:disabled { background: #666; cursor: not-allowed; }
         .detail-panel { background: #b33c21; border-radius: 24px; padding: 20px; }
         .detail-header {
             display: flex;
@@ -505,6 +518,10 @@
             <option value="">-- Selecteer een club --</option>
         </select>
     </div>
+
+    <div style="text-align:center; margin-bottom:16px;">
+        <button id="buildPlayersJsonBtn" class="build-players-btn">🛠️ Bouw players.json</button>
+    </div>
     
     <div id="loading" class="loading hidden">⏳ Laden...</div>
     <div id="error" class="error hidden"></div>
@@ -526,7 +543,6 @@
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button>
                         <button id="progressHistoryBtn" class="download-report-btn" style="background:#ff9800;">📊 Progressie History</button>
-                        <button id="buildPlayersJsonBtn" class="download-report-btn" style="background:#9c27b0;">🛠️ Bouw players.json</button>
                     </div>
                 </div>
                 <div id="authFormArea">
@@ -579,6 +595,7 @@
     const UPDATE_SETTINGS_URL = `${API_BASE}/api/update-settings`;
     const SECRET_TOKEN = 'realdutch-secret-2024';
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/VinkRemy/RealDutch/refs/heads/main/clubs/';
+    const PLAYERS_INDEX_URL = `${GITHUB_RAW_BASE}players.json`;
     
     let AVAILABLE_VERSIONS = [];
     let combinedData = null;
@@ -588,6 +605,33 @@
     let currentClubTag = null;
     let authorizedClubTag = null;
     let cachedHistoricalData = {};
+
+    // === Players index (lazy loaded) ===
+    let playerIndex = null;
+    let playerIndexPromise = null;
+
+    async function loadPlayerIndex() {
+        if (playerIndex) return playerIndex;
+        if (playerIndexPromise) return playerIndexPromise;
+
+        playerIndexPromise = (async () => {
+            try {
+                const res = await fetch(PLAYERS_INDEX_URL, { cache: 'no-cache' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                playerIndex = data.players || data;
+                return playerIndex;
+            } catch (err) {
+                console.warn('players.json niet geladen:', err);
+                playerIndex = {};
+                return playerIndex;
+            } finally {
+                playerIndexPromise = null;
+            }
+        })();
+
+        return playerIndexPromise;
+    }
     
     const adminToggleBtn = document.getElementById('adminToggleBtn');
     const adminCollapsePanel = document.getElementById('adminCollapsePanel');
@@ -766,6 +810,100 @@
         URL.revokeObjectURL(url);
         showToast('✅ JSON gedownload! Upload naar GitHub voor toekomstige vergelijkingen.', false);
     }
+
+    // === Bouw players.json ===
+    async function buildPlayersJson() {
+        const btn = document.getElementById('buildPlayersJsonBtn');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '⏳ Bezig...';
+
+        try {
+            if (!AVAILABLE_VERSIONS || AVAILABLE_VERSIONS.length === 0) {
+                await loadAvailableSnapshots();
+            }
+
+            if (AVAILABLE_VERSIONS.length === 0) {
+                showToast('❌ Geen snapshots gevonden', true);
+                return;
+            }
+
+            const players = {};
+            const sortedVersions = [...AVAILABLE_VERSIONS].sort(
+                (a, b) => new Date(a.date) - new Date(b.date)
+            );
+
+            let processed = 0;
+            const total = sortedVersions.length;
+
+            for (const version of sortedVersions) {
+                const snapshot = await loadHistoricalSnapshot(version.filename);
+                if (!snapshot || !snapshot.clubs) continue;
+
+                for (const club of snapshot.clubs) {
+                    if (!club.members) continue;
+                    for (const m of club.members) {
+                        if (!m.tag) continue;
+
+                        if (!players[m.tag]) players[m.tag] = [];
+
+                        const last = players[m.tag][players[m.tag].length - 1];
+                        if (last && last.date === version.date) continue;
+
+                        players[m.tag].push({
+                            date: version.date,
+                            dateLabel: version.label,
+                            trophies: m.trophies ?? 0,
+                            prestige: m.prestige ?? 0,
+                            teamWins: m.teamWins ?? 0,
+                            showdownWins: m.showdownWins ?? 0,
+                            club: club.name
+                        });
+                    }
+                }
+
+                processed++;
+                btn.textContent = `⏳ ${processed}/${total} snapshots...`;
+            }
+
+            for (const tag in players) {
+                players[tag].sort((a, b) => new Date(a.date) - new Date(b.date));
+            }
+
+            const output = {
+                generatedAt: new Date().toISOString(),
+                snapshotCount: total,
+                playerCount: Object.keys(players).length,
+                players: players
+            };
+
+            const dataStr = JSON.stringify(output, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'players.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Reset in-memory index zodat nieuwe data gebruikt wordt
+            playerIndex = null;
+            playerIndexPromise = null;
+
+            showToast(
+                `✅ players.json gegenereerd: ${Object.keys(players).length} spelers uit ${total} snapshots`,
+                false
+            );
+        } catch (err) {
+            console.error(err);
+            showToast('❌ Fout: ' + err.message, true);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
     
     async function loadHistoricalSnapshot(filename) {
         if (cachedHistoricalData[filename]) return cachedHistoricalData[filename];
@@ -791,109 +929,71 @@
         return roleMap[role] || 'Member';
     }
     
-    // Club history: alleen huidige club voor hoogste rank, en speciale tekst voor 25 april 2025
+    // === Club history — nu via players.json ===
     async function getClubHistoryForPlayer(memberTag) {
+        const index = await loadPlayerIndex();
+        const entries = index[memberTag];
         const history = [];
         let bestRank = { rank: Infinity, date: null, label: null };
-        const currentClubName = currentClub.name;
-        
-        const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        if (!entries || entries.length === 0) {
+            if (currentClub && currentClub.members.find(m => m.tag === memberTag)) {
+                const rank = currentClub.members.findIndex(m => m.tag === memberTag) + 1;
+                history.push({ type: 'joined', date: 'Huidig', club: currentClub.name, rank });
+                bestRank = { rank, date: 'Huidig', label: 'Huidig' };
+            }
+            return { history, bestRank: bestRank.rank !== Infinity ? bestRank : null };
+        }
+
         let previousClub = null;
         let previousDateLabel = null;
-        let firstSeen = false;
-        
-        for (let i = 0; i < sortedVersions.length; i++) {
-            const version = sortedVersions[i];
-            const snapshot = await loadHistoricalSnapshot(version.filename);
-            if (!snapshot || !snapshot.clubs) continue;
-            
-            let found = false;
-            let currentRank = null;
-            let clubName = null;
-            
-            for (const club of snapshot.clubs) {
-                const member = club.members?.find(m => m.tag === memberTag);
-                if (member) {
-                    found = true;
-                    currentRank = member.rank;
-                    clubName = club.name;
-                    // Alleen rank bijhouden binnen huidige club voor beste rank
-                    if (clubName === currentClubName && currentRank && currentRank < bestRank.rank) {
-                        bestRank = { rank: currentRank, date: version.date, label: version.label, club: clubName };
-                    }
-                    break;
-                }
-            }
-            
-            const isFirstSnapshot = version.date === '2025-04-25';
-            
-            if (found && !previousClub) {
-                if (isFirstSnapshot) {
-                    history.push({ type: 'indefinite', date: version.label, club: clubName });
-                } else {
-                    history.push({ type: 'joined', date: version.label, club: clubName, rank: currentRank });
-                }
-                firstSeen = true;
-            } else if (found && previousClub && previousClub !== clubName) {
+
+        for (const e of entries) {
+            const clubName = e.club || 'Onbekend';
+            const dateLabel = e.dateLabel || e.date;
+            const isFirst = previousClub === null;
+
+            if (isFirst) {
+                history.push({ type: 'indefinite', date: dateLabel, club: clubName });
+            } else if (clubName !== previousClub) {
                 history.push({ type: 'left', date: previousDateLabel, club: previousClub });
-                if (isFirstSnapshot) {
-                    history.push({ type: 'indefinite', date: version.label, club: clubName });
-                } else {
-                    history.push({ type: 'joined', date: version.label, club: clubName, rank: currentRank });
-                }
-            } else if (!found && previousClub) {
-                history.push({ type: 'left', date: previousDateLabel, club: previousClub });
-                previousClub = null;
+                history.push({ type: 'joined', date: dateLabel, club: clubName });
             }
-            
-            if (found) {
-                previousClub = clubName;
-                previousDateLabel = version.label;
+
+            previousClub = clubName;
+            previousDateLabel = dateLabel;
+        }
+
+        // Beste rank ooit: huidige positie
+        if (currentClub) {
+            const idx = currentClub.members.findIndex(m => m.tag === memberTag);
+            if (idx >= 0) {
+                bestRank = { rank: idx + 1, date: 'Huidig', label: 'Huidig' };
             }
         }
-        
-        // Check huidige club
-        if (currentClub && currentClub.members.find(m => m.tag === memberTag)) {
-            const currentRank = currentClub.members.findIndex(m => m.tag === memberTag) + 1;
-            if (currentRank < bestRank.rank) {
-                bestRank = { rank: currentRank, date: 'Huidig', label: 'Huidig', club: currentClub.name };
-            }
-            if (!previousClub) {
-                history.push({ type: 'joined', date: 'Huidig', club: currentClub.name, rank: currentRank });
-            }
-        } else if (previousClub) {
-            history.push({ type: 'left', date: previousDateLabel || 'Onbekend', club: previousClub });
+
+        if (currentClub && !currentClub.members.find(m => m.tag === memberTag) && previousClub) {
+            history.push({ type: 'left', date: previousDateLabel, club: previousClub });
         }
-        
+
         return { history, bestRank: bestRank.rank !== Infinity ? bestRank : null };
     }
     
-    // Haal ALLE stats van een speler uit ALLE clubs (alle RD clubs)
+    // === Alle stats van een speler — nu via players.json ===
     async function getAllPlayerStats(memberTag) {
-        const allPoints = []; // elk element: { date, dateRaw, label, trophies, prestige, teamWins, showdownWins, club }
-        const sortedVersions = [...AVAILABLE_VERSIONS].sort((a, b) => new Date(a.date) - new Date(b.date));
-        
-        for (const version of sortedVersions) {
-            const snapshot = await loadHistoricalSnapshot(version.filename);
-            if (!snapshot || !snapshot.clubs) continue;
-            
-            for (const club of snapshot.clubs) {
-                const member = club.members?.find(m => m.tag === memberTag);
-                if (member) {
-                    allPoints.push({
-                        date: version.label,
-                        dateRaw: version.date,
-                        trophies: member.trophies,
-                        prestige: member.prestige,
-                        teamWins: member.teamWins || 0,
-                        showdownWins: member.showdownWins || 0,
-                        club: club.name
-                    });
-                    break;
-                }
-            }
-        }
-        return allPoints;
+        const index = await loadPlayerIndex();
+        const entries = index[memberTag];
+        if (!entries || entries.length === 0) return [];
+
+        return entries.map(e => ({
+            date: e.dateLabel || e.date,
+            dateRaw: e.date,
+            trophies: e.trophies ?? 0,
+            prestige: e.prestige ?? 0,
+            teamWins: e.teamWins ?? 0,
+            showdownWins: e.showdownWins ?? 0,
+            club: e.club || ''
+        }));
     }
     
     async function showPlayerProgressChart(member) {
@@ -945,15 +1045,20 @@
         const deltaDiv = modalOverlay.querySelector('#deltaStats');
         const clubHistoryDiv = modalOverlay.querySelector('#clubHistoryContainer');
         
-        // Load club history
-        const { history, bestRank } = await getClubHistoryForPlayer(member.tag);
+        // Load club history + player stats (nu via players.json)
+        const [historyResult, allHistoricalPoints] = await Promise.all([
+            getClubHistoryForPlayer(member.tag),
+            getAllPlayerStats(member.tag)
+        ]);
+        const { history, bestRank } = historyResult;
+
         let historyHtml = '<h4>📜 Club History</h4>';
         if (history.length === 0) {
             historyHtml += '<div class="history-item">Geen historie gevonden</div>';
         } else {
             history.forEach(item => {
                 if (item.type === 'joined') {
-                    historyHtml += `<div class="history-item">✅ ${item.date} - Toegetreden bij ${item.club} (Rank #${item.rank})</div>`;
+                    historyHtml += `<div class="history-item">✅ ${item.date} - Toegetreden bij ${item.club}${item.rank ? ' (Rank #' + item.rank + ')' : ''}</div>`;
                 } else if (item.type === 'left') {
                     historyHtml += `<div class="history-item">❌ ${item.date} - Vertrokken bij ${item.club}</div>`;
                 } else if (item.type === 'indefinite') {
@@ -968,9 +1073,6 @@
         }
         clubHistoryDiv.innerHTML = historyHtml;
         
-        // Data laden voor grafiek - ALLE clubs, alle tijden
-        const allHistoricalPoints = await getAllPlayerStats(member.tag);
-        
         const currentPoint = {
             date: "Huidig",
             dateRaw: new Date().toISOString().slice(0,10),
@@ -983,7 +1085,6 @@
         
         let historicalDataPoints = [...allHistoricalPoints];
         
-        // Voeg huidig punt toe als die niet al bestaat of verschilt
         const existingCurrent = historicalDataPoints.find(p => p.date === "Huidig");
         if (!existingCurrent) {
             if (historicalDataPoints.length > 0) {
@@ -997,7 +1098,6 @@
             }
         }
         
-        // Sorteer op datum
         historicalDataPoints.sort((a,b) => {
             if (a.date === "Huidig") return 1;
             if (b.date === "Huidig") return -1;
@@ -1434,104 +1534,6 @@
             return m;
         });
     }
-
-    async function buildPlayersJson() {
-    const btn = document.getElementById('buildPlayersJsonBtn');
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = '⏳ Bezig...';
-
-    try {
-        // Zorg dat we de lijst met snapshots hebben
-        if (!AVAILABLE_VERSIONS || AVAILABLE_VERSIONS.length === 0) {
-            await loadAvailableSnapshots();
-        }
-
-        if (AVAILABLE_VERSIONS.length === 0) {
-            showToast('❌ Geen snapshots gevonden', true);
-            return;
-        }
-
-        const players = {};
-        const sortedVersions = [...AVAILABLE_VERSIONS].sort(
-            (a, b) => new Date(a.date) - new Date(b.date)
-        );
-
-        let processed = 0;
-        const total = sortedVersions.length;
-
-        for (const version of sortedVersions) {
-            // Gebruik je bestaande cache-loader
-            const snapshot = await loadHistoricalSnapshot(version.filename);
-            if (!snapshot || !snapshot.clubs) continue;
-
-            for (const club of snapshot.clubs) {
-                if (!club.members) continue;
-                for (const m of club.members) {
-                    if (!m.tag) continue;
-
-                    if (!players[m.tag]) players[m.tag] = [];
-
-                    // Voorkom dubbele entries voor dezelfde datum
-                    const last = players[m.tag][players[m.tag].length - 1];
-                    if (last && last.date === version.date) continue;
-
-                    players[m.tag].push({
-                        date: version.date,
-                        dateLabel: version.label,
-                        trophies: m.trophies ?? 0,
-                        prestige: m.prestige ?? 0,
-                        teamWins: m.teamWins ?? 0,
-                        showdownWins: m.showdownWins ?? 0,
-                        club: club.name
-                    });
-                }
-            }
-
-            processed++;
-            btn.textContent = `⏳ ${processed}/${total} snapshots...`;
-        }
-
-        // Sorteer elke speler op datum
-        for (const tag in players) {
-            players[tag].sort((a, b) => new Date(a.date) - new Date(b.date));
-        }
-
-        // Bouw een compact formaat (optioneel): alleen wat nodig is
-        const output = {
-            generatedAt: new Date().toISOString(),
-            snapshotCount: total,
-            playerCount: Object.keys(players).length,
-            players: players
-        };
-
-        // Download als bestand
-        const dataStr = JSON.stringify(output, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'players.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        showToast(
-            `✅ players.json gegenereerd: ${Object.keys(players).length} spelers uit ${total} snapshots`,
-            false
-        );
-    } catch (err) {
-        console.error(err);
-        showToast('❌ Fout: ' + err.message, true);
-    } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
-    }
-}
-
-document.getElementById('buildPlayersJsonBtn')
-    ?.addEventListener('click', buildPlayersJson);
     
     document.getElementById('clubDropdown').addEventListener('change', (e) => {
         if (e.target.value) selectClub(e.target.value);
@@ -1545,6 +1547,7 @@ document.getElementById('buildPlayersJsonBtn')
     submitAuthBtn.addEventListener('click', performAuth);
     downloadSnapshotBtn.addEventListener('click', downloadCurrentSnapshot);
     progressHistoryBtn.addEventListener('click', showProgressHistory);
+    document.getElementById('buildPlayersJsonBtn').addEventListener('click', buildPlayersJson);
     
     window.openDiscordModal = openDiscordModal;
     window.openKicklistModal = openKicklistModal;
