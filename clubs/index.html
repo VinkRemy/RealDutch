@@ -526,6 +526,7 @@
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button>
                         <button id="progressHistoryBtn" class="download-report-btn" style="background:#ff9800;">📊 Progressie History</button>
+                        <button id="buildPlayersJsonBtn" class="download-report-btn" style="background:#9c27b0;">🛠️ Bouw players.json</button>
                     </div>
                 </div>
                 <div id="authFormArea">
@@ -1433,6 +1434,104 @@
             return m;
         });
     }
+
+    async function buildPlayersJson() {
+    const btn = document.getElementById('buildPlayersJsonBtn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Bezig...';
+
+    try {
+        // Zorg dat we de lijst met snapshots hebben
+        if (!AVAILABLE_VERSIONS || AVAILABLE_VERSIONS.length === 0) {
+            await loadAvailableSnapshots();
+        }
+
+        if (AVAILABLE_VERSIONS.length === 0) {
+            showToast('❌ Geen snapshots gevonden', true);
+            return;
+        }
+
+        const players = {};
+        const sortedVersions = [...AVAILABLE_VERSIONS].sort(
+            (a, b) => new Date(a.date) - new Date(b.date)
+        );
+
+        let processed = 0;
+        const total = sortedVersions.length;
+
+        for (const version of sortedVersions) {
+            // Gebruik je bestaande cache-loader
+            const snapshot = await loadHistoricalSnapshot(version.filename);
+            if (!snapshot || !snapshot.clubs) continue;
+
+            for (const club of snapshot.clubs) {
+                if (!club.members) continue;
+                for (const m of club.members) {
+                    if (!m.tag) continue;
+
+                    if (!players[m.tag]) players[m.tag] = [];
+
+                    // Voorkom dubbele entries voor dezelfde datum
+                    const last = players[m.tag][players[m.tag].length - 1];
+                    if (last && last.date === version.date) continue;
+
+                    players[m.tag].push({
+                        date: version.date,
+                        dateLabel: version.label,
+                        trophies: m.trophies ?? 0,
+                        prestige: m.prestige ?? 0,
+                        teamWins: m.teamWins ?? 0,
+                        showdownWins: m.showdownWins ?? 0,
+                        club: club.name
+                    });
+                }
+            }
+
+            processed++;
+            btn.textContent = `⏳ ${processed}/${total} snapshots...`;
+        }
+
+        // Sorteer elke speler op datum
+        for (const tag in players) {
+            players[tag].sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
+
+        // Bouw een compact formaat (optioneel): alleen wat nodig is
+        const output = {
+            generatedAt: new Date().toISOString(),
+            snapshotCount: total,
+            playerCount: Object.keys(players).length,
+            players: players
+        };
+
+        // Download als bestand
+        const dataStr = JSON.stringify(output, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'players.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast(
+            `✅ players.json gegenereerd: ${Object.keys(players).length} spelers uit ${total} snapshots`,
+            false
+        );
+    } catch (err) {
+        console.error(err);
+        showToast('❌ Fout: ' + err.message, true);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+}
+
+document.getElementById('buildPlayersJsonBtn')
+    ?.addEventListener('click', buildPlayersJson);
     
     document.getElementById('clubDropdown').addEventListener('change', (e) => {
         if (e.target.value) selectClub(e.target.value);
