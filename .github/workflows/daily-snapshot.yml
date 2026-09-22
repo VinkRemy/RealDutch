@@ -47,7 +47,6 @@ jobs:
             const manifestPath = path.join('clubs', 'snapshots.json');
             let snapshots = [];
             
-            // Bestaand manifest laden of nieuw aanmaken
             if (fs.existsSync(manifestPath)) {
               const manifestContent = fs.readFileSync(manifestPath, 'utf8');
               try {
@@ -58,10 +57,8 @@ jobs:
               }
             }
             
-            // Voeg nieuwe snapshot toe als die nog niet bestaat
             if (!snapshots.includes(filename)) {
               snapshots.push(filename);
-              // Sorteer op datum
               snapshots.sort();
               
               const newManifest = { snapshots: snapshots };
@@ -123,7 +120,6 @@ jobs:
             
             console.log(`✅ Snapshot saved to ${filePath}`);
             
-            // Update manifest met de nieuwe snapshot
             await updateManifest(filename);
             
             return { filename, filePath };
@@ -139,6 +135,104 @@ jobs:
           
       - name: Run snapshot creation
         run: node create-snapshot.js
+
+      # 👇 NIEUW: genereer players_YYYY-MM-DD.json + players-latest.json
+      - name: Create players builder script
+        run: |
+          cat > build-players.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          const SNAPSHOT_DIR = 'clubs';
+          const OUTPUT_DIR   = 'clubs';
+          const LATEST_NAME  = 'players-latest.json';
+
+          function listSnapshots(dir) {
+            return fs.readdirSync(dir)
+              .filter(f => /^snapshot_(\d{4}-\d{2}-\d{2})\.json$/.test(f))
+              .map(f => {
+                const m = f.match(/^snapshot_(\d{4}-\d{2}-\d{2})\.json$/);
+                return { filename: f, date: m[1] };
+              })
+              .sort((a, b) => new Date(a.date) - new Date(b.date));
+          }
+
+          function buildPlayersJson(snapshots) {
+            const players = {};
+
+            for (const snap of snapshots) {
+              const fullPath = path.join(SNAPSHOT_DIR, snap.filename);
+              const data = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+              if (!data.clubs) continue;
+
+              for (const club of data.clubs) {
+                if (!club.members) continue;
+                for (const m of club.members) {
+                  if (!m.tag) continue;
+
+                  if (!players[m.tag]) players[m.tag] = [];
+
+                  const last = players[m.tag][players[m.tag].length - 1];
+                  if (last && last.date === snap.date) continue;
+
+                  players[m.tag].push({
+                    date: snap.date,
+                    trophies: m.trophies ?? 0,
+                    prestige: m.prestige ?? 0,
+                    teamWins: m.teamWins ?? 0,
+                    showdownWins: m.showdownWins ?? 0,
+                    club: club.name
+                  });
+                }
+              }
+            }
+
+            for (const tag in players) {
+              players[tag].sort((a, b) => new Date(a.date) - new Date(b.date));
+            }
+
+            return players;
+          }
+
+          function main() {
+            if (!fs.existsSync(SNAPSHOT_DIR)) {
+              console.error('❌ Map niet gevonden:', SNAPSHOT_DIR);
+              process.exit(1);
+            }
+
+            const snapshots = listSnapshots(SNAPSHOT_DIR);
+            if (snapshots.length === 0) {
+              console.error('❌ Geen snapshots gevonden in', SNAPSHOT_DIR);
+              process.exit(1);
+            }
+
+            const players = buildPlayersJson(snapshots);
+            const today = snapshots[snapshots.length - 1].date;
+
+            const output = {
+              generatedAt: new Date().toISOString(),
+              snapshotCount: snapshots.length,
+              playerCount: Object.keys(players).length,
+              players: players
+            };
+
+            const json = JSON.stringify(output, null, 2);
+
+            if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+
+            const datedName = `players_${today}.json`;
+            fs.writeFileSync(path.join(OUTPUT_DIR, datedName), json);
+            console.log(`✅ ${datedName} (${Object.keys(players).length} spelers uit ${snapshots.length} snapshots)`);
+
+            fs.writeFileSync(path.join(OUTPUT_DIR, LATEST_NAME), json);
+            console.log(`✅ ${LATEST_NAME}`);
+          }
+
+          main();
+          EOF
+
+      - name: Build players.json files
+        run: node build-players.js
           
       - name: Commit and push snapshot
         run: |
