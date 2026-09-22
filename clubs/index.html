@@ -518,10 +518,6 @@
             <option value="">-- Selecteer een club --</option>
         </select>
     </div>
-
-    <div style="text-align:center; margin-bottom:16px;">
-        <button id="buildPlayersJsonBtn" class="build-players-btn">🛠️ Bouw players.json</button>
-    </div>
     
     <div id="loading" class="loading hidden">⏳ Laden...</div>
     <div id="error" class="error hidden"></div>
@@ -543,6 +539,7 @@
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button id="downloadSnapshotBtn" class="download-report-btn" style="background:#2196f3;">💾 Download Snapshot</button>
                         <button id="progressHistoryBtn" class="download-report-btn" style="background:#ff9800;">📊 Progressie History</button>
+                        <button id="buildPlayersJsonBtn" class="build-players-btn">🛠️ Bouw players.json</button>
                     </div>
                 </div>
                 <div id="authFormArea">
@@ -643,6 +640,7 @@
     const authMessageContainer = document.getElementById('authMessageContainer');
     const downloadSnapshotBtn = document.getElementById('downloadSnapshotBtn');
     const progressHistoryBtn = document.getElementById('progressHistoryBtn');
+    const buildPlayersJsonBtn = document.getElementById('buildPlayersJsonBtn');
     
     authCodeInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -676,6 +674,8 @@
             editHintSpan.classList.remove('hidden');
             downloadSnapshotBtn.classList.remove('hidden');
             progressHistoryBtn.classList.remove('hidden');
+            buildPlayersJsonBtn.classList.remove('hidden');
+            
             updateTableHeader(true);
         } else {
             adminSessionStatus.innerHTML = '🔒 Niet geautoriseerd';
@@ -685,6 +685,8 @@
             editHintSpan.classList.add('hidden');
             downloadSnapshotBtn.classList.add('hidden');
             progressHistoryBtn.classList.add('hidden');
+            buildPlayersJsonBtn.classList.add('hidden');
+            
             updateTableHeader(false);
         }
         if (currentClub) displayMembers();
@@ -1547,6 +1549,7 @@
     submitAuthBtn.addEventListener('click', performAuth);
     downloadSnapshotBtn.addEventListener('click', downloadCurrentSnapshot);
     progressHistoryBtn.addEventListener('click', showProgressHistory);
+    
     document.getElementById('buildPlayersJsonBtn').addEventListener('click', buildPlayersJson);
     
     window.openDiscordModal = openDiscordModal;
