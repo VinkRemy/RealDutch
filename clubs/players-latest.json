@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-17T03:22:11.885Z",
-  "snapshotCount": 226,
+  "generatedAt": "2026-11-18T02:42:26.988Z",
+  "snapshotCount": 227,
   "playerCount": 750,
   "players": {
     "#2RR9C2LV2": [
@@ -1806,6 +1806,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 163438,
+        "prestige": 142,
+        "teamWins": 37088,
+        "showdownWins": 10199,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 163438,
         "prestige": 142,
         "teamWins": 37088,
@@ -3869,6 +3877,14 @@
         "trophies": 136242,
         "prestige": 120,
         "teamWins": 36981,
+        "showdownWins": 9224,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 137016,
+        "prestige": 121,
+        "teamWins": 37033,
         "showdownWins": 9224,
         "club": "RealDutch"
       }
@@ -8203,6 +8219,14 @@
         "teamWins": 38741,
         "showdownWins": 5142,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 213623,
+        "prestige": 201,
+        "teamWins": 38741,
+        "showdownWins": 5144,
+        "club": "RealDutch"
       }
     ],
     "#22LRC9RQJ": [
@@ -11623,6 +11647,14 @@
         "teamWins": 17966,
         "showdownWins": 11873,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 131952,
+        "prestige": 120,
+        "teamWins": 17966,
+        "showdownWins": 11874,
+        "club": "RealDutch"
       }
     ],
     "#Y2J0UU0CL": [
@@ -13431,6 +13463,14 @@
         "trophies": 126420,
         "prestige": 113,
         "teamWins": 35330,
+        "showdownWins": 10567,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 126446,
+        "prestige": 113,
+        "teamWins": 35333,
         "showdownWins": 10567,
         "club": "RealDutch"
       }
@@ -15492,6 +15532,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 144257,
+        "prestige": 129,
+        "teamWins": 34948,
+        "showdownWins": 3346,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 144257,
         "prestige": 129,
         "teamWins": 34948,
@@ -19087,6 +19135,14 @@
         "teamWins": 37038,
         "showdownWins": 7928,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 147199,
+        "prestige": 140,
+        "teamWins": 37042,
+        "showdownWins": 7930,
+        "club": "RealDutch"
       }
     ],
     "#2VUC08RU": [
@@ -21437,6 +21493,14 @@
         "teamWins": 34019,
         "showdownWins": 6728,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 130387,
+        "prestige": 127,
+        "teamWins": 34020,
+        "showdownWins": 6728,
+        "club": "RealDutch"
       }
     ],
     "#2GYL22CLL": [
@@ -23393,6 +23457,14 @@
         "teamWins": 20890,
         "showdownWins": 2154,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 140706,
+        "prestige": 129,
+        "teamWins": 20900,
+        "showdownWins": 2154,
+        "club": "RealDutch"
       }
     ],
     "#9QQG0PLY8": [
@@ -25198,6 +25270,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 120621,
+        "prestige": 109,
+        "teamWins": 26380,
+        "showdownWins": 7839,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 120621,
         "prestige": 109,
         "teamWins": 26380,
@@ -27031,6 +27111,14 @@
         "teamWins": 34265,
         "showdownWins": 5857,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 161918,
+        "prestige": 140,
+        "teamWins": 34265,
+        "showdownWins": 5857,
+        "club": "RealDutch II"
       }
     ],
     "#2G2P822U8": [
@@ -28836,6 +28924,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 128008,
+        "prestige": 114,
+        "teamWins": 37896,
+        "showdownWins": 5555,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 128008,
         "prestige": 114,
         "teamWins": 37896,
@@ -31519,6 +31615,14 @@
         "teamWins": 16852,
         "showdownWins": 13203,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 110237,
+        "prestige": 104,
+        "teamWins": 16852,
+        "showdownWins": 13203,
+        "club": "RealDutch II"
       }
     ],
     "#PYRRQGLCP": [
@@ -33406,6 +33510,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 135234,
+        "prestige": 115,
+        "teamWins": 32872,
+        "showdownWins": 5731,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 135234,
         "prestige": 115,
         "teamWins": 32872,
@@ -36858,6 +36970,14 @@
         "prestige": 126,
         "teamWins": 35719,
         "showdownWins": 10798,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 151666,
+        "prestige": 126,
+        "teamWins": 35719,
+        "showdownWins": 10806,
         "club": "RealDutch II"
       }
     ],
@@ -41053,6 +41173,14 @@
         "teamWins": 15807,
         "showdownWins": 10158,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 104252,
+        "prestige": 102,
+        "teamWins": 15807,
+        "showdownWins": 10158,
+        "club": "RealDutch II"
       }
     ],
     "#G9UJ8LGPJ": [
@@ -42858,6 +42986,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 120392,
+        "prestige": 109,
+        "teamWins": 6502,
+        "showdownWins": 6807,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 120392,
         "prestige": 109,
         "teamWins": 6502,
@@ -45227,6 +45363,14 @@
         "teamWins": 26777,
         "showdownWins": 7796,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 143424,
+        "prestige": 128,
+        "teamWins": 26777,
+        "showdownWins": 7796,
+        "club": "RealDutch II"
       }
     ],
     "#28L2G9R8P": [
@@ -47032,6 +47176,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 123436,
+        "prestige": 107,
+        "teamWins": 24566,
+        "showdownWins": 16738,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 123436,
         "prestige": 107,
         "teamWins": 24566,
@@ -48847,6 +48999,14 @@
         "teamWins": 16970,
         "showdownWins": 12648,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 116226,
+        "prestige": 102,
+        "teamWins": 16970,
+        "showdownWins": 12648,
+        "club": "RealDutch II"
       }
     ],
     "#2PGLYUY0L": [
@@ -50656,6 +50816,14 @@
         "prestige": 104,
         "teamWins": 20996,
         "showdownWins": 12876,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 116153,
+        "prestige": 104,
+        "teamWins": 20996,
+        "showdownWins": 12877,
         "club": "RealDutch II"
       }
     ],
@@ -52725,6 +52893,14 @@
         "teamWins": 11230,
         "showdownWins": 8738,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 108232,
+        "prestige": 101,
+        "teamWins": 11230,
+        "showdownWins": 8738,
+        "club": "RealDutch II"
       }
     ],
     "#82YPR88J": [
@@ -54530,6 +54706,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 120305,
+        "prestige": 111,
+        "teamWins": 32018,
+        "showdownWins": 7776,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 120305,
         "prestige": 111,
         "teamWins": 32018,
@@ -56345,6 +56529,14 @@
         "teamWins": 17247,
         "showdownWins": 6850,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 105835,
+        "prestige": 100,
+        "teamWins": 17247,
+        "showdownWins": 6854,
+        "club": "RealDutch Light"
       }
     ],
     "#PLUUP9LJR": [
@@ -58078,6 +58270,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 108637,
+        "prestige": 102,
+        "teamWins": 33695,
+        "showdownWins": 7417,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 108637,
         "prestige": 102,
         "teamWins": 33695,
@@ -60855,6 +61055,14 @@
         "teamWins": 33360,
         "showdownWins": 8861,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 120025,
+        "prestige": 110,
+        "teamWins": 33360,
+        "showdownWins": 8861,
+        "club": "RealDutch Elite"
       }
     ],
     "#22U8RVQRP": [
@@ -62665,6 +62873,14 @@
         "teamWins": 14228,
         "showdownWins": 18255,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 129879,
+        "prestige": 112,
+        "teamWins": 14228,
+        "showdownWins": 18255,
+        "club": "RealDutch Elite"
       }
     ],
     "#220JC0LGV": [
@@ -64470,6 +64686,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 117091,
+        "prestige": 105,
+        "teamWins": 48151,
+        "showdownWins": 4770,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 117091,
         "prestige": 105,
         "teamWins": 48151,
@@ -67999,6 +68223,14 @@
         "teamWins": 44746,
         "showdownWins": 4186,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 114090,
+        "prestige": 105,
+        "teamWins": 44746,
+        "showdownWins": 4186,
+        "club": "RealDutch Elite"
       }
     ],
     "#2P0VQ009U": [
@@ -70931,6 +71163,14 @@
         "teamWins": 19109,
         "showdownWins": 2684,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 132276,
+        "prestige": 116,
+        "teamWins": 19130,
+        "showdownWins": 2684,
+        "club": "RealDutch Elite"
       }
     ],
     "#VJQG0UPQ": [
@@ -72739,6 +72979,14 @@
         "trophies": 111133,
         "prestige": 109,
         "teamWins": 37670,
+        "showdownWins": 8450,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 111388,
+        "prestige": 109,
+        "teamWins": 37690,
         "showdownWins": 8450,
         "club": "RealDutch Elite"
       }
@@ -76165,6 +76413,14 @@
         "teamWins": 39897,
         "showdownWins": 8543,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 112163,
+        "prestige": 101,
+        "teamWins": 39902,
+        "showdownWins": 8543,
+        "club": "RealDutch Elite"
       }
     ],
     "#PG28VV22L": [
@@ -78185,6 +78441,14 @@
         "teamWins": 15421,
         "showdownWins": 5864,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 114744,
+        "prestige": 90,
+        "teamWins": 15421,
+        "showdownWins": 5864,
+        "club": "RealDutch Elite"
       }
     ],
     "#PVYJ9YCL2": [
@@ -80003,6 +80267,14 @@
         "trophies": 106363,
         "prestige": 101,
         "teamWins": 21365,
+        "showdownWins": 6716,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 106363,
+        "prestige": 101,
+        "teamWins": 21369,
         "showdownWins": 6716,
         "club": "RealDutch Elite"
       }
@@ -83563,6 +83835,14 @@
         "teamWins": 22451,
         "showdownWins": 18159,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 124946,
+        "prestige": 105,
+        "teamWins": 22451,
+        "showdownWins": 18159,
+        "club": "RealDutch Elite"
       }
     ],
     "#2UC2G98PL": [
@@ -85373,6 +85653,14 @@
         "teamWins": 16856,
         "showdownWins": 5094,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 118688,
+        "prestige": 113,
+        "teamWins": 16856,
+        "showdownWins": 5094,
+        "club": "RealDutch Elite"
       }
     ],
     "#Y9L8YRJ": [
@@ -87178,6 +87466,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 95576,
+        "prestige": 93,
+        "teamWins": 27767,
+        "showdownWins": 5748,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 95576,
         "prestige": 93,
         "teamWins": 27767,
@@ -89054,6 +89350,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 110949,
+        "prestige": 104,
+        "teamWins": 19701,
+        "showdownWins": 10639,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 110949,
         "prestige": 104,
         "teamWins": 19701,
@@ -92671,6 +92975,14 @@
         "teamWins": 18590,
         "showdownWins": 11191,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 103754,
+        "prestige": 94,
+        "teamWins": 18625,
+        "showdownWins": 11191,
+        "club": "RealDutch Elite"
       }
     ],
     "#2RR8PLQJRV": [
@@ -94481,6 +94793,14 @@
         "teamWins": 507,
         "showdownWins": 4814,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 100576,
+        "prestige": 100,
+        "teamWins": 507,
+        "showdownWins": 4814,
+        "club": "RealDutch Elite"
       }
     ],
     "#PUGUUL89": [
@@ -96286,6 +96606,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 57010,
+        "prestige": 10,
+        "teamWins": 1840,
+        "showdownWins": 2310,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 57010,
         "prestige": 10,
         "teamWins": 1840,
@@ -98721,6 +99049,14 @@
         "teamWins": 49345,
         "showdownWins": 4878,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 132575,
+        "prestige": 117,
+        "teamWins": 49345,
+        "showdownWins": 4878,
+        "club": "RealDutch Force"
       }
     ],
     "#CP9JLJYJ": [
@@ -100541,6 +100877,14 @@
         "teamWins": 10328,
         "showdownWins": 9130,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 116319,
+        "prestige": 107,
+        "teamWins": 10328,
+        "showdownWins": 9130,
+        "club": "RealDutch II"
       }
     ],
     "#G98RLPV": [
@@ -102346,6 +102690,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 120412,
+        "prestige": 108,
+        "teamWins": 7941,
+        "showdownWins": 6881,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 120412,
         "prestige": 108,
         "teamWins": 7941,
@@ -104277,6 +104629,14 @@
         "teamWins": 10552,
         "showdownWins": 10553,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 121328,
+        "prestige": 114,
+        "teamWins": 10552,
+        "showdownWins": 10569,
+        "club": "RealDutch Force"
       }
     ],
     "#2JQQPYPPG": [
@@ -106086,6 +106446,14 @@
         "prestige": 113,
         "teamWins": 25785,
         "showdownWins": 9851,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 118741,
+        "prestige": 114,
+        "teamWins": 25785,
+        "showdownWins": 9855,
         "club": "RealDutch Force"
       }
     ],
@@ -110485,6 +110853,14 @@
         "teamWins": 18195,
         "showdownWins": 6316,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 120020,
+        "prestige": 109,
+        "teamWins": 18198,
+        "showdownWins": 6326,
+        "club": "RealDutch Force"
       }
     ],
     "#PJ8VL2YY0": [
@@ -112953,6 +113329,14 @@
         "teamWins": 35179,
         "showdownWins": 7669,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 160205,
+        "prestige": 133,
+        "teamWins": 35230,
+        "showdownWins": 7669,
+        "club": "RealDutch Force"
       }
     ],
     "#9LPQ8PJC": [
@@ -114763,6 +115147,14 @@
         "teamWins": 9525,
         "showdownWins": 6558,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 114161,
+        "prestige": 108,
+        "teamWins": 9525,
+        "showdownWins": 6569,
+        "club": "RealDutch Force"
       }
     ],
     "#8UR2YJPL0": [
@@ -116565,6 +116957,14 @@
         "teamWins": 14621,
         "showdownWins": 12476,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 133013,
+        "prestige": 121,
+        "teamWins": 14621,
+        "showdownWins": 12476,
+        "club": "RealDutch Glory"
       }
     ],
     "#2U8JCP8UG": [
@@ -118207,6 +118607,14 @@
         "trophies": 133988,
         "prestige": 124,
         "teamWins": 26257,
+        "showdownWins": 7004,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 133998,
+        "prestige": 124,
+        "teamWins": 26258,
         "showdownWins": 7004,
         "club": "RealDutch"
       }
@@ -120018,6 +120426,14 @@
         "prestige": 106,
         "teamWins": 16588,
         "showdownWins": 8719,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 115785,
+        "prestige": 106,
+        "teamWins": 16588,
+        "showdownWins": 8723,
         "club": "RealDutch Force"
       }
     ],
@@ -124321,6 +124737,14 @@
         "teamWins": 17405,
         "showdownWins": 14126,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 113851,
+        "prestige": 106,
+        "teamWins": 17405,
+        "showdownWins": 14126,
+        "club": "RealDutch Force"
       }
     ],
     "#9QUCGR8QC": [
@@ -126130,6 +126554,14 @@
         "prestige": 107,
         "teamWins": 35163,
         "showdownWins": 5411,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 121954,
+        "prestige": 107,
+        "teamWins": 35166,
+        "showdownWins": 5415,
         "club": "RealDutch Force"
       }
     ],
@@ -127941,6 +128373,14 @@
         "teamWins": 19498,
         "showdownWins": 14759,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 123898,
+        "prestige": 114,
+        "teamWins": 19498,
+        "showdownWins": 14764,
+        "club": "RealDutch Force"
       }
     ],
     "#8ULGL0YYL": [
@@ -129749,6 +130189,14 @@
         "trophies": 125950,
         "prestige": 114,
         "teamWins": 14282,
+        "showdownWins": 8343,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 126199,
+        "prestige": 114,
+        "teamWins": 14291,
         "showdownWins": 8343,
         "club": "RealDutch Force"
       }
@@ -132219,6 +132667,14 @@
         "teamWins": 21564,
         "showdownWins": 5854,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 95458,
+        "prestige": 70,
+        "teamWins": 21566,
+        "showdownWins": 5854,
+        "club": "RealDutch Force"
       }
     ],
     "#PUQYP0J02": [
@@ -134029,6 +134485,14 @@
         "teamWins": 17203,
         "showdownWins": 10893,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 148343,
+        "prestige": 130,
+        "teamWins": 17203,
+        "showdownWins": 10909,
+        "club": "RealDutch Glory"
       }
     ],
     "#PGRPYLGRJ": [
@@ -135838,6 +136302,14 @@
         "prestige": 137,
         "teamWins": 36528,
         "showdownWins": 6918,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 150906,
+        "prestige": 137,
+        "teamWins": 36536,
+        "showdownWins": 6922,
         "club": "RealDutch Glory"
       }
     ],
@@ -139019,6 +139491,14 @@
         "teamWins": 30359,
         "showdownWins": 5194,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 149197,
+        "prestige": 128,
+        "teamWins": 30359,
+        "showdownWins": 5197,
+        "club": "RealDutch Glory"
       }
     ],
     "#LUPC8LY": [
@@ -140828,6 +141308,14 @@
         "prestige": 122,
         "teamWins": 23670,
         "showdownWins": 5232,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 131903,
+        "prestige": 122,
+        "teamWins": 23670,
+        "showdownWins": 5241,
         "club": "RealDutch Glory"
       }
     ],
@@ -142639,6 +143127,14 @@
         "teamWins": 30169,
         "showdownWins": 9228,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 118245,
+        "prestige": 103,
+        "teamWins": 30172,
+        "showdownWins": 9228,
+        "club": "RealDutch Glory"
       }
     ],
     "#2U0U9RQJ8": [
@@ -144448,6 +144944,14 @@
         "prestige": 92,
         "teamWins": 20025,
         "showdownWins": 6817,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 115457,
+        "prestige": 92,
+        "teamWins": 20025,
+        "showdownWins": 6824,
         "club": "RealDutch Elite"
       }
     ],
@@ -148607,6 +149111,14 @@
         "teamWins": 19682,
         "showdownWins": 3848,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 120954,
+        "prestige": 112,
+        "teamWins": 19682,
+        "showdownWins": 3848,
+        "club": "RealDutch Glory"
       }
     ],
     "#P0GLJP0PU": [
@@ -152003,6 +152515,14 @@
         "teamWins": 20369,
         "showdownWins": 6352,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 133306,
+        "prestige": 111,
+        "teamWins": 20369,
+        "showdownWins": 6352,
+        "club": "RealDutch Glory"
       }
     ],
     "#GYYVJ8CQ8": [
@@ -154615,6 +155135,14 @@
         "teamWins": 6571,
         "showdownWins": 10726,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 121768,
+        "prestige": 111,
+        "teamWins": 6571,
+        "showdownWins": 10726,
+        "club": "RealDutch Glory"
       }
     ],
     "#2GV808GC": [
@@ -156423,6 +156951,14 @@
         "trophies": 127280,
         "prestige": 113,
         "teamWins": 29883,
+        "showdownWins": 5532,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 127285,
+        "prestige": 113,
+        "teamWins": 29885,
         "showdownWins": 5532,
         "club": "RealDutch Glory"
       }
@@ -158234,6 +158770,14 @@
         "prestige": 119,
         "teamWins": 29214,
         "showdownWins": 5075,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 137000,
+        "prestige": 119,
+        "teamWins": 29232,
+        "showdownWins": 5079,
         "club": "RealDutch Glory"
       }
     ],
@@ -160535,6 +161079,14 @@
         "teamWins": 20668,
         "showdownWins": 2688,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 126651,
+        "prestige": 116,
+        "teamWins": 20690,
+        "showdownWins": 2695,
+        "club": "RealDutch Glory"
       }
     ],
     "#YU0Q08C2": [
@@ -162340,6 +162892,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 111839,
+        "prestige": 110,
+        "teamWins": 7924,
+        "showdownWins": 8690,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 111839,
         "prestige": 110,
         "teamWins": 7924,
@@ -164155,6 +164715,14 @@
         "teamWins": 7491,
         "showdownWins": 9757,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 116141,
+        "prestige": 107,
+        "teamWins": 7491,
+        "showdownWins": 9757,
+        "club": "RealDutch Glory"
       }
     ],
     "#9820YRUY": [
@@ -165796,6 +166364,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 106761,
+        "prestige": 88,
+        "teamWins": 22268,
+        "showdownWins": 3717,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 106761,
         "prestige": 88,
         "teamWins": 22268,
@@ -167611,6 +168187,14 @@
         "teamWins": 25558,
         "showdownWins": 14765,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 134010,
+        "prestige": 115,
+        "teamWins": 25566,
+        "showdownWins": 14782,
+        "club": "RealDutch Glory"
       }
     ],
     "#RU2JUQ0V": [
@@ -169421,6 +170005,14 @@
         "teamWins": 41633,
         "showdownWins": 1727,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 117044,
+        "prestige": 95,
+        "teamWins": 41633,
+        "showdownWins": 1727,
+        "club": "RealDutch Glory"
       }
     ],
     "#G2PGRQ0Q": [
@@ -171226,6 +171818,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 137410,
+        "prestige": 116,
+        "teamWins": 20343,
+        "showdownWins": 10041,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 137410,
         "prestige": 116,
         "teamWins": 20343,
@@ -173377,6 +173977,14 @@
       {
         "date": "2026-11-17",
         "trophies": 127583,
+        "prestige": 99,
+        "teamWins": 21049,
+        "showdownWins": 8282,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 127580,
         "prestige": 99,
         "teamWins": 21049,
         "showdownWins": 8282,
@@ -175913,6 +176521,14 @@
         "teamWins": 32089,
         "showdownWins": 7878,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 117992,
+        "prestige": 95,
+        "teamWins": 32089,
+        "showdownWins": 7878,
+        "club": "RealDutch Stars"
       }
     ],
     "#8JVG9PQQ0": [
@@ -177718,6 +178334,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 128413,
+        "prestige": 117,
+        "teamWins": 11539,
+        "showdownWins": 9357,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 128413,
         "prestige": 117,
         "teamWins": 11539,
@@ -179533,6 +180157,14 @@
         "teamWins": 13568,
         "showdownWins": 9395,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 131764,
+        "prestige": 117,
+        "teamWins": 13568,
+        "showdownWins": 9395,
+        "club": "RealDutch Glory"
       }
     ],
     "#8R8LU2YRQ": [
@@ -181341,6 +181973,14 @@
         "trophies": 128021,
         "prestige": 114,
         "teamWins": 20931,
+        "showdownWins": 2054,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 128069,
+        "prestige": 114,
+        "teamWins": 20935,
         "showdownWins": 2054,
         "club": "RealDutch Stars"
       }
@@ -183152,6 +183792,14 @@
         "prestige": 115,
         "teamWins": 39079,
         "showdownWins": 5733,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 123821,
+        "prestige": 115,
+        "teamWins": 39104,
+        "showdownWins": 5735,
         "club": "RealDutch Stars"
       }
     ],
@@ -185157,6 +185805,14 @@
         "teamWins": 19641,
         "showdownWins": 2530,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 126489,
+        "prestige": 111,
+        "teamWins": 19641,
+        "showdownWins": 2530,
+        "club": "RealDutch Glory"
       }
     ],
     "#2R9RUC2RJ": [
@@ -186967,6 +187623,14 @@
         "teamWins": 30404,
         "showdownWins": 7779,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 138649,
+        "prestige": 126,
+        "teamWins": 30415,
+        "showdownWins": 7793,
+        "club": "RealDutch Stars"
       }
     ],
     "#RQ0UGP9J": [
@@ -188772,6 +189436,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 122438,
+        "prestige": 105,
+        "teamWins": 19032,
+        "showdownWins": 9894,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 122438,
         "prestige": 105,
         "teamWins": 19032,
@@ -190585,6 +191257,14 @@
         "trophies": 113031,
         "prestige": 86,
         "teamWins": 14548,
+        "showdownWins": 3690,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 113645,
+        "prestige": 86,
+        "teamWins": 14591,
         "showdownWins": 3690,
         "club": "RealDutch Stars"
       }
@@ -193007,6 +193687,14 @@
         "teamWins": 12705,
         "showdownWins": 7025,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 102011,
+        "prestige": 82,
+        "teamWins": 12705,
+        "showdownWins": 7025,
+        "club": "RealDutch Stars"
       }
     ],
     "#222VLGJ2V": [
@@ -194812,6 +195500,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 105114,
+        "prestige": 86,
+        "teamWins": 10638,
+        "showdownWins": 6738,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 105114,
         "prestige": 86,
         "teamWins": 10638,
@@ -199563,6 +200259,14 @@
         "teamWins": 22345,
         "showdownWins": 2620,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 137127,
+        "prestige": 118,
+        "teamWins": 22360,
+        "showdownWins": 2620,
+        "club": "RealDutch Stars"
       }
     ],
     "#PRLY8YV22": [
@@ -203300,6 +204004,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 105648,
+        "prestige": 93,
+        "teamWins": 14014,
+        "showdownWins": 6864,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 105648,
         "prestige": 93,
         "teamWins": 14014,
@@ -207071,6 +207783,14 @@
         "teamWins": 12967,
         "showdownWins": 5646,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 119386,
+        "prestige": 109,
+        "teamWins": 12972,
+        "showdownWins": 5646,
+        "club": "RealDutch Stars"
       }
     ],
     "#RJRJRLR": [
@@ -209371,6 +210091,14 @@
         "teamWins": 23433,
         "showdownWins": 7124,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 94626,
+        "prestige": 53,
+        "teamWins": 23433,
+        "showdownWins": 7124,
+        "club": "RealDutch Stars"
       }
     ],
     "#8GCRRRYJY": [
@@ -211423,6 +212151,14 @@
         "teamWins": 19518,
         "showdownWins": 6808,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 101616,
+        "prestige": 63,
+        "teamWins": 19531,
+        "showdownWins": 6808,
+        "club": "RealDutch Stars"
       }
     ],
     "#2QYPJ8RY": [
@@ -213233,6 +213969,14 @@
         "teamWins": 5661,
         "showdownWins": 5049,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 80351,
+        "prestige": 29,
+        "teamWins": 5661,
+        "showdownWins": 5058,
+        "club": "RealDutch Nova"
       }
     ],
     "#PCQ9RQL0J": [
@@ -215038,6 +215782,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 25029,
+        "prestige": 2,
+        "teamWins": 791,
+        "showdownWins": 1025,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 25029,
         "prestige": 2,
         "teamWins": 791,
@@ -218527,6 +219279,14 @@
         "teamWins": 27238,
         "showdownWins": 4315,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 93550,
+        "prestige": 74,
+        "teamWins": 27238,
+        "showdownWins": 4315,
+        "club": "RealDutch Light"
       }
     ],
     "#9YLJ9L8PQ": [
@@ -220336,6 +221096,14 @@
         "prestige": 71,
         "teamWins": 13965,
         "showdownWins": 5270,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 94512,
+        "prestige": 71,
+        "teamWins": 13966,
+        "showdownWins": 5276,
         "club": "RealDutch Light"
       }
     ],
@@ -223240,6 +224008,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 119374,
+        "prestige": 96,
+        "teamWins": 12172,
+        "showdownWins": 4574,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 119374,
         "prestige": 96,
         "teamWins": 12172,
@@ -226561,6 +227337,14 @@
         "teamWins": 9492,
         "showdownWins": 5987,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 108530,
+        "prestige": 83,
+        "teamWins": 9492,
+        "showdownWins": 5987,
+        "club": "RealDutch Stars"
       }
     ],
     "#P0U802802": [
@@ -228371,6 +229155,14 @@
         "teamWins": 15977,
         "showdownWins": 3435,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 85526,
+        "prestige": 49,
+        "teamWins": 15978,
+        "showdownWins": 3435,
+        "club": "RealDutch Light"
       }
     ],
     "#2889U9V0Y": [
@@ -230176,6 +230968,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 90226,
+        "prestige": 63,
+        "teamWins": 15892,
+        "showdownWins": 8519,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 90226,
         "prestige": 63,
         "teamWins": 15892,
@@ -232401,6 +233201,14 @@
         "teamWins": 11619,
         "showdownWins": 5123,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 83051,
+        "prestige": 34,
+        "teamWins": 11619,
+        "showdownWins": 5123,
+        "club": "RealDutch Light"
       }
     ],
     "#CPRGJ8QL": [
@@ -234206,6 +235014,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 87278,
+        "prestige": 82,
+        "teamWins": 35522,
+        "showdownWins": 3529,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 87278,
         "prestige": 82,
         "teamWins": 35522,
@@ -237933,6 +238749,14 @@
         "teamWins": 15567,
         "showdownWins": 2511,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 83250,
+        "prestige": 54,
+        "teamWins": 15567,
+        "showdownWins": 2511,
+        "club": "RealDutch Light"
       }
     ],
     "#LRGL20YLV": [
@@ -239738,6 +240562,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 84283,
+        "prestige": 72,
+        "teamWins": 15146,
+        "showdownWins": 3794,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 84283,
         "prestige": 72,
         "teamWins": 15146,
@@ -241552,6 +242384,14 @@
         "prestige": 36,
         "teamWins": 14102,
         "showdownWins": 2364,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 80354,
+        "prestige": 37,
+        "teamWins": 14107,
+        "showdownWins": 2369,
         "club": "RealDutch Light"
       }
     ],
@@ -246021,6 +246861,14 @@
         "teamWins": 14091,
         "showdownWins": 3403,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 91401,
+        "prestige": 65,
+        "teamWins": 14091,
+        "showdownWins": 3409,
+        "club": "RealDutch Light"
       }
     ],
     "#GG8CRJ2QQ": [
@@ -247226,6 +248074,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 66306,
+        "prestige": 26,
+        "teamWins": 7750,
+        "showdownWins": 3561,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 66306,
         "prestige": 26,
         "teamWins": 7750,
@@ -249041,6 +249897,14 @@
         "teamWins": 2171,
         "showdownWins": 2322,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 52833,
+        "prestige": 28,
+        "teamWins": 2171,
+        "showdownWins": 2322,
+        "club": "RealDutch Light"
       }
     ],
     "#PUC9GGGYL": [
@@ -250758,6 +251622,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 15050,
+        "prestige": 1,
+        "teamWins": 570,
+        "showdownWins": 919,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 15050,
         "prestige": 1,
         "teamWins": 570,
@@ -252568,6 +253440,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 10214,
+        "prestige": 0,
+        "teamWins": 311,
+        "showdownWins": 502,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 10214,
         "prestige": 0,
         "teamWins": 311,
@@ -255955,6 +256835,14 @@
         "teamWins": 4134,
         "showdownWins": 3078,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 87335,
+        "prestige": 61,
+        "teamWins": 4134,
+        "showdownWins": 3078,
+        "club": "RealDutch Light"
       }
     ],
     "#PPR0VQY2L": [
@@ -257783,6 +258671,14 @@
         "teamWins": 12384,
         "showdownWins": 4442,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 88048,
+        "prestige": 52,
+        "teamWins": 12387,
+        "showdownWins": 4442,
+        "club": "RealDutch Light"
       }
     ],
     "#9Q22JV0G8": [
@@ -259588,6 +260484,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 83350,
+        "prestige": 57,
+        "teamWins": 10367,
+        "showdownWins": 3324,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 83350,
         "prestige": 57,
         "teamWins": 10367,
@@ -261403,6 +262307,14 @@
         "teamWins": 7422,
         "showdownWins": 3411,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 65667,
+        "prestige": 21,
+        "teamWins": 7422,
+        "showdownWins": 3411,
+        "club": "RealDutch Nova"
       }
     ],
     "#9RGL9PLC8": [
@@ -263208,6 +264120,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 79406,
+        "prestige": 57,
+        "teamWins": 9607,
+        "showdownWins": 3074,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 79406,
         "prestige": 57,
         "teamWins": 9607,
@@ -270935,6 +271855,14 @@
         "teamWins": 9126,
         "showdownWins": 2945,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 90487,
+        "prestige": 67,
+        "teamWins": 9126,
+        "showdownWins": 2945,
+        "club": "RealDutch Light"
       }
     ],
     "#28VY8CU98": [
@@ -273532,6 +274460,14 @@
         "prestige": 39,
         "teamWins": 4316,
         "showdownWins": 2950,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 66535,
+        "prestige": 39,
+        "teamWins": 4316,
+        "showdownWins": 2957,
         "club": "RealDutch Nova"
       }
     ],
@@ -278879,6 +279815,14 @@
         "teamWins": 3029,
         "showdownWins": 3380,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 87986,
+        "prestige": 69,
+        "teamWins": 3029,
+        "showdownWins": 3389,
+        "club": "RealDutch Light"
       }
     ],
     "#YGYV2VYPR": [
@@ -284037,6 +284981,14 @@
         "teamWins": 55,
         "showdownWins": 798,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 15010,
+        "prestige": 1,
+        "teamWins": 55,
+        "showdownWins": 798,
+        "club": "RealDutch Fight"
       }
     ],
     "#89PCQP2Y": [
@@ -285690,6 +286642,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 18238,
+        "prestige": 2,
+        "teamWins": 898,
+        "showdownWins": 557,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 18238,
         "prestige": 2,
         "teamWins": 898,
@@ -287500,6 +288460,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 4037,
+        "prestige": 0,
+        "teamWins": 112,
+        "showdownWins": 204,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 4037,
         "prestige": 0,
         "teamWins": 112,
@@ -289759,6 +290727,14 @@
         "teamWins": 2407,
         "showdownWins": 2107,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 28050,
+        "prestige": 4,
+        "teamWins": 2407,
+        "showdownWins": 2107,
+        "club": "RealDutch Minis"
       }
     ],
     "#YR208008": [
@@ -291564,6 +292540,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 24292,
+        "prestige": 1,
+        "teamWins": 3086,
+        "showdownWins": 1445,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 24292,
         "prestige": 1,
         "teamWins": 3086,
@@ -293379,6 +294363,14 @@
         "teamWins": 2641,
         "showdownWins": 1005,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 24039,
+        "prestige": 0,
+        "teamWins": 2641,
+        "showdownWins": 1005,
+        "club": "RealDutch Minis"
       }
     ],
     "#890VYYJCQ": [
@@ -295184,6 +296176,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 24537,
+        "prestige": 0,
+        "teamWins": 1999,
+        "showdownWins": 1120,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 24537,
         "prestige": 0,
         "teamWins": 1999,
@@ -296999,6 +297999,14 @@
         "teamWins": 4732,
         "showdownWins": 157,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 27676,
+        "prestige": 19,
+        "teamWins": 4732,
+        "showdownWins": 157,
+        "club": "RealDutch Minis"
       }
     ],
     "#L2VQJ0C2V": [
@@ -298804,6 +299812,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 20056,
+        "prestige": 0,
+        "teamWins": 1112,
+        "showdownWins": 1184,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 20056,
         "prestige": 0,
         "teamWins": 1112,
@@ -300619,6 +301635,14 @@
         "teamWins": 3774,
         "showdownWins": 420,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 25020,
+        "prestige": 8,
+        "teamWins": 3774,
+        "showdownWins": 420,
+        "club": "RealDutch Minis"
       }
     ],
     "#9GJ9VP2GQ": [
@@ -302424,6 +303448,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 19925,
+        "prestige": 1,
+        "teamWins": 3121,
+        "showdownWins": 706,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 19925,
         "prestige": 1,
         "teamWins": 3121,
@@ -304239,6 +305271,14 @@
         "teamWins": 3639,
         "showdownWins": 1016,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 53931,
+        "prestige": 25,
+        "teamWins": 3645,
+        "showdownWins": 1020,
+        "club": "RealDutch Nova"
       }
     ],
     "#LUGGY8JUG": [
@@ -306047,6 +307087,14 @@
         "trophies": 26155,
         "prestige": 18,
         "teamWins": 3028,
+        "showdownWins": 1485,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 26171,
+        "prestige": 18,
+        "teamWins": 3030,
         "showdownWins": 1485,
         "club": "RealDutch Minis"
       }
@@ -307859,6 +308907,14 @@
         "teamWins": 1269,
         "showdownWins": 743,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 15996,
+        "prestige": 4,
+        "teamWins": 1269,
+        "showdownWins": 743,
+        "club": "RealDutch Minis"
       }
     ],
     "#8QYVGPRU9": [
@@ -309664,6 +310720,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 12913,
+        "prestige": 1,
+        "teamWins": 1598,
+        "showdownWins": 673,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 12913,
         "prestige": 1,
         "teamWins": 1598,
@@ -311769,6 +312833,14 @@
         "teamWins": 457,
         "showdownWins": 528,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 8056,
+        "prestige": 1,
+        "teamWins": 457,
+        "showdownWins": 528,
+        "club": "RealDutch Minis"
       }
     ],
     "#2YPYG980V": [
@@ -313579,6 +314651,14 @@
         "teamWins": 948,
         "showdownWins": 106,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 7058,
+        "prestige": 0,
+        "teamWins": 948,
+        "showdownWins": 106,
+        "club": "RealDutch Minis"
       }
     ],
     "#GGVG9JPLG": [
@@ -315384,6 +316464,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 7785,
+        "prestige": 2,
+        "teamWins": 706,
+        "showdownWins": 185,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 7785,
         "prestige": 2,
         "teamWins": 706,
@@ -317457,6 +318545,14 @@
         "teamWins": 1248,
         "showdownWins": 310,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 7262,
+        "prestige": 1,
+        "teamWins": 1248,
+        "showdownWins": 310,
+        "club": "RealDutch Minis"
       }
     ],
     "#PUV9V0GP8": [
@@ -318966,6 +320062,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 15040,
+        "prestige": 1,
+        "teamWins": 431,
+        "showdownWins": 912,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 15040,
         "prestige": 1,
         "teamWins": 431,
@@ -320781,6 +321885,14 @@
         "teamWins": 489,
         "showdownWins": 77,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 3370,
+        "prestige": 1,
+        "teamWins": 489,
+        "showdownWins": 77,
+        "club": "RealDutch Minis"
       }
     ],
     "#RRL8YGVPV": [
@@ -322586,6 +323698,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 2658,
+        "prestige": 0,
+        "teamWins": 417,
+        "showdownWins": 39,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 2658,
         "prestige": 0,
         "teamWins": 417,
@@ -324401,6 +325521,14 @@
         "teamWins": 26,
         "showdownWins": 142,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 2120,
+        "prestige": 0,
+        "teamWins": 26,
+        "showdownWins": 142,
+        "club": "RealDutch Mini2"
       }
     ],
     "#RQLRYUG2J": [
@@ -326206,6 +327334,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 2459,
+        "prestige": 2,
+        "teamWins": 103,
+        "showdownWins": 153,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 2459,
         "prestige": 2,
         "teamWins": 103,
@@ -328021,6 +329157,14 @@
         "teamWins": 59,
         "showdownWins": 30,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 1216,
+        "prestige": 0,
+        "teamWins": 59,
+        "showdownWins": 30,
+        "club": "RealDutch Minis"
       }
     ],
     "#GVQ8CR22V": [
@@ -329826,6 +330970,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 14009,
+        "prestige": 0,
+        "teamWins": 3410,
+        "showdownWins": 313,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 14009,
         "prestige": 0,
         "teamWins": 3410,
@@ -331641,6 +332793,14 @@
         "teamWins": 949,
         "showdownWins": 365,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 10966,
+        "prestige": 0,
+        "teamWins": 949,
+        "showdownWins": 365,
+        "club": "RealDutch Mini2"
       }
     ],
     "#298PRYPLV": [
@@ -333346,6 +334506,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 15030,
+        "prestige": 1,
+        "teamWins": 501,
+        "showdownWins": 981,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 15030,
         "prestige": 1,
         "teamWins": 501,
@@ -335358,6 +336526,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 3040,
+        "prestige": 1,
+        "teamWins": 490,
+        "showdownWins": 14,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 3040,
         "prestige": 1,
         "teamWins": 490,
@@ -337577,6 +338753,14 @@
         "teamWins": 31,
         "showdownWins": 99,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 1842,
+        "prestige": 0,
+        "teamWins": 31,
+        "showdownWins": 99,
+        "club": "RealDutch Mini2"
       }
     ],
     "#RUJ9GG82J": [
@@ -339382,6 +340566,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 1827,
+        "prestige": 0,
+        "teamWins": 34,
+        "showdownWins": 95,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 1827,
         "prestige": 0,
         "teamWins": 34,
@@ -341197,6 +342389,14 @@
         "teamWins": 9,
         "showdownWins": 62,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 1584,
+        "prestige": 0,
+        "teamWins": 9,
+        "showdownWins": 62,
+        "club": "RealDutch Mini2"
       }
     ],
     "#J0GRU82PP": [
@@ -343002,6 +344202,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 888,
+        "prestige": 0,
+        "teamWins": 31,
+        "showdownWins": 21,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 888,
         "prestige": 0,
         "teamWins": 31,
@@ -344817,6 +346025,14 @@
         "teamWins": 29,
         "showdownWins": 14,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 556,
+        "prestige": 0,
+        "teamWins": 29,
+        "showdownWins": 14,
+        "club": "RealDutch Mini2"
       }
     ],
     "#RUCPYPCPQ": [
@@ -346622,6 +347838,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 747,
+        "prestige": 0,
+        "teamWins": 14,
+        "showdownWins": 37,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 747,
         "prestige": 0,
         "teamWins": 14,
@@ -348437,6 +349661,14 @@
         "teamWins": 35,
         "showdownWins": 12,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 523,
+        "prestige": 0,
+        "teamWins": 35,
+        "showdownWins": 12,
+        "club": "RealDutch Mini2"
       }
     ],
     "#J0R2CRJ8Q": [
@@ -350242,6 +351474,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 451,
+        "prestige": 0,
+        "teamWins": 13,
+        "showdownWins": 24,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 451,
         "prestige": 0,
         "teamWins": 13,
@@ -352057,6 +353297,14 @@
         "teamWins": 27,
         "showdownWins": 8,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 407,
+        "prestige": 0,
+        "teamWins": 27,
+        "showdownWins": 8,
+        "club": "RealDutch Mini2"
       }
     ],
     "#2LC990PRG0": [
@@ -353862,6 +355110,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 404,
+        "prestige": 0,
+        "teamWins": 0,
+        "showdownWins": 29,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 404,
         "prestige": 0,
         "teamWins": 0,
@@ -355677,6 +356933,14 @@
         "teamWins": 17,
         "showdownWins": 14,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 386,
+        "prestige": 0,
+        "teamWins": 17,
+        "showdownWins": 14,
+        "club": "RealDutch Mini2"
       }
     ],
     "#J88VPUU2Y": [
@@ -357482,6 +358746,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 414,
+        "prestige": 0,
+        "teamWins": 0,
+        "showdownWins": 20,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 414,
         "prestige": 0,
         "teamWins": 0,
@@ -360789,6 +362061,14 @@
         "teamWins": 16161,
         "showdownWins": 6477,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 73796,
+        "prestige": 10,
+        "teamWins": 16161,
+        "showdownWins": 6477,
+        "club": "RealDutch OG"
       }
     ],
     "#2R99C0JP": [
@@ -362594,6 +363874,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 80581,
+        "prestige": 53,
+        "teamWins": 12262,
+        "showdownWins": 7608,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 80581,
         "prestige": 53,
         "teamWins": 12262,
@@ -364407,6 +365695,14 @@
         "trophies": 66497,
         "prestige": 10,
         "teamWins": 11379,
+        "showdownWins": 2442,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 66513,
+        "prestige": 10,
+        "teamWins": 11381,
         "showdownWins": 2442,
         "club": "RealDutch OG"
       }
@@ -366389,6 +367685,14 @@
         "teamWins": 27465,
         "showdownWins": 5200,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 120845,
+        "prestige": 98,
+        "teamWins": 27465,
+        "showdownWins": 5200,
+        "club": "RealDutch Light"
       }
     ],
     "#22R20Q0LP": [
@@ -368194,6 +369498,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 80657,
+        "prestige": 41,
+        "teamWins": 23666,
+        "showdownWins": 1274,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 80657,
         "prestige": 41,
         "teamWins": 23666,
@@ -370009,6 +371321,14 @@
         "teamWins": 12608,
         "showdownWins": 5315,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 70746,
+        "prestige": 42,
+        "teamWins": 12608,
+        "showdownWins": 5315,
+        "club": "RealDutch OG"
       }
     ],
     "#J8CQJ0Y0": [
@@ -371817,6 +373137,14 @@
         "trophies": 58325,
         "prestige": 30,
         "teamWins": 9870,
+        "showdownWins": 3410,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 58350,
+        "prestige": 30,
+        "teamWins": 9873,
         "showdownWins": 3410,
         "club": "RealDutch OG"
       }
@@ -373629,6 +374957,14 @@
         "teamWins": 7102,
         "showdownWins": 3886,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 61419,
+        "prestige": 15,
+        "teamWins": 7102,
+        "showdownWins": 3894,
+        "club": "RealDutch OG"
       }
     ],
     "#G0CJVGR8Y": [
@@ -375434,6 +376770,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 56954,
+        "prestige": 13,
+        "teamWins": 6756,
+        "showdownWins": 2120,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 56954,
         "prestige": 13,
         "teamWins": 6756,
@@ -377249,6 +378593,14 @@
         "teamWins": 9168,
         "showdownWins": 4847,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 51852,
+        "prestige": 18,
+        "teamWins": 9168,
+        "showdownWins": 4847,
+        "club": "RealDutch OG"
       }
     ],
     "#2LQQJJLV9": [
@@ -379054,6 +380406,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 45246,
+        "prestige": 5,
+        "teamWins": 4046,
+        "showdownWins": 2814,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 45246,
         "prestige": 5,
         "teamWins": 4046,
@@ -380869,6 +382229,14 @@
         "teamWins": 4918,
         "showdownWins": 2935,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 41679,
+        "prestige": 2,
+        "teamWins": 4918,
+        "showdownWins": 2935,
+        "club": "RealDutch OG"
       }
     ],
     "#2J8YP82UP": [
@@ -382674,6 +384042,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 45726,
+        "prestige": 6,
+        "teamWins": 13455,
+        "showdownWins": 5297,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 45726,
         "prestige": 6,
         "teamWins": 13455,
@@ -384489,6 +385865,14 @@
         "teamWins": 6525,
         "showdownWins": 1694,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 35434,
+        "prestige": 19,
+        "teamWins": 6525,
+        "showdownWins": 1694,
+        "club": "RealDutch OG"
       }
     ],
     "#GC2LYYP28": [
@@ -386299,6 +387683,14 @@
         "teamWins": 4155,
         "showdownWins": 1099,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 46429,
+        "prestige": 15,
+        "teamWins": 4155,
+        "showdownWins": 1099,
+        "club": "RealDutch Nova"
       }
     ],
     "#UJUUCQ0R": [
@@ -388104,6 +389496,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 27717,
+        "prestige": 0,
+        "teamWins": 3368,
+        "showdownWins": 1551,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 27717,
         "prestige": 0,
         "teamWins": 3368,
@@ -390177,6 +391577,14 @@
         "teamWins": 2736,
         "showdownWins": 1671,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 22038,
+        "prestige": 0,
+        "teamWins": 2736,
+        "showdownWins": 1671,
+        "club": "RealDutch OG"
       }
     ],
     "#PPU98Q8UC": [
@@ -391982,6 +393390,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 23186,
+        "prestige": 3,
+        "teamWins": 1103,
+        "showdownWins": 1446,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 23186,
         "prestige": 3,
         "teamWins": 1103,
@@ -393871,6 +395287,14 @@
         "teamWins": 1297,
         "showdownWins": 1038,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 24477,
+        "prestige": 6,
+        "teamWins": 1297,
+        "showdownWins": 1038,
+        "club": "RealDutch OG"
       }
     ],
     "#992LCL0Y": [
@@ -395681,6 +397105,14 @@
         "teamWins": 2636,
         "showdownWins": 1218,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 17678,
+        "prestige": 0,
+        "teamWins": 2636,
+        "showdownWins": 1218,
+        "club": "RealDutch OG"
       }
     ],
     "#298R2UYUJ": [
@@ -397486,6 +398918,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 16365,
+        "prestige": 1,
+        "teamWins": 2652,
+        "showdownWins": 570,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 16365,
         "prestige": 1,
         "teamWins": 2652,
@@ -400463,6 +401903,14 @@
         "teamWins": 589,
         "showdownWins": 109,
         "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 5109,
+        "prestige": 0,
+        "teamWins": 589,
+        "showdownWins": 109,
+        "club": "RealDutch OG"
       }
     ],
     "#2RJUJGP292": [
@@ -402910,6 +404358,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 1108,
+        "prestige": 0,
+        "teamWins": 10,
+        "showdownWins": 80,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 1108,
         "prestige": 0,
         "teamWins": 10,
@@ -406025,6 +407481,14 @@
         "teamWins": 31364,
         "showdownWins": 10513,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 132231,
+        "prestige": 116,
+        "teamWins": 31364,
+        "showdownWins": 10513,
+        "club": "RealDutch"
       }
     ],
     "#P8YQLQJJP": [
@@ -407328,6 +408792,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 123712,
+        "prestige": 100,
+        "teamWins": 24478,
+        "showdownWins": 4008,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 123712,
         "prestige": 100,
         "teamWins": 24478,
@@ -409179,6 +410651,14 @@
         "teamWins": 3947,
         "showdownWins": 3333,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 40579,
+        "prestige": 12,
+        "teamWins": 3947,
+        "showdownWins": 3333,
+        "club": "RealDutch Fight"
       }
     ],
     "#2J0G8R9C8R": [
@@ -410792,6 +412272,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 29060,
+        "prestige": 12,
+        "teamWins": 97,
+        "showdownWins": 1371,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 29060,
         "prestige": 12,
         "teamWins": 97,
@@ -416479,6 +417967,14 @@
         "teamWins": 27842,
         "showdownWins": 6322,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 109179,
+        "prestige": 97,
+        "teamWins": 27842,
+        "showdownWins": 6322,
+        "club": "RealDutch II"
       }
     ],
     "#CG0VU8J8": [
@@ -418256,6 +419752,14 @@
         "prestige": 112,
         "teamWins": 13910,
         "showdownWins": 7193,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 128603,
+        "prestige": 113,
+        "teamWins": 13916,
+        "showdownWins": 7194,
         "club": "RealDutch Force"
       }
     ],
@@ -423703,6 +425207,14 @@
         "teamWins": 10229,
         "showdownWins": 1030,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 73392,
+        "prestige": 48,
+        "teamWins": 10231,
+        "showdownWins": 1031,
+        "club": "RealDutch Nova"
       }
     ],
     "#P8C8PPQ0R": [
@@ -428441,6 +429953,14 @@
         "teamWins": 5918,
         "showdownWins": 5020,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 108938,
+        "prestige": 88,
+        "teamWins": 5918,
+        "showdownWins": 5020,
+        "club": "RealDutch Stars"
       }
     ],
     "#U8JU02C": [
@@ -430437,6 +431957,14 @@
         "trophies": 124679,
         "prestige": 114,
         "teamWins": 47126,
+        "showdownWins": 3279,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 124679,
+        "prestige": 114,
+        "teamWins": 47128,
         "showdownWins": 3279,
         "club": "RealDutch"
       }
@@ -438261,6 +439789,14 @@
         "teamWins": 6390,
         "showdownWins": 6013,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 105239,
+        "prestige": 83,
+        "teamWins": 6390,
+        "showdownWins": 6013,
+        "club": "RealDutch Elite"
       }
     ],
     "#GYJQR89UG": [
@@ -441673,6 +443209,14 @@
         "teamWins": 12695,
         "showdownWins": 2104,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 70598,
+        "prestige": 41,
+        "teamWins": 12695,
+        "showdownWins": 2104,
+        "club": "RealDutch Light"
       }
     ],
     "#P802CYQGU": [
@@ -444555,6 +446099,14 @@
         "teamWins": 20487,
         "showdownWins": 4133,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 113215,
+        "prestige": 111,
+        "teamWins": 20487,
+        "showdownWins": 4133,
+        "club": "RealDutch II"
       }
     ],
     "#QYG8QC98P": [
@@ -446272,6 +447824,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 131029,
+        "prestige": 123,
+        "teamWins": 5688,
+        "showdownWins": 5676,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 131029,
         "prestige": 123,
         "teamWins": 5688,
@@ -449475,6 +451035,14 @@
         "teamWins": 10161,
         "showdownWins": 7905,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 125552,
+        "prestige": 116,
+        "teamWins": 10161,
+        "showdownWins": 7905,
+        "club": "RealDutch II"
       }
     ],
     "#PYCU9JC9": [
@@ -451652,6 +453220,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 38124,
+        "prestige": 12,
+        "teamWins": 3528,
+        "showdownWins": 1878,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 38124,
         "prestige": 12,
         "teamWins": 3528,
@@ -454547,6 +456123,14 @@
         "teamWins": 15617,
         "showdownWins": 4708,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 106185,
+        "prestige": 100,
+        "teamWins": 15617,
+        "showdownWins": 4708,
+        "club": "RealDutch Elite"
       }
     ],
     "#22LYJLQQR": [
@@ -456224,6 +457808,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 22773,
+        "prestige": 7,
+        "teamWins": 2594,
+        "showdownWins": 492,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 22773,
         "prestige": 7,
         "teamWins": 2594,
@@ -458166,6 +459758,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 6350,
+        "prestige": 0,
+        "teamWins": 294,
+        "showdownWins": 276,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 6350,
         "prestige": 0,
         "teamWins": 294,
@@ -460797,6 +462397,14 @@
         "teamWins": 23905,
         "showdownWins": 6610,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 135513,
+        "prestige": 123,
+        "teamWins": 23905,
+        "showdownWins": 6610,
+        "club": "RealDutch"
       }
     ],
     "#Y0Q0QLVJR": [
@@ -463278,6 +464886,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 92637,
+        "prestige": 65,
+        "teamWins": 9687,
+        "showdownWins": 3413,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 92637,
         "prestige": 65,
         "teamWins": 9687,
@@ -467597,6 +469213,14 @@
         "teamWins": 2623,
         "showdownWins": 1706,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 35876,
+        "prestige": 0,
+        "teamWins": 2623,
+        "showdownWins": 1706,
+        "club": "RealDutch Minis"
       }
     ],
     "#P9G8J22U8": [
@@ -469347,6 +470971,14 @@
         "trophies": 122632,
         "prestige": 117,
         "teamWins": 17696,
+        "showdownWins": 2661,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 122622,
+        "prestige": 117,
+        "teamWins": 17707,
         "showdownWins": 2661,
         "club": "RealDutch Force"
       }
@@ -472229,6 +473861,14 @@
         "teamWins": 16320,
         "showdownWins": 8589,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 128458,
+        "prestige": 112,
+        "teamWins": 16320,
+        "showdownWins": 8589,
+        "club": "RealDutch"
       }
     ],
     "#YPYV002CL": [
@@ -473849,6 +475489,14 @@
         "teamWins": 2,
         "showdownWins": 75,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 1107,
+        "prestige": 0,
+        "teamWins": 2,
+        "showdownWins": 75,
+        "club": "RealDutch Minis"
       }
     ],
     "#2RR8YRJLQ0": [
@@ -475414,6 +477062,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 1104,
+        "prestige": 0,
+        "teamWins": 0,
+        "showdownWins": 68,
+        "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 1104,
         "prestige": 0,
         "teamWins": 0,
@@ -477023,6 +478679,14 @@
         "teamWins": 22850,
         "showdownWins": 8055,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 115282,
+        "prestige": 100,
+        "teamWins": 22850,
+        "showdownWins": 8055,
+        "club": "RealDutch II"
       }
     ],
     "#UJPGYY82": [
@@ -478072,6 +479736,14 @@
         "prestige": 119,
         "teamWins": 17890,
         "showdownWins": 10542,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 130053,
+        "prestige": 119,
+        "teamWins": 17918,
+        "showdownWins": 10546,
         "club": "RealDutch"
       }
     ],
@@ -479622,6 +481294,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 121824,
+        "prestige": 112,
+        "teamWins": 15172,
+        "showdownWins": 6649,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 121824,
         "prestige": 112,
         "teamWins": 15172,
@@ -481651,6 +483331,14 @@
         "teamWins": 7319,
         "showdownWins": 683,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 34045,
+        "prestige": 1,
+        "teamWins": 7319,
+        "showdownWins": 683,
+        "club": "RealDutch Fight"
       }
     ],
     "#2LRJLVJ8PL": [
@@ -483200,6 +484888,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 28560,
+        "prestige": 14,
+        "teamWins": 3165,
+        "showdownWins": 948,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 28560,
         "prestige": 14,
         "teamWins": 3165,
@@ -484761,6 +486457,14 @@
         "teamWins": 2067,
         "showdownWins": 3306,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 52780,
+        "prestige": 26,
+        "teamWins": 2067,
+        "showdownWins": 3306,
+        "club": "RealDutch Fight"
       }
     ],
     "#202U2RPVJ": [
@@ -486302,6 +488006,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 44024,
+        "prestige": 11,
+        "teamWins": 5514,
+        "showdownWins": 1576,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 44024,
         "prestige": 11,
         "teamWins": 5514,
@@ -487922,6 +489634,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 11415,
+        "prestige": 0,
+        "teamWins": 830,
+        "showdownWins": 1011,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 11415,
         "prestige": 0,
         "teamWins": 830,
@@ -491020,6 +492740,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 117676,
+        "prestige": 112,
+        "teamWins": 13474,
+        "showdownWins": 3601,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 117676,
         "prestige": 112,
         "teamWins": 13474,
@@ -496951,6 +498679,14 @@
         "teamWins": 46,
         "showdownWins": 674,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 15058,
+        "prestige": 0,
+        "teamWins": 46,
+        "showdownWins": 674,
+        "club": "RealDutch Fight"
       }
     ],
     "#29R222PJ2": [
@@ -498840,6 +500576,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 129594,
+        "prestige": 110,
+        "teamWins": 20509,
+        "showdownWins": 6259,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 129594,
         "prestige": 110,
         "teamWins": 20509,
@@ -503390,6 +505134,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 102633,
+        "prestige": 84,
+        "teamWins": 9944,
+        "showdownWins": 8243,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 102633,
         "prestige": 84,
         "teamWins": 9944,
@@ -513121,6 +514873,14 @@
         "teamWins": 7231,
         "showdownWins": 8517,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 124281,
+        "prestige": 115,
+        "teamWins": 7231,
+        "showdownWins": 8517,
+        "club": "RealDutch II"
       }
     ],
     "#2LQJUL0GG": [
@@ -516667,6 +518427,14 @@
         "teamWins": 13600,
         "showdownWins": 3941,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 118702,
+        "prestige": 98,
+        "teamWins": 13600,
+        "showdownWins": 3941,
+        "club": "RealDutch Stars"
       }
     ],
     "#9PY0UJGV2": [
@@ -519097,6 +520865,14 @@
         "teamWins": 0,
         "showdownWins": 2,
         "club": "RealDutch Mini2"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 2529,
+        "prestige": 2,
+        "teamWins": 0,
+        "showdownWins": 2,
+        "club": "RealDutch Mini2"
       }
     ],
     "#9YPG9UQLV": [
@@ -520494,6 +522270,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 114122,
+        "prestige": 104,
+        "teamWins": 14898,
+        "showdownWins": 2156,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 114122,
         "prestige": 104,
         "teamWins": 14898,
@@ -522751,6 +524535,14 @@
         "teamWins": 13516,
         "showdownWins": 7713,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 107959,
+        "prestige": 83,
+        "teamWins": 13516,
+        "showdownWins": 7713,
+        "club": "RealDutch Elite"
       }
     ],
     "#PJYQUGG0R": [
@@ -524131,6 +525923,14 @@
         "teamWins": 77,
         "showdownWins": 39,
         "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 1397,
+        "prestige": 0,
+        "teamWins": 77,
+        "showdownWins": 39,
+        "club": "RealDutch Minis"
       }
     ],
     "#282LGG2GU": [
@@ -525496,6 +527296,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 95185,
+        "prestige": 69,
+        "teamWins": 25524,
+        "showdownWins": 4259,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 95185,
         "prestige": 69,
         "teamWins": 25524,
@@ -528989,6 +530797,14 @@
         "trophies": 129430,
         "prestige": 119,
         "teamWins": 18181,
+        "showdownWins": 5097,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 129465,
+        "prestige": 119,
+        "teamWins": 18184,
         "showdownWins": 5097,
         "club": "RealDutch Force"
       }
@@ -533837,6 +535653,14 @@
         "teamWins": 32191,
         "showdownWins": 693,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 133801,
+        "prestige": 117,
+        "teamWins": 32224,
+        "showdownWins": 693,
+        "club": "RealDutch"
       }
     ],
     "#2CYJ22GUG": [
@@ -535257,6 +537081,14 @@
         "teamWins": 24857,
         "showdownWins": 4625,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 85143,
+        "prestige": 46,
+        "teamWins": 24859,
+        "showdownWins": 4625,
+        "club": "RealDutch Light"
       }
     ],
     "#2QJ20PL8U8": [
@@ -536522,6 +538354,14 @@
         "prestige": 18,
         "teamWins": 5251,
         "showdownWins": 1231,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 59717,
+        "prestige": 18,
+        "teamWins": 5251,
+        "showdownWins": 1236,
         "club": "RealDutch Nova"
       }
     ],
@@ -538799,6 +540639,14 @@
         "teamWins": 29248,
         "showdownWins": 3163,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 127565,
+        "prestige": 116,
+        "teamWins": 29250,
+        "showdownWins": 3163,
+        "club": "RealDutch"
       }
     ],
     "#UGGPRVL": [
@@ -540400,6 +542248,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 13830,
+        "prestige": 8,
+        "teamWins": 415,
+        "showdownWins": 682,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 13830,
         "prestige": 8,
         "teamWins": 415,
@@ -542205,6 +544061,14 @@
         "teamWins": 8786,
         "showdownWins": 1951,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 61737,
+        "prestige": 26,
+        "teamWins": 8786,
+        "showdownWins": 1951,
+        "club": "RealDutch Nova"
       }
     ],
     "#GRJR0UC2L": [
@@ -543405,6 +545269,14 @@
         "trophies": 54846,
         "prestige": 15,
         "teamWins": 3741,
+        "showdownWins": 1747,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 54846,
+        "prestige": 15,
+        "teamWins": 3743,
         "showdownWins": 1747,
         "club": "RealDutch Fight"
       }
@@ -545094,6 +546966,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 150000,
+        "prestige": 120,
+        "teamWins": 14810,
+        "showdownWins": 8309,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 150000,
         "prestige": 120,
         "teamWins": 14810,
@@ -547052,6 +548932,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 3600,
+        "prestige": 0,
+        "teamWins": 150,
+        "showdownWins": 92,
+        "club": "RealDutch Minis"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 3600,
         "prestige": 0,
         "teamWins": 150,
@@ -549537,6 +551425,14 @@
         "teamWins": 13511,
         "showdownWins": 6304,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 115829,
+        "prestige": 103,
+        "teamWins": 13512,
+        "showdownWins": 6304,
+        "club": "RealDutch II"
       }
     ],
     "#2G0QV0028": [
@@ -551921,6 +553817,14 @@
         "teamWins": 14569,
         "showdownWins": 5567,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 105134,
+        "prestige": 75,
+        "teamWins": 14569,
+        "showdownWins": 5567,
+        "club": "RealDutch Light"
       }
     ],
     "#2GUPP9JRR": [
@@ -552974,6 +554878,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 48276,
+        "prestige": 29,
+        "teamWins": 3176,
+        "showdownWins": 2432,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 48276,
         "prestige": 29,
         "teamWins": 3176,
@@ -554191,6 +556103,14 @@
         "teamWins": 15603,
         "showdownWins": 5133,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 73073,
+        "prestige": 41,
+        "teamWins": 15605,
+        "showdownWins": 5133,
+        "club": "RealDutch Light"
       }
     ],
     "#9VQRV9CJ8": [
@@ -555253,6 +557173,14 @@
         "teamWins": 5521,
         "showdownWins": 1626,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 50890,
+        "prestige": 22,
+        "teamWins": 5521,
+        "showdownWins": 1626,
+        "club": "RealDutch Fight"
       }
     ],
     "#28U0C0Q0G": [
@@ -556258,6 +558186,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 125122,
+        "prestige": 96,
+        "teamWins": 13986,
+        "showdownWins": 4335,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 125122,
         "prestige": 96,
         "teamWins": 13986,
@@ -557276,6 +559212,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 164226,
+        "prestige": 134,
+        "teamWins": 35014,
+        "showdownWins": 3817,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 164226,
         "prestige": 134,
         "teamWins": 35014,
@@ -558612,6 +560556,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 121224,
+        "prestige": 109,
+        "teamWins": 14055,
+        "showdownWins": 3874,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 121224,
         "prestige": 109,
         "teamWins": 14055,
@@ -561211,6 +563163,14 @@
         "teamWins": 26988,
         "showdownWins": 5948,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 113822,
+        "prestige": 94,
+        "teamWins": 26988,
+        "showdownWins": 5948,
+        "club": "RealDutch Stars"
       }
     ],
     "#RR8PRYJVC": [
@@ -563279,6 +565239,14 @@
         "teamWins": 14483,
         "showdownWins": 4904,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 104458,
+        "prestige": 75,
+        "teamWins": 14483,
+        "showdownWins": 4904,
+        "club": "RealDutch Elite"
       }
     ],
     "#9CP2JP08Q": [
@@ -564188,6 +566156,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 86238,
+        "prestige": 50,
+        "teamWins": 16581,
+        "showdownWins": 4195,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 86238,
         "prestige": 50,
         "teamWins": 16581,
@@ -565282,6 +567258,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 108411,
+        "prestige": 95,
+        "teamWins": 22580,
+        "showdownWins": 7449,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 108411,
         "prestige": 95,
         "teamWins": 22580,
@@ -567330,6 +569314,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 30975,
+        "prestige": 0,
+        "teamWins": 15213,
+        "showdownWins": 2992,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 30975,
         "prestige": 0,
         "teamWins": 15213,
@@ -570545,6 +572537,14 @@
         "teamWins": 2875,
         "showdownWins": 540,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 16793,
+        "prestige": 0,
+        "teamWins": 2875,
+        "showdownWins": 540,
+        "club": "RealDutch Fight"
       }
     ],
     "#9QC22CLQY": [
@@ -571322,6 +573322,14 @@
         "prestige": 112,
         "teamWins": 13518,
         "showdownWins": 8427,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 139790,
+        "prestige": 112,
+        "teamWins": 13533,
+        "showdownWins": 8430,
         "club": "RealDutch"
       }
     ],
@@ -572178,6 +574186,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 153342,
+        "prestige": 133,
+        "teamWins": 62002,
+        "showdownWins": 13449,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 153342,
         "prestige": 133,
         "teamWins": 62002,
@@ -573251,6 +575267,14 @@
         "teamWins": 7001,
         "showdownWins": 5727,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 102663,
+        "prestige": 95,
+        "teamWins": 7001,
+        "showdownWins": 5727,
+        "club": "RealDutch Stars"
       }
     ],
     "#PCVP089Y": [
@@ -573968,6 +575992,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 53413,
+        "prestige": 24,
+        "teamWins": 4691,
+        "showdownWins": 3104,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 53413,
         "prestige": 24,
         "teamWins": 4691,
@@ -574844,6 +576876,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 64239,
+        "prestige": 37,
+        "teamWins": 7603,
+        "showdownWins": 2372,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 64239,
         "prestige": 37,
         "teamWins": 7603,
@@ -576095,6 +578135,14 @@
         "teamWins": 7922,
         "showdownWins": 3464,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 96672,
+        "prestige": 77,
+        "teamWins": 7922,
+        "showdownWins": 3464,
+        "club": "RealDutch Light"
       }
     ],
     "#2RU29CRCCL": [
@@ -576853,6 +578901,14 @@
         "teamWins": 23260,
         "showdownWins": 10974,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 141379,
+        "prestige": 125,
+        "teamWins": 23260,
+        "showdownWins": 10974,
+        "club": "RealDutch"
       }
     ],
     "#V92GCQ8G": [
@@ -577510,6 +579566,14 @@
         "prestige": 120,
         "teamWins": 28477,
         "showdownWins": 5875,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 135242,
+        "prestige": 120,
+        "teamWins": 28479,
+        "showdownWins": 5891,
         "club": "RealDutch Elite"
       }
     ],
@@ -578775,6 +580839,14 @@
         "teamWins": 32832,
         "showdownWins": 6808,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 140147,
+        "prestige": 127,
+        "teamWins": 32832,
+        "showdownWins": 6808,
+        "club": "RealDutch"
       }
     ],
     "#QLG2GL92G": [
@@ -579610,6 +581682,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 158142,
+        "prestige": 111,
+        "teamWins": 38351,
+        "showdownWins": 2068,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 158142,
         "prestige": 111,
         "teamWins": 38351,
@@ -580759,6 +582839,14 @@
         "teamWins": 2060,
         "showdownWins": 1709,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 36328,
+        "prestige": 16,
+        "teamWins": 2060,
+        "showdownWins": 1709,
+        "club": "RealDutch Fight"
       }
     ],
     "#L0GPGJGVG": [
@@ -581887,6 +583975,14 @@
         "teamWins": 2390,
         "showdownWins": 964,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 33687,
+        "prestige": 0,
+        "teamWins": 2390,
+        "showdownWins": 964,
+        "club": "RealDutch Fight"
       }
     ],
     "#L0YYCJVU": [
@@ -582377,6 +584473,14 @@
         "teamWins": 39421,
         "showdownWins": 4230,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 111785,
+        "prestige": 101,
+        "teamWins": 39421,
+        "showdownWins": 4230,
+        "club": "RealDutch Glory"
       }
     ],
     "#2L8GRLUGG": [
@@ -582858,6 +584962,14 @@
         "prestige": 106,
         "teamWins": 26097,
         "showdownWins": 5082,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 111760,
+        "prestige": 107,
+        "teamWins": 26097,
+        "showdownWins": 5087,
         "club": "RealDutch Elite"
       }
     ],
@@ -583591,6 +585703,14 @@
         "teamWins": 2717,
         "showdownWins": 2738,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 54019,
+        "prestige": 18,
+        "teamWins": 2717,
+        "showdownWins": 2738,
+        "club": "RealDutch Fight"
       }
     ],
     "#922VQC92": [
@@ -584056,6 +586176,14 @@
         "prestige": 113,
         "teamWins": 28659,
         "showdownWins": 4728,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 124942,
+        "prestige": 113,
+        "teamWins": 28659,
+        "showdownWins": 4729,
         "club": "RealDutch Force"
       }
     ],
@@ -584589,6 +586717,14 @@
         "teamWins": 3999,
         "showdownWins": 1624,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 53344,
+        "prestige": 16,
+        "teamWins": 3999,
+        "showdownWins": 1624,
+        "club": "RealDutch Fight"
       }
     ],
     "#CUQRP9UV": [
@@ -585022,6 +587158,14 @@
         "prestige": 55,
         "teamWins": 5705,
         "showdownWins": 3500,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 97624,
+        "prestige": 55,
+        "teamWins": 5705,
+        "showdownWins": 3505,
         "club": "RealDutch Elite"
       }
     ],
@@ -585589,6 +587733,14 @@
         "teamWins": 19603,
         "showdownWins": 5930,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 113204,
+        "prestige": 111,
+        "teamWins": 19610,
+        "showdownWins": 5932,
+        "club": "RealDutch Light"
       }
     ],
     "#QJ29PPP": [
@@ -586018,6 +588170,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 85011,
+        "prestige": 66,
+        "teamWins": 28876,
+        "showdownWins": 7481,
+        "club": "RealDutch OG"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 85011,
         "prestige": 66,
         "teamWins": 28876,
@@ -586654,6 +588814,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 17150,
+        "prestige": 8,
+        "teamWins": 1504,
+        "showdownWins": 222,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 17150,
         "prestige": 8,
         "teamWins": 1504,
@@ -587431,6 +589599,14 @@
         "teamWins": 6363,
         "showdownWins": 5818,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 108065,
+        "prestige": 77,
+        "teamWins": 6363,
+        "showdownWins": 5818,
+        "club": "RealDutch Force"
       }
     ],
     "#9C2G2L9CP": [
@@ -587847,6 +590023,14 @@
         "trophies": 139944,
         "prestige": 119,
         "teamWins": 16339,
+        "showdownWins": 8069,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 139999,
+        "prestige": 119,
+        "teamWins": 16343,
         "showdownWins": 8069,
         "club": "RealDutch Glory"
       }
@@ -588939,6 +591123,14 @@
         "teamWins": 22757,
         "showdownWins": 5636,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 124751,
+        "prestige": 86,
+        "teamWins": 22769,
+        "showdownWins": 5636,
+        "club": "RealDutch Glory"
       }
     ],
     "#800RP0JQ": [
@@ -589633,6 +591825,14 @@
         "teamWins": 11515,
         "showdownWins": 5178,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 95873,
+        "prestige": 68,
+        "teamWins": 11515,
+        "showdownWins": 5178,
+        "club": "RealDutch Stars"
       }
     ],
     "#8P0GGR8RR": [
@@ -589990,6 +592190,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 112393,
+        "prestige": 88,
+        "teamWins": 25952,
+        "showdownWins": 7329,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 112393,
         "prestige": 88,
         "teamWins": 25952,
@@ -590987,6 +593195,14 @@
         "teamWins": 18102,
         "showdownWins": 1985,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 95719,
+        "prestige": 81,
+        "teamWins": 18102,
+        "showdownWins": 1985,
+        "club": "RealDutch Elite"
       }
     ],
     "#2UYVGCRCVC": [
@@ -591593,6 +593809,14 @@
         "teamWins": 15475,
         "showdownWins": 3385,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 102241,
+        "prestige": 91,
+        "teamWins": 15475,
+        "showdownWins": 3385,
+        "club": "RealDutch II"
       }
     ],
     "#LURLQL9L": [
@@ -591905,6 +594129,14 @@
         "trophies": 137852,
         "prestige": 109,
         "teamWins": 55297,
+        "showdownWins": 3844,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 137834,
+        "prestige": 109,
+        "teamWins": 55302,
         "showdownWins": 3844,
         "club": "RealDutch"
       }
@@ -592232,6 +594464,14 @@
         "prestige": 76,
         "teamWins": 10510,
         "showdownWins": 3733,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 103260,
+        "prestige": 76,
+        "teamWins": 10510,
+        "showdownWins": 3735,
         "club": "RealDutch Force"
       }
     ],
@@ -592576,6 +594816,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 35205,
+        "prestige": 9,
+        "teamWins": 1912,
+        "showdownWins": 1438,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 35205,
         "prestige": 9,
         "teamWins": 1912,
@@ -593164,6 +595412,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 107056,
+        "prestige": 100,
+        "teamWins": 11379,
+        "showdownWins": 3897,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 107056,
         "prestige": 100,
         "teamWins": 11379,
@@ -593759,6 +596015,14 @@
         "teamWins": 260,
         "showdownWins": 1001,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 17303,
+        "prestige": 5,
+        "teamWins": 260,
+        "showdownWins": 1001,
+        "club": "RealDutch Fight"
       }
     ],
     "#2YQJ20P": [
@@ -594040,6 +596304,14 @@
         "prestige": 21,
         "teamWins": 11007,
         "showdownWins": 4242,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 55460,
+        "prestige": 21,
+        "teamWins": 11007,
+        "showdownWins": 4244,
         "club": "RealDutch Nova"
       }
     ],
@@ -594359,6 +596631,14 @@
         "teamWins": 1231,
         "showdownWins": 1977,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 33613,
+        "prestige": 17,
+        "teamWins": 1231,
+        "showdownWins": 1977,
+        "club": "RealDutch Nova"
       }
     ],
     "#222QPPJLPR": [
@@ -594633,6 +596913,14 @@
         "teamWins": 1870,
         "showdownWins": 1196,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 30242,
+        "prestige": 17,
+        "teamWins": 1870,
+        "showdownWins": 1196,
+        "club": "RealDutch Fight"
       }
     ],
     "#GVJY0PV0": [
@@ -594902,6 +597190,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 19029,
+        "prestige": 0,
+        "teamWins": 2023,
+        "showdownWins": 756,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 19029,
         "prestige": 0,
         "teamWins": 2023,
@@ -595387,6 +597683,14 @@
         "teamWins": 1260,
         "showdownWins": 2032,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 27307,
+        "prestige": 6,
+        "teamWins": 1260,
+        "showdownWins": 2032,
+        "club": "RealDutch Fight"
       }
     ],
     "#2UY90CYUY9": [
@@ -595632,6 +597936,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 20202,
+        "prestige": 13,
+        "teamWins": 1521,
+        "showdownWins": 497,
+        "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 20202,
         "prestige": 13,
         "teamWins": 1521,
@@ -595945,6 +598257,14 @@
         "teamWins": 20897,
         "showdownWins": 5383,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 132741,
+        "prestige": 120,
+        "teamWins": 20897,
+        "showdownWins": 5383,
+        "club": "RealDutch"
       }
     ],
     "#90CLQRCUC": [
@@ -596179,6 +598499,14 @@
         "teamWins": 28724,
         "showdownWins": 4513,
         "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 115316,
+        "prestige": 105,
+        "teamWins": 28743,
+        "showdownWins": 4515,
+        "club": "RealDutch II"
       }
     ],
     "#2CRG8YYV2": [
@@ -596407,6 +598735,14 @@
         "teamWins": 8709,
         "showdownWins": 3853,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 90424,
+        "prestige": 62,
+        "teamWins": 8709,
+        "showdownWins": 3853,
+        "club": "RealDutch Light"
       }
     ],
     "#2LYJPYYRUU": [
@@ -596624,6 +598960,14 @@
         "prestige": 27,
         "teamWins": 615,
         "showdownWins": 1551,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 33222,
+        "prestige": 27,
+        "teamWins": 615,
+        "showdownWins": 1554,
         "club": "RealDutch Nova"
       }
     ],
@@ -597491,6 +599835,14 @@
         "teamWins": 2351,
         "showdownWins": 1222,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 35873,
+        "prestige": 21,
+        "teamWins": 2351,
+        "showdownWins": 1222,
+        "club": "RealDutch Nova"
       }
     ],
     "#RV98ULYQ": [
@@ -597667,6 +600019,14 @@
         "trophies": 117806,
         "prestige": 100,
         "teamWins": 13916,
+        "showdownWins": 4753,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 117820,
+        "prestige": 100,
+        "teamWins": 13922,
         "showdownWins": 4753,
         "club": "RealDutch Glory"
       }
@@ -597905,6 +600265,14 @@
         "teamWins": 11576,
         "showdownWins": 6548,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 119814,
+        "prestige": 113,
+        "teamWins": 11576,
+        "showdownWins": 6548,
+        "club": "RealDutch Glory"
       }
     ],
     "#22GGCUVY8": [
@@ -598070,6 +600438,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 95678,
+        "prestige": 54,
+        "teamWins": 5280,
+        "showdownWins": 4892,
+        "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 95678,
         "prestige": 54,
         "teamWins": 5280,
@@ -598245,6 +600621,14 @@
         "teamWins": 8468,
         "showdownWins": 4107,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 53316,
+        "prestige": 6,
+        "teamWins": 8468,
+        "showdownWins": 4112,
+        "club": "RealDutch Nova"
       }
     ],
     "#L0RGJVJY": [
@@ -598394,6 +600778,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 161011,
+        "prestige": 150,
+        "teamWins": 42793,
+        "showdownWins": 12093,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 161011,
         "prestige": 150,
         "teamWins": 42793,
@@ -598646,6 +601038,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 119720,
+        "prestige": 112,
+        "teamWins": 12533,
+        "showdownWins": 4257,
+        "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 119720,
         "prestige": 112,
         "teamWins": 12533,
@@ -598911,6 +601311,14 @@
         "teamWins": 5427,
         "showdownWins": 3897,
         "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 95200,
+        "prestige": 51,
+        "teamWins": 5427,
+        "showdownWins": 3904,
+        "club": "RealDutch Stars"
       }
     ],
     "#GCJ8RRJCU": [
@@ -599044,6 +601452,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 84838,
+        "prestige": 50,
+        "teamWins": 7484,
+        "showdownWins": 2218,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 84838,
         "prestige": 50,
         "teamWins": 7484,
@@ -599187,6 +601603,14 @@
         "teamWins": 8180,
         "showdownWins": 556,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 53712,
+        "prestige": 45,
+        "teamWins": 8182,
+        "showdownWins": 556,
+        "club": "RealDutch Nova"
       }
     ],
     "#GJYQYUUJ8": [
@@ -599313,6 +601737,14 @@
       {
         "date": "2026-11-17",
         "trophies": 148498,
+        "prestige": 124,
+        "teamWins": 1064,
+        "showdownWins": 9344,
+        "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 148506,
         "prestige": 124,
         "teamWins": 1064,
         "showdownWins": 9344,
@@ -599447,6 +601879,14 @@
         "teamWins": 4567,
         "showdownWins": 652,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 36099,
+        "prestige": 22,
+        "teamWins": 4569,
+        "showdownWins": 652,
+        "club": "RealDutch Nova"
       }
     ],
     "#2088PC9LC": [
@@ -599568,6 +602008,14 @@
         "prestige": 116,
         "teamWins": 22654,
         "showdownWins": 4093,
+        "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 136283,
+        "prestige": 116,
+        "teamWins": 22656,
+        "showdownWins": 4094,
         "club": "RealDutch"
       }
     ],
@@ -599725,6 +602173,14 @@
         "teamWins": 6322,
         "showdownWins": 1838,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 55115,
+        "prestige": 13,
+        "teamWins": 6328,
+        "showdownWins": 1856,
+        "club": "RealDutch Nova"
       }
     ],
     "#2VYJPYR9RJ": [
@@ -599861,6 +602317,14 @@
         "teamWins": 9114,
         "showdownWins": 5394,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 102734,
+        "prestige": 76,
+        "teamWins": 9120,
+        "showdownWins": 5409,
+        "club": "RealDutch Elite"
       }
     ],
     "#92PRVPV0Q": [
@@ -599954,6 +602418,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 115237,
+        "prestige": 111,
+        "teamWins": 6386,
+        "showdownWins": 8655,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 115237,
         "prestige": 111,
         "teamWins": 6386,
@@ -600057,6 +602529,14 @@
         "teamWins": 1490,
         "showdownWins": 708,
         "club": "RealDutch Fight"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 29649,
+        "prestige": 12,
+        "teamWins": 1490,
+        "showdownWins": 708,
+        "club": "RealDutch Fight"
       }
     ],
     "#20J8CY9": [
@@ -600142,6 +602622,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 125987,
+        "prestige": 109,
+        "teamWins": 14166,
+        "showdownWins": 2828,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 125987,
         "prestige": 109,
         "teamWins": 14166,
@@ -600237,6 +602725,14 @@
         "teamWins": 22364,
         "showdownWins": 6598,
         "club": "RealDutch Light"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 88718,
+        "prestige": 62,
+        "teamWins": 22389,
+        "showdownWins": 6598,
+        "club": "RealDutch Light"
       }
     ],
     "#8P0Y8Y29Q": [
@@ -600306,6 +602802,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 123947,
+        "prestige": 110,
+        "teamWins": 24463,
+        "showdownWins": 3764,
+        "club": "RealDutch II"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 123947,
         "prestige": 110,
         "teamWins": 24463,
@@ -600403,6 +602907,14 @@
         "teamWins": 12845,
         "showdownWins": 5015,
         "club": "RealDutch Glory"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 125242,
+        "prestige": 102,
+        "teamWins": 12845,
+        "showdownWins": 5015,
+        "club": "RealDutch Glory"
       }
     ],
     "#YRGJR8PUR": [
@@ -600461,6 +602973,14 @@
         "teamWins": 8488,
         "showdownWins": 5575,
         "club": "RealDutch"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 125453,
+        "prestige": 113,
+        "teamWins": 8509,
+        "showdownWins": 5577,
+        "club": "RealDutch"
       }
     ],
     "#R2GJ88LUR": [
@@ -600514,6 +603034,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 117069,
+        "prestige": 108,
+        "teamWins": 9342,
+        "showdownWins": 3352,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 117069,
         "prestige": 108,
         "teamWins": 9342,
@@ -600595,6 +603123,14 @@
         "teamWins": 8202,
         "showdownWins": 2864,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 91683,
+        "prestige": 72,
+        "teamWins": 8202,
+        "showdownWins": 2866,
+        "club": "RealDutch Elite"
       }
     ],
     "#GRUUPRJCJ": [
@@ -600641,6 +603177,14 @@
       {
         "date": "2026-11-17",
         "trophies": 91903,
+        "prestige": 59,
+        "teamWins": 4196,
+        "showdownWins": 4188,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 91901,
         "prestige": 59,
         "teamWins": 4196,
         "showdownWins": 4188,
@@ -600695,6 +603239,14 @@
         "teamWins": 8576,
         "showdownWins": 1124,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 56448,
+        "prestige": 28,
+        "teamWins": 8609,
+        "showdownWins": 1124,
+        "club": "RealDutch Nova"
       }
     ],
     "#8RJQPV2JL": [
@@ -600745,6 +603297,14 @@
         "teamWins": 4500,
         "showdownWins": 2394,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 32503,
+        "prestige": 9,
+        "teamWins": 4500,
+        "showdownWins": 2394,
+        "club": "RealDutch Nova"
       }
     ],
     "#2GVCUUGV2": [
@@ -600787,6 +603347,14 @@
         "teamWins": 9123,
         "showdownWins": 7756,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 103712,
+        "prestige": 66,
+        "teamWins": 9132,
+        "showdownWins": 7773,
+        "club": "RealDutch Force"
       }
     ],
     "#QYLG9VYU8": [
@@ -600816,6 +603384,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 136504,
+        "prestige": 121,
+        "teamWins": 14959,
+        "showdownWins": 8901,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 136504,
         "prestige": 121,
         "teamWins": 14959,
@@ -600855,6 +603431,14 @@
         "teamWins": 3780,
         "showdownWins": 3443,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 39639,
+        "prestige": 19,
+        "teamWins": 3780,
+        "showdownWins": 3443,
+        "club": "RealDutch Nova"
       }
     ],
     "#QRCQCJCR": [
@@ -600881,6 +603465,14 @@
         "teamWins": 9030,
         "showdownWins": 6346,
         "club": "RealDutch Elite"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 101603,
+        "prestige": 61,
+        "teamWins": 9036,
+        "showdownWins": 6346,
+        "club": "RealDutch Elite"
       }
     ],
     "#8CRQPP2U": [
@@ -600905,6 +603497,14 @@
         "trophies": 40823,
         "prestige": 25,
         "teamWins": 5043,
+        "showdownWins": 1274,
+        "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 40823,
+        "prestige": 25,
+        "teamWins": 5049,
         "showdownWins": 1274,
         "club": "RealDutch Nova"
       }
@@ -600935,6 +603535,14 @@
         "teamWins": 16369,
         "showdownWins": 7203,
         "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 133064,
+        "prestige": 121,
+        "teamWins": 16369,
+        "showdownWins": 7205,
+        "club": "RealDutch Force"
       }
     ],
     "#8LYRU8GU": [
@@ -600948,6 +603556,14 @@
       },
       {
         "date": "2026-11-17",
+        "trophies": 117780,
+        "prestige": 100,
+        "teamWins": 10700,
+        "showdownWins": 5956,
+        "club": "RealDutch Force"
+      },
+      {
+        "date": "2026-11-18",
         "trophies": 117780,
         "prestige": 100,
         "teamWins": 10700,
@@ -600971,6 +603587,14 @@
         "teamWins": 6220,
         "showdownWins": 1583,
         "club": "RealDutch Nova"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 33172,
+        "prestige": 21,
+        "teamWins": 6220,
+        "showdownWins": 1583,
+        "club": "RealDutch Nova"
       }
     ],
     "#2QR0Q80G8V": [
@@ -600980,6 +603604,14 @@
         "prestige": 76,
         "teamWins": 6416,
         "showdownWins": 2255,
+        "club": "RealDutch Stars"
+      },
+      {
+        "date": "2026-11-18",
+        "trophies": 91418,
+        "prestige": 76,
+        "teamWins": 6419,
+        "showdownWins": 2261,
         "club": "RealDutch Stars"
       }
     ]
